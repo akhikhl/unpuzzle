@@ -1,0 +1,5 @@
+apply plugin: 'groovy'
+
+dependencies {
+  testCompile 'xmlunit:xmlunit:1.4'
+}
