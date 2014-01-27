@@ -7,7 +7,6 @@
  */
 package osgi2mvn
 
-
 import org.custommonkey.xmlunit.Diff
 import org.custommonkey.xmlunit.XMLUnit
 
@@ -51,6 +50,7 @@ class Bundle2PomTest extends Specification {
       <artifactId>org.eclipse.equinox.registry</artifactId>
       <version>[3.2.0,4.0.0)</version>
       <scope>compile</scope>
+      <optional>true</optional>
     </dependency>
   </dependencies>
 </project>''', pom.toString()

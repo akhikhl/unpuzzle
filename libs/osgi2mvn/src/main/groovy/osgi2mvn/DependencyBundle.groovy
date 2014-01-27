@@ -15,7 +15,7 @@ import groovy.transform.ToString
  * @see osgi2mvn.Pom
  */
 @ToString
-final class RequiredBundle {
+final class DependencyBundle {
   String group
 	String name
 	String version

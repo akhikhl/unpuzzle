@@ -9,6 +9,8 @@ package osgi2mvn
 
 import groovy.xml.MarkupBuilder
 
+import org.osgi.framework.Constants
+
 /**
  * POJO class holding data extracted from bundle and needed for POM generation.
  * @author ahi
@@ -21,7 +23,7 @@ final class Pom {
   String artifact
   String version
 	String packaging = 'jar'
-	List<RequiredBundle> requiredBundles = []
+	List<DependencyBundle> dependencyBundles = []
   String dependencyGroup
 
 	boolean isZip() {
@@ -51,20 +53,22 @@ final class Pom {
         version pom.version
       if(pom.packaging != 'jar')
         packaging pom.packaging
-      if(pom.requiredBundles)
+      if(pom.dependencyBundles)
         dependencies {
-          for(def reqBundle in pom.requiredBundles)
+          for(def depBundle in pom.dependencyBundles)
             dependency {
-              if(reqBundle.group)
-                groupId reqBundle.group
+              if(depBundle.group)
+                groupId depBundle.group
               else if(dependencyGroup)
                 groupId dependencyGroup
               else
-                groupId reqBundle.name
-              artifactId reqBundle.name
-              if(reqBundle.version)
-                version reqBundle.version
+                groupId depBundle.name
+              artifactId depBundle.name
+              if(depBundle.version)
+                version depBundle.version
               scope 'compile'
+              if(depBundle.resolution == Constants.RESOLUTION_OPTIONAL)
+                optional true
             }
         }
     }

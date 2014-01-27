@@ -52,8 +52,8 @@ class PomTest extends Specification {
   def 'should create pom with dependency'() {
   when:
     def pom = new Pom(group: 'myGroup', artifact: 'myArtifact', version: '0.0.1', dependencyGroup: 'group2')
-    pom.requiredBundles.add(new RequiredBundle(group: 'group1', name: 'dep1', version: '1.0'))
-    pom.requiredBundles.add(new RequiredBundle(name: 'dep2', version: '2.0'))
+    pom.dependencyBundles.add(new DependencyBundle(group: 'group1', name: 'dep1', version: '1.0'))
+    pom.dependencyBundles.add(new DependencyBundle(name: 'dep2', version: '2.0'))
   then:
     identicalXml '''<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns='http://maven.apache.org/POM/4.0.0' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>

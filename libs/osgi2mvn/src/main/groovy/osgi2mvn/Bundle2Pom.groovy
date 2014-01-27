@@ -46,16 +46,16 @@ class Bundle2Pom {
     pom.dependencyGroup = dependencyGroup
     pom.version = manifest.attr.getValue(Constants.BUNDLE_VERSION)
 
-    parseRequiredBundles(pom.requiredBundles, manifest.attr.getValue(Constants.REQUIRE_BUNDLE))
+    parseDependencyBundles(pom.dependencyBundles, manifest.attr.getValue(Constants.REQUIRE_BUNDLE))
 
     return pom
   }
 
-  private RequiredBundle parseRequiredBundle(String string) {
+  private DependencyBundle parseDependencyBundle(String string) {
     List elements = string.split(';')
     String name = elements[0]
     elements.remove(0)
-    RequiredBundle bundle = new RequiredBundle(name: name, resolution: Constants.RESOLUTION_MANDATORY, visibility: Constants.VISIBILITY_PRIVATE, version: "[1.0,)")
+    DependencyBundle bundle = new DependencyBundle(name: name, resolution: Constants.RESOLUTION_MANDATORY, visibility: Constants.VISIBILITY_PRIVATE, version: "[1.0,)")
     for(String element in elements)
       if (element.startsWith(Constants.BUNDLE_VERSION_ATTRIBUTE)) {
         String s = element.substring(element.indexOf('=') + 1)
@@ -71,19 +71,19 @@ class Bundle2Pom {
     return bundle
   }
 
-  private void parseRequiredBundles(List<RequiredBundle> requiredBundles, String requiredBundlesString) {
+  private void parseDependencyBundles(List<DependencyBundle> depBundles, String depBundlesString) {
     int startPos = 0
     boolean quoted = false
-    for(int i = 0; i < requiredBundlesString.length(); i++) {
-      char c = requiredBundlesString.charAt(i)
+    for(int i = 0; i < depBundlesString.length(); i++) {
+      char c = depBundlesString.charAt(i)
       if(c == ',' && !quoted) {
-        requiredBundles.add(parseRequiredBundle(requiredBundlesString.substring(startPos, i)))
+        depBundles.add(parseDependencyBundle(depBundlesString.substring(startPos, i)))
         startPos = i + 1
       } else if(c == '"')
         quoted = !quoted
     }
-    if(startPos < requiredBundlesString.length())
-      requiredBundles.add(parseRequiredBundle(requiredBundlesString.substring(startPos, requiredBundlesString.length())))
+    if(startPos < depBundlesString.length())
+      depBundles.add(parseDependencyBundle(depBundlesString.substring(startPos, depBundlesString.length())))
   }
 }
 
