@@ -26,7 +26,7 @@ class PomTest extends Specification {
     new Diff(control, result).identical()
   }
 
-  def 'should create create empty pom xml'() {
+  def 'should create empty pom'() {
   when:
     def pom = new Pom()
   then:
@@ -36,7 +36,7 @@ class PomTest extends Specification {
 </project>''', pom.toString()
   }
 
-  def 'should create create simple pom xml'() {
+  def 'should create simple pom'() {
   when:
     def pom = new Pom(group: 'myGroup', artifact: 'myArtifact', version: '0.0.1')
   then:
@@ -46,6 +46,35 @@ class PomTest extends Specification {
   <groupId>myGroup</groupId>
   <artifactId>myArtifact</artifactId>
   <version>0.0.1</version>
+</project>''', pom.toString()
+  }
+
+  def 'should create pom with dependency'() {
+  when:
+    def pom = new Pom(group: 'myGroup', artifact: 'myArtifact', version: '0.0.1', dependencyGroup: 'group2')
+    pom.requiredBundles.add(new RequiredBundle(group: 'group1', name: 'dep1', version: '1.0'))
+    pom.requiredBundles.add(new RequiredBundle(name: 'dep2', version: '2.0'))
+  then:
+    identicalXml '''<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns='http://maven.apache.org/POM/4.0.0' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>myGroup</groupId>
+  <artifactId>myArtifact</artifactId>
+  <version>0.0.1</version>
+  <dependencies>
+    <dependency>
+      <groupId>group1</groupId>
+      <artifactId>dep1</artifactId>
+      <version>1.0</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>group2</groupId>
+      <artifactId>dep2</artifactId>
+      <version>2.0</version>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
 </project>''', pom.toString()
   }
 }

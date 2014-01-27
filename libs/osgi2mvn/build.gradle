@@ -1,5 +1,6 @@
 apply plugin: 'groovy'
 
 dependencies {
+  compile 'org.apache.felix:org.apache.felix.main:4.2.1'
   testCompile 'xmlunit:xmlunit:1.4'
 }

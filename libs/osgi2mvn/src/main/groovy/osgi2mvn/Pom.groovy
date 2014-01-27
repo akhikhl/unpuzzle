@@ -20,10 +20,9 @@ final class Pom {
 	String group
   String artifact
   String version
-  String dependencyGroup
-
 	String packaging = 'jar'
-	List<RequiredBundle> bundles
+	List<RequiredBundle> requiredBundles = []
+  String dependencyGroup
 
 	boolean isZip() {
 		return packaging == 'zip'
@@ -52,6 +51,22 @@ final class Pom {
         version pom.version
       if(pom.packaging != 'jar')
         packaging pom.packaging
+      if(pom.requiredBundles)
+        dependencies {
+          for(def reqBundle in pom.requiredBundles)
+            dependency {
+              if(reqBundle.group)
+                groupId reqBundle.group
+              else if(dependencyGroup)
+                groupId dependencyGroup
+              else
+                groupId reqBundle.name
+              artifactId reqBundle.name
+              if(reqBundle.version)
+                version reqBundle.version
+              scope 'compile'
+            }
+        }
     }
   }
 }

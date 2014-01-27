@@ -7,20 +7,19 @@
  */
 package osgi2mvn
 
+import groovy.transform.ToString
+
 /**
  * POJO class holding data on required bundle. Used by {@link osgi2mvn.Pom} class.
  * @author ahi
  * @see osgi2mvn.Pom
  */
+@ToString
 final class RequiredBundle {
-
+  String group
 	String name
 	String version
 	String visibility
 	String resolution
-
-	String toString() {
-		return "name: $name; version: $version; visibility: $visibility; resolution: $resolution"
-	}
 }
 
