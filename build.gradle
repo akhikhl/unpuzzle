@@ -1,0 +1,14 @@
+ext {
+  group = 'org.akhikhl.osgi2mvn'
+  version = '0.0.1'
+  logback_version = '1.0.13'
+  slf4j_version = '1.7.5'
+}
+
+apply from: 'root.gradle'
+
+subprojects {
+  apply from: rootProject.file('common.gradle')
+  // apply from: rootProject.file('sonatype.gradle')
+}
+
