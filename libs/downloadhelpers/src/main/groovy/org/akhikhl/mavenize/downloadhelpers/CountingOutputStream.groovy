@@ -1,11 +1,11 @@
 /*
- * oscr
+ * mavenize
  *
  * Copyright 2014  Andrey Hihlovskiy.
  *
  * See the file "license.txt" for copying and usage permission.
  */
-package org.akhikhl.oscr.downloadhelpers
+package org.akhikhl.mavenize.downloadhelpers
 
 import java.io.IOException
 import java.io.OutputStream

@@ -1,11 +1,11 @@
 /*
- * oscr
+ * mavenize
  *
  * Copyright 2014  Andrey Hihlovskiy.
  *
  * See the file "license.txt" for copying and usage permission.
  */
-package org.akhikhl.oscr.osgi2mvn
+package org.akhikhl.mavenize.osgi2mvn
 
 import java.util.jar.JarFile
 import java.util.jar.Manifest

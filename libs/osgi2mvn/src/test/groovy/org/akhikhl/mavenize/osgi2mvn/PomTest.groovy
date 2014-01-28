@@ -1,11 +1,11 @@
 /*
- * oscr
+ * mavenize
  *
  * Copyright 2014  Andrey Hihlovskiy.
  *
  * See the file "license.txt" for copying and usage permission.
  */
-package org.akhikhl.oscr.osgi2mvn
+package org.akhikhl.mavenize.osgi2mvn
 
 import org.custommonkey.xmlunit.Diff
 import org.custommonkey.xmlunit.XMLUnit
@@ -13,7 +13,7 @@ import org.custommonkey.xmlunit.XMLUnit
 import spock.lang.Specification
 
 /**
- * Unit-test for {@link org.akhikhl.oscr.osgi2mvn.Pom} class.
+ * Unit-test for {@link org.akhikhl.mavenize.osgi2mvn.Pom} class.
  * @author Andrey Hihlovskiy
  */
 class PomTest extends Specification {

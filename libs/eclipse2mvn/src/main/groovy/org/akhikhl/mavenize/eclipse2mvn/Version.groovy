@@ -1,13 +1,13 @@
 /*
- * oscr
+ * mavenize
  *
  * Copyright 2014  Andrey Hihlovskiy.
  *
  * See the file "license.txt" for copying and usage permission.
  */
-package org.akhikhl.oscr.eclipse2mvn
+package org.akhikhl.mavenize.eclipse2mvn
 
-import org.akhikhl.oscr.osgi2mvn.Pom
+import org.akhikhl.mavenize.osgi2mvn.Pom
 
 /**
  * OSGi-specific version.

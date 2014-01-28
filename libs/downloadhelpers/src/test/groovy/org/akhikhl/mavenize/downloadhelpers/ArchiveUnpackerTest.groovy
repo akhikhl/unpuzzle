@@ -1,16 +1,16 @@
 /*
- * oscr
+ * mavenize
  *
  * Copyright 2014  Andrey Hihlovskiy.
  *
  * See the file "license.txt" for copying and usage permission.
  */
-package org.akhikhl.oscr.downloadhelpers
+package org.akhikhl.mavenize.downloadhelpers
 
 import spock.lang.Specification
 
 /**
- * Unit-test for {@link org.akhikhl.oscr.downloadhelpers.ArchiveUnpacker} class.
+ * Unit-test for {@link org.akhikhl.mavenize.downloadhelpers.ArchiveUnpacker} class.
  * @author Andrey Hihlovskiy
  */
 class ArchiveUnpackerTest {

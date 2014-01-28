@@ -1,16 +1,16 @@
 /*
- * oscr
+ * mavenize
  *
  * Copyright 2014  Andrey Hihlovskiy.
  *
  * See the file "license.txt" for copying and usage permission.
  */
-package org.akhikhl.oscr.eclipse2mvn
+package org.akhikhl.mavenize.eclipse2mvn
 
-import org.akhikhl.oscr.downloadhelpers.IConsole
-import org.akhikhl.oscr.downloadhelpers.SysConsole
-import org.akhikhl.oscr.downloadhelpers.Downloader
-import org.akhikhl.oscr.downloadhelpers.ArchiveUnpacker
+import org.akhikhl.mavenize.downloadhelpers.IConsole
+import org.akhikhl.mavenize.downloadhelpers.SysConsole
+import org.akhikhl.mavenize.downloadhelpers.Downloader
+import org.akhikhl.mavenize.downloadhelpers.ArchiveUnpacker
 
 /**
  * Downloads and unpacks more or more eclipse distributions from the specified URLs.

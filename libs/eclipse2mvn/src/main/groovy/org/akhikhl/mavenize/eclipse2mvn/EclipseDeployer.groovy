@@ -1,18 +1,18 @@
 /*
- * oscr
+ * mavenize
  *
  * Copyright 2014  Andrey Hihlovskiy.
  *
  * See the file "license.txt" for copying and usage permission.
  */
-package org.akhikhl.oscr.eclipse2mvn
+package org.akhikhl.mavenize.eclipse2mvn
 
-import org.akhikhl.oscr.downloadhelpers.IConsole
-import org.akhikhl.oscr.downloadhelpers.SysConsole
-import org.akhikhl.oscr.osgi2mvn.Pom
-import org.akhikhl.oscr.osgi2mvn.Bundle2Pom
-import org.akhikhl.oscr.osgi2mvn.DependencyBundle
-import org.akhikhl.oscr.osgi2mvn.Deployer
+import org.akhikhl.mavenize.downloadhelpers.IConsole
+import org.akhikhl.mavenize.downloadhelpers.SysConsole
+import org.akhikhl.mavenize.osgi2mvn.Pom
+import org.akhikhl.mavenize.osgi2mvn.Bundle2Pom
+import org.akhikhl.mavenize.osgi2mvn.DependencyBundle
+import org.akhikhl.mavenize.osgi2mvn.Deployer
 
 /**
  * Deploys eclipse plugins to maven.

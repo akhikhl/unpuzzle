@@ -12,10 +12,10 @@ buildscript {
   }
 }
 
-import org.akhikhl.oscr.eclipse2mvn.EclipseDownloader
-import org.akhikhl.oscr.eclipse2mvn.EclipseDeployer
-import org.akhikhl.oscr.eclipse2mvn.EclipseSource
-import org.akhikhl.oscr.osgi2mvn.Deployer
+import org.akhikhl.mavenize.eclipse2mvn.EclipseDownloader
+import org.akhikhl.mavenize.eclipse2mvn.EclipseDeployer
+import org.akhikhl.mavenize.eclipse2mvn.EclipseSource
+import org.akhikhl.mavenize.osgi2mvn.Deployer
 
 ext {
   current_os = System.getProperty("os.name")

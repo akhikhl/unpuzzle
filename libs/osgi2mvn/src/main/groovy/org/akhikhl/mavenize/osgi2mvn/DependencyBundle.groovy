@@ -1,16 +1,16 @@
 /*
- * oscr
+ * mavenize
  *
  * Copyright 2014  Andrey Hihlovskiy.
  *
  * See the file "license.txt" for copying and usage permission.
  */
-package org.akhikhl.oscr.osgi2mvn
+package org.akhikhl.mavenize.osgi2mvn
 
 import groovy.transform.ToString
 
 /**
- * POJO class holding data on dependency bundle. Used by {@link org.akhikhl.oscr.osgi2mvn.Pom} class.
+ * POJO class holding data on dependency bundle. Used by {@link org.akhikhl.mavenize.osgi2mvn.Pom} class.
  * @author Andrey Hihlovskiy
  */
 @ToString

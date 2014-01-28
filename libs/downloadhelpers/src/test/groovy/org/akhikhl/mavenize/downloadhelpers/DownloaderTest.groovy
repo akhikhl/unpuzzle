@@ -1,18 +1,18 @@
 /*
- * oscr
+ * mavenize
  *
  * Copyright 2014  Andrey Hihlovskiy.
  *
  * See the file "license.txt" for copying and usage permission.
  */
-package org.akhikhl.oscr.downloadhelpers
+package org.akhikhl.mavenize.downloadhelpers
 
 import org.apache.commons.codec.digest.DigestUtils
 import spock.lang.Specification
 import java.util.UUID
 
 /**
- * Unit-test for {@link org.akhikhl.oscr.downloadhelpers.Downloader} class.
+ * Unit-test for {@link org.akhikhl.mavenize.downloadhelpers.Downloader} class.
  * @author Andrey Hihlovskiy
  */
 class DownloaderTest extends Specification {
