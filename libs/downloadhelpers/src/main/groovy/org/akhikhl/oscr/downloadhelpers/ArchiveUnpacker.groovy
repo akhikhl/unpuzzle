@@ -42,9 +42,12 @@ final class ArchiveUnpacker {
   }
 
   private final IConsole console
+  private File workFolder
 
   ArchiveUnpacker(IConsole console) {
     this.console = console
+    workFolder = new File(System.getProperty('java.io.tmpdir'), UUID.randomUUID().toString())
+    workFolder.deleteOnExit()
   }
 
   void unGzip(final File inputFile, final File outputFile) throws IOException {
@@ -63,13 +66,13 @@ final class ArchiveUnpacker {
   void unpack(File archiveFile, File outputDir) throws IOException, ArchiveException {
     String fileName = archiveFile.getName()
     if (fileName.endsWith('.tar.gz')) {
-      File tarFile = new File(archiveFile.getParentFile(), StringUtils.removeEnd(fileName, '.tar.gz') + '.tar')
+      workFolder.mkdirs()
+      File tarFile = new File(workFolder, StringUtils.removeEnd(fileName, '.tar.gz') + '.tar')
       unGzip(archiveFile, tarFile)
       unTar(tarFile, outputDir)
-      tarFile.delete()
     }
     else if (fileName.endsWith('.gz')) {
-      File tarFile = new File(archiveFile.getParentFile(), StringUtils.removeEnd(fileName, '.gz'))
+      File tarFile = new File(outputDir, StringUtils.removeEnd(fileName, '.gz'))
       unGzip(archiveFile, tarFile)
     }
     else if (fileName.endsWith('.tar'))

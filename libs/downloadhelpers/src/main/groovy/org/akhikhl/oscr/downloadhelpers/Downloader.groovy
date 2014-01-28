@@ -67,6 +67,7 @@ final class Downloader {
     }
     console.startProgress("Downloading file: ${url.toExternalForm()}")
     try {
+      file.parentFile.mkdirs()
       url.openStream().withStream { is ->
         file.withOutputStream { os ->
           IOUtils.copy(is, new DownloadCountingOutputStream(os))

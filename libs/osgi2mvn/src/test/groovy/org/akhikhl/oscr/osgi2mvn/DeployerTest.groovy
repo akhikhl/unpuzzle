@@ -18,13 +18,13 @@ import java.util.UUID
  * @author Andrey Hihlovskiy
  */
 class DeployerTest extends Specification {
-  
+
   static File testFolder
   static Deployer deployer
 
   def setupSpec() {
     XMLUnit.setIgnoreWhitespace(true)
-    testFolder = new File(System.getProperty("java.io.tmpdir"), UUID.randomUUID().toString())
+    testFolder = new File(System.getProperty('java.io.tmpdir'), UUID.randomUUID().toString())
     testFolder.deleteOnExit()
     deployer = new Deployer(testFolder.toURI().toURL().toString())
   }
@@ -59,6 +59,6 @@ class DeployerTest extends Specification {
     deployedDir.exists()
     deployedJar.exists()
     deployedPom.exists()
-  }  
+  }
 }
 
