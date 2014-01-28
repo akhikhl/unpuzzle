@@ -41,5 +41,17 @@ class ArchiveUnpackerTest {
     unpackedFiles[0].name == 'sample.txt'
     unpackedFiles[0].text == '0042bfe2-8812-11e3-85b6-6bf8a04179ee'
   }
+
+  def 'should unpack .zip files'() {
+  when:
+    File archiveFile = new File('src/test/resources/sample.txt.zip').absoluteFile
+    unpacker.unpack(archiveFile, testFolder)
+    File[] unpackedFiles = testFolder.listFiles()
+  then:
+    unpackedFiles != null
+    unpackedFiles.length() == 1
+    unpackedFiles[0].name == 'sample.txt'
+    unpackedFiles[0].text == '0042bfe2-8812-11e3-85b6-6bf8a04179ee'
+  }
 }
 
