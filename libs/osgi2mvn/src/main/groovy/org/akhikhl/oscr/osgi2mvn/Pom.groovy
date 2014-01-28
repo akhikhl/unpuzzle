@@ -5,7 +5,7 @@
  *
  * See the file "license.txt" for copying and usage permission.
  */
-package osgi2mvn
+package org.akhikhl.oscr.osgi2mvn
 
 import groovy.xml.MarkupBuilder
 
@@ -13,7 +13,7 @@ import org.osgi.framework.Constants
 
 /**
  * POJO class holding data extracted from bundle and needed for POM generation.
- * @author ahi
+ * @author Andrey Hihlovskiy
  */
 final class Pom {
 
@@ -25,10 +25,6 @@ final class Pom {
 	String packaging = 'jar'
 	List<DependencyBundle> dependencyBundles = []
   String dependencyGroup
-
-	boolean isZip() {
-		return packaging == 'zip'
-	}
 
 	String toString() {
     ByteArrayOutputStream stm = new ByteArrayOutputStream()

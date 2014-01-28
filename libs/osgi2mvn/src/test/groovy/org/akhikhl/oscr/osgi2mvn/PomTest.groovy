@@ -5,7 +5,7 @@
  *
  * See the file "license.txt" for copying and usage permission.
  */
-package osgi2mvn
+package org.akhikhl.oscr.osgi2mvn
 
 import org.custommonkey.xmlunit.Diff
 import org.custommonkey.xmlunit.XMLUnit
@@ -13,8 +13,8 @@ import org.custommonkey.xmlunit.XMLUnit
 import spock.lang.Specification
 
 /**
- * Unit-test for {@link osgi2mvn.Pom} class.
- * @author ahi
+ * Unit-test for {@link org.akhikhl.oscr.osgi2mvn.Pom} class.
+ * @author Andrey Hihlovskiy
  */
 class PomTest extends Specification {
 

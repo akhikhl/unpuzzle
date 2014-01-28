@@ -5,14 +5,14 @@
  *
  * See the file "license.txt" for copying and usage permission.
  */
-package osgi2mvn
+package org.akhikhl.oscr.osgi2mvn
 
 /**
  * Deploys OSGI bundle (jar or directory) to maven repository
  * @author Andrey Hihlovskiy
  */
 class Deployer {
-	
+
   private Map deployerOptions
   private String repositoryUrl
   private AntBuilder ant = new AntBuilder()
@@ -32,23 +32,26 @@ class Deployer {
   }
 
   /**
-   * deploys the specified bundle with the specified pom to target maven repository.
+   * Deploys the specified bundle with the specified POM to target maven repository.
    * @param options - may contain sourceFile (of type java.io.File), pointing to sources jar.
-   * @param pom - contains POM that will be used for deployment
-   * @param file - jar-file or directory, containing OSGI bundle
+   * @param pomStruct - contains POM that will be used for deployment
+   * @param bundleFileOrDirectory - jar-file or directory, containing OSGI bundle
    */
-  void deployBundle(Map options = [:], Pom pomStruct, File file) {
+  void deployBundle(Map options = [:], Pom pomStruct, File bundleFileOrDirectory) {
     workFolder.mkdirs()
     def pomFile = new File(workFolder, 'myPom.xml')
-    if (file.isDirectory()) {
+    File bundleFile
+    if (bundleFileOrDirectory.isDirectory()) {
       pomStruct.packaging = 'jar'
       pomFile.text = pomStruct.toString()
       File zipFile = new File(workFolder, "${pomStruct.artifact}-${pomStruct.version}.jar")
-      ant.zip(basedir: file, destfile: zipFile)
-      file = zipFile
+      ant.zip(basedir: bundleFileOrDirectory, destfile: zipFile)
+      bundleFile = zipFile
     }
-    else
+    else {
       pomFile.text = pomStruct.toString()
+      bundleFile = bundleFileOrDirectory
+    }
     File sourceFile = options.sourceFile
     if(sourceFile?.isDirectory()) {
       File zipFile = new File(workFolder, sourceFile.name + '.jar')
@@ -57,7 +60,7 @@ class Deployer {
     }
     ant.with {
       pom id: 'mypom', file: pomFile
-      deploy file: file, {
+      deploy file: bundleFile, {
         pom refid: 'mypom'
         if(sourceFile)
           attach file: sourceFile, type: 'jar', classifier: 'sources'

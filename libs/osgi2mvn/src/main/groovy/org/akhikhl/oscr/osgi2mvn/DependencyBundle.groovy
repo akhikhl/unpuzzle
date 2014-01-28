@@ -5,14 +5,13 @@
  *
  * See the file "license.txt" for copying and usage permission.
  */
-package osgi2mvn
+package org.akhikhl.oscr.osgi2mvn
 
 import groovy.transform.ToString
 
 /**
- * POJO class holding data on required bundle. Used by {@link osgi2mvn.Pom} class.
- * @author ahi
- * @see osgi2mvn.Pom
+ * POJO class holding data on dependency bundle. Used by {@link org.akhikhl.oscr.osgi2mvn.Pom} class.
+ * @author Andrey Hihlovskiy
  */
 @ToString
 final class DependencyBundle {

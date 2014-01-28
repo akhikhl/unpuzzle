@@ -5,17 +5,16 @@
  *
  * See the file "license.txt" for copying and usage permission.
  */
-package osgi2mvn
+package org.akhikhl.oscr.osgi2mvn
 
 import java.util.jar.JarFile
 import java.util.jar.Manifest
 
-import org.osgi.framework.Bundle
 import org.osgi.framework.Constants
 
 /**
- * Converts bundle manifest to pom.
- * @author ahi
+ * Converts bundle manifest to POM.
+ * @author Andrey Hihlovskiy
  */
 final class Bundle2Pom {
 
