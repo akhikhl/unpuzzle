@@ -1,8 +1,6 @@
 ext {
-  group = 'org.akhikhl.osgi2mvn'
+  group = 'org.akhikhl.oscr'
   version = '0.0.1'
-  logback_version = '1.0.13'
-  slf4j_version = '1.7.5'
 }
 
 apply from: 'root.gradle'

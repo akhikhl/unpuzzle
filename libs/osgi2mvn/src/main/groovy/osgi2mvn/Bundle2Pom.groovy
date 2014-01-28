@@ -17,17 +17,27 @@ import org.osgi.framework.Constants
  * Converts bundle manifest to pom.
  * @author ahi
  */
-class Bundle2Pom {
+final class Bundle2Pom {
 
   String group
   String dependencyGroup
 
+  /**
+   * Constructs Bundle2Pom object with the specified parameters.
+   * @param group - maven group to which the given artifact belongs.
+   * @param dependencyGroup - maven group to which the dependencies of the given artifact belong.
+   */
   Bundle2Pom(String group = null, String dependencyGroup = null) {
     this.group = group
     this.dependencyGroup = dependencyGroup
   }
 
-  public Pom convert(File bundleFileOrDirectory) {
+  /**
+   * Converts bundle to POM.
+   * @param bundleFileOrDirectory - jar-file or directory containing OSGi bundle.
+   * @return the converted POM.
+   */
+  Pom convert(File bundleFileOrDirectory) {
     def pom = new Pom()
     def manifest
     if (bundleFileOrDirectory.isDirectory()) {
