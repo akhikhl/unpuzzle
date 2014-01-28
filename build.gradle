@@ -1,5 +1,5 @@
 ext {
-  group = 'org.akhikhl.oscr'
+  group = 'org.akhikhl.mavenize'
   version = '0.0.1'
 }
 
