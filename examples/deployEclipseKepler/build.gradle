@@ -7,7 +7,7 @@ buildscript {
   }
 
   dependencies {
-    classpath 'org.akhikhl.oscr:eclipse2mvn:0.0.1'
+    classpath 'org.akhikhl.mavenize:eclipse2mvn:0.0.1'
     classpath 'org.apache.maven:maven-ant-tasks:2.1.3'
   }
 }
