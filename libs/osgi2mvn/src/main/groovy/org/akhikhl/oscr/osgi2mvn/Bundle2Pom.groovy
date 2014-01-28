@@ -81,6 +81,8 @@ final class Bundle2Pom {
   }
 
   private void parseDependencyBundles(List<DependencyBundle> depBundles, String depBundlesString) {
+    if(!depBundlesString)
+      return
     int startPos = 0
     boolean quoted = false
     for(int i = 0; i < depBundlesString.length(); i++) {
