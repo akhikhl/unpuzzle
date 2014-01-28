@@ -1,5 +1,5 @@
 /*
- * osgi2mvn
+ * oscr
  *
  * Copyright 2014  Andrey Hihlovskiy.
  *
@@ -11,6 +11,10 @@ import java.io.IOException
 
 import org.apache.commons.lang3.StringUtils
 
+/**
+ * Console implementation, writes everything to System.out.
+ * @author Andrey Hihlovskiy
+ */
 final class SysConsole implements IConsole {
 
   @Override
@@ -31,6 +35,15 @@ final class SysConsole implements IConsole {
       throw new RuntimeException(e)
     }
     System.out.flush()
+  }
+
+  @Override
+  void progressError(String message) {
+    try {
+      System.out.println(StringUtils.rightPad(message, 60, ' '))
+    } catch (IOException e) {
+      throw new RuntimeException(e)
+    }
   }
 
   @Override

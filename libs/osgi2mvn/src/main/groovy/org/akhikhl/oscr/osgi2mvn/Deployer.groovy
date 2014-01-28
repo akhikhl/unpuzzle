@@ -1,11 +1,13 @@
 /*
- * osgi2mvn
+ * oscr
  *
  * Copyright 2014  Andrey Hihlovskiy.
  *
  * See the file "license.txt" for copying and usage permission.
  */
 package org.akhikhl.oscr.osgi2mvn
+
+import groovy.xml.NamespaceBuilder
 
 /**
  * Deploys OSGI bundle (jar or directory) to maven repository
@@ -15,7 +17,8 @@ class Deployer {
 
   private Map deployerOptions
   private String repositoryUrl
-  private AntBuilder ant = new AntBuilder()
+  private AntBuilder ant
+  private mvn
   private File workFolder
 
   /**
@@ -25,8 +28,15 @@ class Deployer {
    */
   Deployer(Map deployerOptions = [:], String repositoryUrl) {
     this.deployerOptions = deployerOptions
+    if(deployerOptions.ant)
+      this.ant = deployerOptions.ant
+    else {
+      URLClassLoader classLoader = (URLClassLoader)this.getClass().getClassLoader()
+      URL mavenAntTasks = classLoader.URLs.find { it.toString().contains('maven-ant-tasks') }
+      this.ant = new AntBuilder()
+      this.ant.taskdef(resource: 'org/apache/maven/artifact/ant/antlib.xml', classpath: mavenAntTasks.toString())
+    }
     this.repositoryUrl = repositoryUrl
-    ant.taskdef resource: 'org/apache/maven/artifact/ant/antlib.xml'
     workFolder = new File(System.getProperty("java.io.tmpdir"), UUID.randomUUID().toString())
     workFolder.deleteOnExit()
   }

@@ -1,5 +1,5 @@
 /*
- * osgi2mvn
+ * oscr
  *
  * Copyright 2014  Andrey Hihlovskiy.
  *
@@ -17,6 +17,11 @@ import java.net.URL
 
 import org.apache.commons.io.IOUtils
 
+/**
+ * Downloads the specified file from the specified URL to the specified target folder.
+ * As a convenience feature prints the number of downloaded bytes to console.
+ * @author Andrey Hihlovskiy
+ */
 final class Downloader {
 
   private class DownloadCountingOutputStream extends CountingOutputStream {

@@ -1,5 +1,5 @@
 /*
- * osgi2mvn
+ * oscr
  *
  * Copyright 2014  Andrey Hihlovskiy.
  *

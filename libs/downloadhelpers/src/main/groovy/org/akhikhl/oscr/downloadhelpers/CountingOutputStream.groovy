@@ -1,5 +1,5 @@
 /*
- * osgi2mvn
+ * oscr
  *
  * Copyright 2014  Andrey Hihlovskiy.
  *
@@ -10,6 +10,10 @@ package org.akhikhl.oscr.downloadhelpers
 import java.io.IOException
 import java.io.OutputStream
 
+/**
+ * Decorator stream, counting the bytes being written.
+ * @author Andrey Hihlovskiy
+ */
 class CountingOutputStream extends OutputStream {
 
   private final OutputStream proxy

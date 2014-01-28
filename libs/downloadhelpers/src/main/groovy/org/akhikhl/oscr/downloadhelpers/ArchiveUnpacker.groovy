@@ -1,5 +1,5 @@
 /*
- * osgi2mvn
+ * oscr
  *
  * Copyright 2014  Andrey Hihlovskiy.
  *
@@ -23,6 +23,11 @@ import org.apache.commons.compress.archivers.tar.TarArchiveInputStream
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.StringUtils
 
+/**
+ * Unpacks the specified archive file - .zip, .tar.gz, .gz or .tar
+* As a convenience feature prints the number of unpacked bytes to console.
+  * @author Andrey Hihlovskiy
+ */
 final class ArchiveUnpacker {
 
   private class UncompressCountingOutputStream extends CountingOutputStream {
