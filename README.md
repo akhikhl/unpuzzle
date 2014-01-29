@@ -1,4 +1,4 @@
-# Mavenize [![Maintainer Status](http://stillmaintained.com/akhikhl/mavenize.png)](http://stillmaintained.com/akhikhl/mavenize) [![Build Status](https://travis-ci.org/akhikhl/mavenize.png?branch=master)](https://travis-ci.org/akhikhl/mavenize) [![endorse](https://api.coderwall.com/akhikhl/endorsecount.png)](https://coderwall.com/akhikhl)
+# Mavenize [![Maintainer Status](http://stillmaintained.com/akhikhl/mavenize.png)](http://stillmaintained.com/akhikhl/mavenize) [![Build Status](https://travis-ci.org/akhikhl/mavenize.png?branch=master)](https://travis-ci.org/akhikhl/mavenize) [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/akhikhl/mavenize/trend.png)](https://bitdeli.com/free "Bitdeli Badge") [![endorse](https://api.coderwall.com/akhikhl/endorsecount.png)](https://coderwall.com/akhikhl)
 
 **Mavenize** is a set of tools for mavenizing OSGi-bundles.
 
@@ -252,7 +252,4 @@ Copyright 2014 (c) Andrey Hihlovskiy
 
 All versions, present and past, of Mavenize are licensed under [MIT license](https://github.com/akhikhl/mavenize/blob/master/license.txt).
 
-
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/akhikhl/mavenize/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
