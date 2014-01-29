@@ -15,7 +15,7 @@ import org.gradle.api.Project
  */
 class Eclipse2MvnPluginExtension {
 
-  String group = 'eclipse'
+  String group = 'eclipse-kepler'
   String current_os
   String current_arch
   List<EclipseSource> sources = []
