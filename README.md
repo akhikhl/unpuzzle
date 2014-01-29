@@ -252,3 +252,7 @@ Copyright 2014 (c) Andrey Hihlovskiy
 
 All versions, present and past, of Mavenize are licensed under [MIT license](https://github.com/akhikhl/mavenize/blob/master/license.txt).
 
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/akhikhl/mavenize/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
