@@ -1,0 +1,20 @@
+buildscript {
+  apply plugin: 'maven'
+
+  repositories {
+    mavenLocal()
+    mavenCentral()
+  }
+  
+  dependencies {
+    classpath 'org.akhikhl.mavenize:gradle-eclipse2mvn:0.0.1'
+  }
+}
+
+// apply plugin: 'gradle-eclipse2mvn'
+
+import org.akhikhl.mavenize.gradle.eclipse2mvn.Eclipse2MvnPlugin
+
+if (!project.plugins.findPlugin(Eclipse2MvnPlugin))
+  project.apply(plugin: Eclipse2MvnPlugin)
+

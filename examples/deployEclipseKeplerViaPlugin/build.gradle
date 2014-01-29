@@ -1,17 +1,4 @@
-buildscript {
-  apply plugin: 'maven'
-  
-  repositories {
-    mavenLocal()
-    mavenCentral()
-  }
-
-  dependencies {
-    classpath 'org.akhikhl.mavenize:gradle-eclipse2mvn:0.0.1'
-  }
-}
-
-apply plugin: 'gradle-eclipse2mvn'
+apply from: 'mavenize.plugin'
 
 eclipse2mvn {
   config 'eclipse-kepler'

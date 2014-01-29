@@ -53,8 +53,21 @@ class Eclipse2MvnPlugin implements Plugin<Project> {
       project.task('uploadEclipse') {
         dependsOn project.tasks.downloadEclipse
         doLast {
-          def corporateDeployment = rootProject.ext.corporateDeployment
-          Deployer mavenDeployer = new Deployer(corporateDeployment.url, user: corporateDeployment.user, password: corporateDeployment.password)
+          def eclipseUpload
+          if(project.eclipse2mvn.eclipseUpload)
+            eclipseUpload = project.eclipse2mvn.eclipseUpload
+          else if(project.ext.has('eclipseUpload'))
+            eclipseUpload = project.ext.eclipseUpload
+          else if(project.rootProject.ext.has('eclipseUpload'))
+            eclipseUpload = project.rootProject.ext.eclipseUpload
+          if(!eclipseUpload || !eclipseUpload.url || !eclipseUpload.user || !eclipseUpload.password) {
+            System.err.println eclipseUpload
+            System.err.println '''Could not upload eclipse: eclipseUpload properties not defined.
+See Mavenize online documentation for more details:
+https://github.com/akhikhl/mavenize/blob/master/README.md'''
+            return
+          }
+          Deployer mavenDeployer = new Deployer(eclipseUpload.url, user: eclipseUpload.user, password: eclipseUpload.password)
           new EclipseDeployer(project.eclipse2mvn.group).deploy(project.eclipse2mvn.sources, project.buildDir, mavenDeployer)
         }
       }

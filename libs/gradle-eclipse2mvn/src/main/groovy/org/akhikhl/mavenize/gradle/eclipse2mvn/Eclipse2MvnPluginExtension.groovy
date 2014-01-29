@@ -18,8 +18,8 @@ class Eclipse2MvnPluginExtension {
   String group = 'eclipse'
   String current_os
   String current_arch
-
   List<EclipseSource> sources = []
+  def eclipseUpload = [:]
 
   Eclipse2MvnPluginExtension() {
     current_os = System.getProperty('os.name')
