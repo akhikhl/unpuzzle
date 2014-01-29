@@ -1,4 +1,4 @@
-# Mavenize
+# Mavenize [![Maintainer Status](http://stillmaintained.com/akhikhl/mavenize.png)](http://stillmaintained.com/akhikhl/mavenize) [![Build Status](https://travis-ci.org/akhikhl/mavenize.png?branch=master)](https://travis-ci.org/akhikhl/mavenize) [![endorse](https://api.coderwall.com/akhikhl/endorsecount.png)](https://coderwall.com/akhikhl)
 
 **Mavenize** is a set of tools for mavenizing OSGi-bundles.
 
