@@ -15,7 +15,7 @@ All versions of Mavenize are available in maven central under the group 'org.akh
   - [installEclipse](#installeclipse)  
   - [uploadEclipse](#uploadeclipse)  
 4. [Gradle plugin extension](#gradle-plugin-extension)
-5. [eclipseUpload configuration](#eclipseupload-configuration]
+5. [eclipseUpload configuration](#eclipseupload-configuration)
 6. [Jar-library API](#jar-library-api)
 
 ## What "mavenize" means?
