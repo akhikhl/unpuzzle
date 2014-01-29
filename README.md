@@ -17,6 +17,7 @@ All versions of Mavenize are available in maven central under the group 'org.akh
 4. [Gradle plugin extension](#gradle-plugin-extension)
 5. [eclipseUpload configuration](#eclipseupload-configuration)
 6. [Jar-library API](#jar-library-api)
+7. [Copyright and License](#copyright-and-license)
 
 ## What "mavenize" means?
 
@@ -224,4 +225,30 @@ and password in "init.gradle" script outside of the project. See more informatio
 about init scripts in [official gradle documentation](http://www.gradle.org/docs/current/userguide/init_scripts.html).
 
 ## Jar library API
+
+Gradle plugin might be sufficient for the most use-cases requiring mavenizing OSGi-bundles.
+However, you can mavenize OSGi-bundles even without gradle plugin, just by using Mavenize API functions.
+
+Good example of Mavenize API usage is given in the file https://github.com/akhikhl/mavenize/blob/master/examples/deployEclipseKepler/build.gradle
+
+Essentially, Mavenize API consists of four classes:
+
+- [EclipseDownloader](http://akhikhl.github.io/mavenize/groovydoc/eclipse2mvn/org/akhikhl/mavenize/eclipse2mvn/EclipseDownloader.html), 
+  implements downloading and unpacking the specified set of sources.
+
+- [Deployer](http://akhikhl.github.io/mavenize/groovydoc/osgi2mvn/org/akhikhl/mavenize/osgi2mvn/Deployer.html), 
+  implements deployment of single jar or directory with the specified POM to the specified repository.
+
+- [EclipseDeployer](http://akhikhl.github.io/mavenize/groovydoc/eclipse2mvn/org/akhikhl/mavenize/eclipse2mvn/EclipseDeployer.html), 
+  implements dependency resolution and deployment of multiple OSGi bundles
+  to the specified maven group and specified Deployer.
+  
+- [EclipseSource](http://akhikhl.github.io/mavenize/groovydoc/eclipse2mvn/org/akhikhl/mavenize/eclipse2mvn/EclipseSource.html), 
+  simple POJO class, storing information on download source.
+
+## Copyright and License
+
+Copyright 2014 (c) Andrey Hihlovskiy
+
+All versions, present and past, of Mavenize are licensed under [MIT license](https://github.com/akhikhl/mavenize/blob/master/license.txt).
 
