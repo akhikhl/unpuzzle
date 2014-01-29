@@ -124,6 +124,11 @@ eclipse2mvn {
   config 'eclipse-kepler'
   group = 'eclipse'
   source 'http://some.url/goes/here.zip', sourcesOnly: false, languagePacksOnly: false
+  eclipseUpload = [
+    url: 'http://example.com/repository',
+    user: 'ahi',
+    password: 'ahi123'
+  ]  
 }
 ```
 Here is the detailed description of all properties:
@@ -145,6 +150,8 @@ Here is the detailed description of all properties:
   - **languagePacksOnly** - optional, boolean. When specified, signifies whether the given
     distribution package contains only language fragments. Default value is false.
     Typical use-case: languagePacksOnly=true for eclipse language packs.
+    
+- **eclipseUpload** - optional, hashmap. See more information at [eclipseUpload configuration](#eclipseupload-configuration).     
     
 Additionally the following properties are injected into eclipse2mvn plugin extension
 and can be used for deducting correct version of eclipse to download:
