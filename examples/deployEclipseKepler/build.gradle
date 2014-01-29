@@ -35,18 +35,19 @@ List<EclipseSource> eclipseSources = []
 Binding binding = new Binding()
 binding.current_os = project.ext.current_os
 binding.current_arch = project.ext.current_arch
-binding.eclipseSource = { Map options = [:], String url ->
-  def source = new EclipseSource(url: url)
+binding.group = 'eclipse'
+binding.source = { Map options = [:], String url ->
+  def src = new EclipseSource(url: url)
   if(options.sourcesOnly)
-    source.sourcesOnly = options.sourcesOnly
+    src.sourcesOnly = options.sourcesOnly
   if(options.languagePacksOnly)
-    source.languagePacksOnly = options.languagePacksOnly
-  eclipseSources.add(source)
+    src.languagePacksOnly = options.languagePacksOnly
+  eclipseSources.add(src)
 }
 GroovyShell shell = new GroovyShell(binding)
 shell.evaluate(project.file('eclipseDownloadConfig.groovy'))
 
-project.ext.eclipseGroup = binding.eclipseGroup
+project.ext.eclipseGroup = binding.group
 project.ext.eclipseSources = eclipseSources
 
 task('downloadEclipse') {

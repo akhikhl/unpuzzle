@@ -8,14 +8,18 @@
 package org.akhikhl.mavenize.gradle.eclipse2mvn
 
 import org.akhikhl.mavenize.eclipse2mvn.EclipseSource
+import org.gradle.api.Project
 
+/**
+ * Plugin extension for {@link org.akhikhl.mavenize.gradle.eclipse2mvn.Eclipse2MvnPlugin}
+ */
 class Eclipse2MvnPluginExtension {
 
-  String eclipseGroup = 'eclipse'
+  String group = 'eclipse'
   String current_os
   String current_arch
 
-  List<EclipseSource> eclipseSources = []
+  List<EclipseSource> sources = []
 
   Eclipse2MvnPluginExtension() {
     current_os = System.getProperty('os.name')
@@ -31,12 +35,33 @@ class Eclipse2MvnPluginExtension {
       current_arch = 'x86_64'
   }
 
-  def eclipseSource(Map options = [:], String url) {
-    def source = new EclipseSource(url: url)
+  private void applyConfig(String configName) {
+    Binding binding = new Binding()
+    def pluginExtension = this
+    binding.eclipse2mvn = { Closure closure ->
+      closure.resolveStrategy = Closure.DELEGATE_FIRST
+      closure.delegate = pluginExtension
+      closure()
+    }
+    GroovyShell shell = new GroovyShell(binding)
+    this.getClass().getClassLoader().getResourceAsStream("${configName}.groovy").withReader('UTF-8') {
+      shell.evaluate(it)
+    }
+  }
+
+  void config(String configName) {
+    if (configName in ['eclipse-kepler'])
+      applyConfig(configName)
+    else
+      System.err.println("Unrecognized eclipse2mvn configuration: $configName")
+  }
+
+  void source(Map options = [:], String url) {
+    def src = new EclipseSource(url: url)
     if(options.sourcesOnly)
-      source.sourcesOnly = options.sourcesOnly
+      src.sourcesOnly = options.sourcesOnly
     if(options.languagePacksOnly)
-      source.languagePacksOnly = options.languagePacksOnly
-    eclipseSources.add(source)
+      src.languagePacksOnly = options.languagePacksOnly
+    sources.add(src)
   }
 }

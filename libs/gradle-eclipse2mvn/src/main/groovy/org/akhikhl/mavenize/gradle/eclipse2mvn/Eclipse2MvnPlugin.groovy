@@ -31,8 +31,10 @@ class Eclipse2MvnPlugin implements Plugin<Project> {
         File markerFile = new File(project.buildDir, 'eclipseDownloaded')
         outputs.file markerFile
         doLast {
+          if(!project.eclipse2mvn.sources)
+            applyDefaultConfig(project)
           project.buildDir.mkdirs()
-          new EclipseDownloader().downloadAndUnpack(project.eclipse2mvn.eclipseSources, project.buildDir)
+          new EclipseDownloader().downloadAndUnpack(project.eclipse2mvn.sources, project.buildDir)
           markerFile.text = new java.util.Date()
         }
       }
@@ -43,7 +45,7 @@ class Eclipse2MvnPlugin implements Plugin<Project> {
         outputs.file outputMarkerFile
         doLast {
           Deployer mavenDeployer = new Deployer(new File(System.getProperty('user.home'), '.m2/repository').toURI().toURL().toString())
-          new EclipseDeployer(project.eclipse2mvn.eclipseGroup).deploy(project.eclipse2mvn.eclipseSources, project.buildDir, mavenDeployer)
+          new EclipseDeployer(project.eclipse2mvn.group).deploy(project.eclipse2mvn.sources, project.buildDir, mavenDeployer)
           outputMarkerFile.text = new java.util.Date()
         }
       }
@@ -53,7 +55,7 @@ class Eclipse2MvnPlugin implements Plugin<Project> {
         doLast {
           def corporateDeployment = rootProject.ext.corporateDeployment
           Deployer mavenDeployer = new Deployer(corporateDeployment.url, user: corporateDeployment.user, password: corporateDeployment.password)
-          new EclipseDeployer(project.ext.eclipseGroup).deploy(project.ext.eclipseSources, project.buildDir, mavenDeployer)
+          new EclipseDeployer(project.eclipse2mvn.group).deploy(project.eclipse2mvn.sources, project.buildDir, mavenDeployer)
         }
       }
 
@@ -66,4 +68,15 @@ class Eclipse2MvnPlugin implements Plugin<Project> {
         }
     } // project.afterEvaluate
   } // apply
+
+  private void applyDefaultConfig(Project project) {
+    Binding binding = new Binding()
+    binding.eclipse2mvn = { Closure closure ->
+      project.eclipse2mvn closure
+    }
+    GroovyShell shell = new GroovyShell(binding)
+    this.getClass().getClassLoader().getResourceAsStream('eclipse-kepler.groovy').withReader('UTF-8') {
+      shell.evaluate(it)
+    }
+  }
 }

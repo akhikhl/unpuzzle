@@ -1,4 +1,4 @@
-eclipseGroup = 'eclipse-kepler'
+group = 'eclipse-kepler'
 
 def eclipseArchives = [
   'linux_x86_32' : 'eclipse-jee-kepler-SR1-linux-gtk.tar.gz',
@@ -16,12 +16,12 @@ def eclipseSdkArchives = [
 
 def eclipseMirror = 'http://mirror.netcologne.de'
 
-def currentEclipseArchive = eclipseArchives[current_os + '_' + current_arch]
-def currentEclipseSdkArchive = eclipseSdkArchives[current_os + '_' + current_arch]
+def eclipseArchive = eclipseArchives[current_os + '_' + current_arch]
+def eclipseSdkArchive = eclipseSdkArchives[current_os + '_' + current_arch]
 
-eclipseSource "$eclipseMirror/eclipse//technology/epp/downloads/release/kepler/SR1/$currentEclipseArchive"
-eclipseSource "$eclipseMirror/eclipse//eclipse/downloads/drops4/R-4.3.1-201309111000/$currentEclipseSdkArchive", sourcesOnly: true
-eclipseSource "$eclipseMirror/eclipse//eclipse/downloads/drops4/R-4.3.1-201309111000/eclipse-4.3.1-delta-pack.zip"
-eclipseSource "$eclipseMirror/eclipse//technology/babel/babel_language_packs/R0.11.1/kepler/BabelLanguagePack-eclipse-de_4.3.0.v20131123020001.zip", languagePacksOnly: true
+source "$eclipseMirror/eclipse//technology/epp/downloads/release/kepler/SR1/$eclipseArchive"
+source "$eclipseMirror/eclipse//eclipse/downloads/drops4/R-4.3.1-201309111000/$eclipseSdkArchive", sourcesOnly: true
+source "$eclipseMirror/eclipse//eclipse/downloads/drops4/R-4.3.1-201309111000/eclipse-4.3.1-delta-pack.zip"
+source "$eclipseMirror/eclipse//technology/babel/babel_language_packs/R0.11.1/kepler/BabelLanguagePack-eclipse-de_4.3.0.v20131123020001.zip", languagePacksOnly: true
 
 
