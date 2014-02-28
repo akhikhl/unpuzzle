@@ -1,25 +1,25 @@
-# Mavenize [![Maintainer Status](http://stillmaintained.com/akhikhl/mavenize.png)](http://stillmaintained.com/akhikhl/mavenize) [![Build Status](https://travis-ci.org/akhikhl/mavenize.png?branch=master)](https://travis-ci.org/akhikhl/mavenize) [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/akhikhl/mavenize/trend.png)](https://bitdeli.com/free "Bitdeli Badge") [![endorse](https://api.coderwall.com/akhikhl/endorsecount.png)](https://coderwall.com/akhikhl)
+# Underwork [![Maintainer Status](http://stillmaintained.com/akhikhl/underwork.png)](http://stillmaintained.com/akhikhl/underwork) [![Build Status](https://travis-ci.org/akhikhl/underwork.png?branch=master)](https://travis-ci.org/akhikhl/underwork) [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/akhikhl/underwork/trend.png)](https://bitdeli.com/free "Bitdeli Badge") [![endorse](https://api.coderwall.com/akhikhl/endorsecount.png)](https://coderwall.com/akhikhl)
 
-**Mavenize** is a set of tools for mavenizing OSGi-bundles.
+**Underwork** is a set of tools for mavenizing OSGi-bundles.
 
-You can consume Mavenize in two forms: as a [gradle plugin](#gradle-plugin) and as an [ordinary jar-library](#jar-library-api).
+You can consume Underwork in two forms: as a [gradle plugin](#gradle-plugin) and as an [ordinary jar-library](#jar-library-api).
 
-All versions of Mavenize are available in maven central under the group 'org.akhikhl.mavenize'.
+All versions of Underwork are available in maven central under the group 'org.akhikhl.underwork'.
 
 **Content of this document**
 
-1. [What "mavenize" means?](#what-mavenize-means)
+1. [What "mavenizing" means?](#what-mavenize-means)
 2. [Gradle plugin](#gradle-plugin)
 3. [Gradle tasks](#gradle-tasks)
   - [downloadEclipse](#downloadeclipse)
   - [installEclipse](#installeclipse)  
   - [uploadEclipse](#uploadeclipse)  
 4. [Gradle plugin extension](#gradle-plugin-extension)
-5. [eclipseUpload configuration](#eclipseupload-configuration)
+5. [uploadEclipse configuration](#uploadEclipse-configuration)
 6. [Jar-library API](#jar-library-api)
 7. [Copyright and License](#copyright-and-license)
 
-## What "mavenize" means?
+## What "mavenizing" means?
 
 Under "mavenizing" OSGi-bundles we mean the following:
 
@@ -50,18 +50,18 @@ it can greatly simplify building OSGi/eclipse applications.
 Add the following to "build.gradle":
 
 ```groovy
-apply from: 'https://raw.github.com/akhikhl/mavenize/master/pluginScripts/mavenize.plugin'
+apply from: 'https://raw.github.com/akhikhl/underwork/master/pluginScripts/underwork.plugin'
 ```
 
 then do "gradle installEclipse" from command-line. This will download eclipse
 from it's distribution site and install eclipse plugins to the local maven repository:
-$HOME/.m2/repository.
+$HOME/.m2/repository, into maven group "eclipse-kepler".
 
-Alternatively, you can download the script from https://raw.github.com/akhikhl/mavenize/master/pluginScripts/mavenize.plugin 
+Alternatively, you can download the script from https://raw.github.com/akhikhl/underwork/master/pluginScripts/underwork.plugin 
 to the project folder and include it like this:
 
 ```groovy
-apply from: 'mavenize.plugin'
+apply from: 'underwork.plugin'
 ```
 
 or feel free copying (and modifying) the declarations from this script to your "build.gradle".
@@ -73,11 +73,11 @@ or feel free copying (and modifying) the declarations from this script to your "
 **downloadEclipse** task downloads eclipse distribution from the official site,
 then unpacks it to the buildDir folder. 
 
-By default Mavenize downloads eclipse kepler SR1, with delta-pack and eclipse-SDK.
+By default Underwork downloads eclipse kepler SR1, with delta-pack and eclipse-SDK.
 You can fine-tune, which version of eclipse is downloaded and with which add-ons
 by providing your own [configuration](#gradle-plugin-extension).
 
-If download finishes with success, Mavenize "remembers" it by creating marker file 
+If download finishes with success, Underwork "remembers" it by creating marker file 
 "$buildDir/eclipseDownloaded". If downloadEclipse task is invoked again later, 
 it will first check whether marker file exists. If it does, the download is skipped.
 
@@ -92,7 +92,7 @@ and installs the generated maven artifacts to local maven repository ($HOME/.m2/
 By default all OSGi-bundles are installed into "eclipse-kepler" maven group.
 You can define other maven group by providing your own [configuration](#gradle-plugin-extension).
 
-If installation finishes with success, Mavenize "remembers" it by creating marker file 
+If installation finishes with success, Underwork "remembers" it by creating marker file 
 "$buildDir/eclipseArtifactsInstalled". If installEclipse task is invoked again later, 
 it will first check whether marker file exists. If it does, the installation is skipped.
 
@@ -103,7 +103,7 @@ installEclipse task depends on [downloadEclipse](#downloadeclipse] task.
 **uploadEclipse** task mavenizes all OSGi-bundles of the downloaded eclipse distribution 
 and installs the generated maven artifacts to remote maven repository.
 
-You should specify [eclipseUpload configuration](#eclipseupload-configuration] in order to make uploadEclipse work.
+You should specify [uploadEclipse configuration](#uploadEclipse-configuration] in order to make uploadEclipse work.
 
 By default all OSGi-bundles are installed into "eclipse-kepler" maven group.
 You can define other maven group by providing your own [configuration](#gradle-plugin-extension).
@@ -112,38 +112,38 @@ uploadEclipse task depends on [downloadEclipse](#downloadeclipse] task.
 
 ## Gradle plugin extension
 
-Mavenize works without configuration out of the box. You just apply gradle plugin,
-invoke [installEclipse](#installeclipse) task and Mavenize does it's job with reasonable defaults.
+Underwork works without configuration out of the box. You just apply gradle plugin,
+run [installEclipse](#installeclipse) task and Underwork does it's job with reasonable defaults.
 
-However, there are cases when you need to fine-tune Mavenize. For example you might
-want to change maven group or to download/mavenize/install other version of eclipse distribution.
+However, there are cases when you need to fine-tune Underwork. For example you might
+want to change maven group or to download/underwork/install other version of eclipse distribution.
 
-Mavenize supports the following gradle plugin extension:
+Underwork supports the following gradle plugin extension:
 
 ```groovy
-eclipse2mvn {
+underwork {
   config 'eclipse-kepler'
   group = 'eclipse'
   source 'http://some.url/goes/here.zip', sourcesOnly: false, languagePacksOnly: false
-  eclipseUpload = [
+  uploadEclipse = [
     url: 'http://example.com/repository',
-    user: 'ahi',
-    password: 'ahi123'
+    user: 'someUser',
+    password: 'somePassword'
   ]  
 }
 ```
 Here is the detailed description of all properties:
 
 - **config** - optional, function call. It currently accepts only 'eclipse-kepler' as an argument.
-  "config" reconfigures Mavenizer so that it downloads/mavenizes/installs all OSGi bundles
+  "config" specifies that Underwork should download/mavenize/install all OSGi bundles
   relevant to the specified configuration. You can slightly augment the configuration
-  by providing additional sources. See concrete example at https://github.com/akhikhl/mavenize/tree/master/examples/deployEclipseKeplerViaPlugin
+  by providing additional sources. See concrete example at https://github.com/akhikhl/underwork/tree/master/examples/deployEclipseKeplerViaPlugin
   
 - **group** - optional, string. "group" specifies which maven group is assigned
   to all OSGi bundles upon mavenizing. The default value is 'eclipse-kepler'.
   
-- **source** - optional, multiple, function call. Basically "source" specifies URL
-  from which Mavenizer should download eclipse distribution (or add-on distributions,
+- **source** - optional, multiple, function call. Essentially "source" specifies URL
+  from which Underwork should download eclipse distribution (or add-on distributions,
   like eclipse-SDK, delta-pack or language-packs). Additionally it acccepts the following properties:
   - **sourcesOnly** - optional, boolean. When specified, signifies whether the given
     distribution package contains only sources or not. Default value is false.
@@ -152,42 +152,42 @@ Here is the detailed description of all properties:
     distribution package contains only language fragments. Default value is false.
     Typical use-case: languagePacksOnly=true for eclipse language packs.
     
-- **eclipseUpload** - optional, hashmap. See more information at [eclipseUpload configuration](#eclipseupload-configuration).     
+- **uploadEclipse** - optional, hashmap. See more information at [uploadEclipse configuration](#uploadEclipse-configuration).     
     
-Additionally the following properties are injected into eclipse2mvn plugin extension
+Additionally the following properties are injected into underwork plugin extension
 and can be used for deducting correct version of eclipse to download:
 
 - **current_os** - string, assigned to 'linux' or 'windows', depending on the current operating system.
 
 - **current_arch** - string assigned to 'x86_32' or 'x86_64', depending on the current processor architecture.
     
-You can see the complete and working configuration at https://github.com/akhikhl/mavenize/blob/master/libs/gradle-eclipse2mvn/src/main/resources/eclipse-kepler.groovy
+You can see the complete and working configuration at https://github.com/akhikhl/underwork/blob/master/libs/gradle-underwork/src/main/resources/eclipse-kepler.groovy
 
-## eclipseUpload configuration
+## uploadEclipse configuration
 
 In order to upload mavenized OSGi bundles to remote repository you need to specify
 three parameters: remote repository URL, user name and password.
 All three can be specified in one of three places, in the following priority order:
 
-- in "build.gradle" of the current project (project where gradle-eclipse2mvn plugin is being applied):
+- in "build.gradle" of the current project (project where underwork gradle-plugin is being applied):
 ```groovy
-eclipse2mvn {
+underwork {
   // ...
-  eclipseUpload = [
+  uploadEclipse = [
     url: 'http://example.com/repository',
-    user: 'ahi',
-    password: 'ahi123'
+    user: 'someUser',
+    password: 'somePassword'
   ]  
 }
 ```
-- in "build.gradle" of the current project (project where gradle-eclipse2mvn plugin is being applied):
+- in "build.gradle" of the current project (project where underwork gradle-plugin is being applied):
 ```groovy
 ext {
   // ...
-  eclipseUpload = [
+  uploadEclipse = [
     url: 'http://example.com/repository',
-    user: 'ahi',
-    password: 'ahi123'
+    user: 'someUser',
+    password: 'somePassword'
   ]  
 }
 ```
@@ -195,10 +195,10 @@ ext {
 ```groovy
 ext {
   // ...
-  eclipseUpload = [
+  uploadEclipse = [
     url: 'http://example.com/repository',
-    user: 'ahi',
-    password: 'ahi123'
+    user: 'someUser',
+    password: 'somePassword'
   ]  
 }
 ```
@@ -206,16 +206,16 @@ ext {
 ```groovy
 projectsEvaluated {
   rootProject.ext {
-    eclipseUpload = [
+    uploadEclipse = [
       url: 'file:///home/ahi/repository',
-      user: 'ahi',
-      password: 'ahi123'
+      user: 'someUser',
+      password: 'somePassword'
     ]
   }
 }
 ```
 
-It is probably not the best idea to store sensitive information (like user names and passwords)
+It is probably not good idea to store sensitive information (like user names and passwords)
 within the source code of your project. Consider: if you store the source code 
 in the version control system, everybody authorized to see the sources effectively 
 gets he credentials to upload to your maven repository.
@@ -227,29 +227,28 @@ about init scripts in [official gradle documentation](http://www.gradle.org/docs
 ## Jar library API
 
 Gradle plugin might be sufficient for the most use-cases requiring mavenizing OSGi-bundles.
-However, you can mavenize OSGi-bundles even without gradle plugin, just by using Mavenize API functions.
+However, you can mavenize OSGi-bundles even without gradle plugin, just by using Underwork API functions.
 
-Good example of Mavenize API usage is given in the file https://github.com/akhikhl/mavenize/blob/master/examples/deployEclipseKepler/build.gradle
+Good example of Underwork API usage is given in the file https://github.com/akhikhl/underwork/blob/master/examples/deployEclipseKepler/build.gradle
 
-Essentially, Mavenize API consists of four classes:
+Essentially, Underwork API consists of four classes:
 
-- [EclipseDownloader](http://akhikhl.github.io/mavenize/groovydoc/eclipse2mvn/org/akhikhl/mavenize/eclipse2mvn/EclipseDownloader.html), 
+- [EclipseDownloader](http://akhikhl.github.io/underwork/groovydoc/underwork/org/akhikhl/underwork/underwork/EclipseDownloader.html), 
   implements downloading and unpacking the specified set of sources.
 
-- [Deployer](http://akhikhl.github.io/mavenize/groovydoc/osgi2mvn/org/akhikhl/mavenize/osgi2mvn/Deployer.html), 
+- [Deployer](http://akhikhl.github.io/underwork/groovydoc/osgi2mvn/org/akhikhl/underwork/osgi2mvn/Deployer.html), 
   implements deployment of single jar or directory with the specified POM to the specified repository.
 
-- [EclipseDeployer](http://akhikhl.github.io/mavenize/groovydoc/eclipse2mvn/org/akhikhl/mavenize/eclipse2mvn/EclipseDeployer.html), 
+- [EclipseDeployer](http://akhikhl.github.io/underwork/groovydoc/underwork/org/akhikhl/underwork/underwork/EclipseDeployer.html), 
   implements dependency resolution and deployment of multiple OSGi bundles
   to the specified maven group and specified Deployer.
   
-- [EclipseSource](http://akhikhl.github.io/mavenize/groovydoc/eclipse2mvn/org/akhikhl/mavenize/eclipse2mvn/EclipseSource.html), 
+- [EclipseSource](http://akhikhl.github.io/underwork/groovydoc/underwork/org/akhikhl/underwork/underwork/EclipseSource.html), 
   simple POJO class, storing information on download source.
 
 ## Copyright and License
 
 Copyright 2014 (c) Andrey Hihlovskiy
 
-All versions, present and past, of Mavenize are licensed under [MIT license](https://github.com/akhikhl/mavenize/blob/master/license.txt).
-
+All versions, present and past, of Underwork are licensed under [MIT license](https://github.com/akhikhl/underwork/blob/master/license.txt).
 

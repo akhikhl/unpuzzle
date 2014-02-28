@@ -1,6 +1,8 @@
-apply from: 'mavenize.plugin'
+apply from: 'underwork.plugin'
 
-eclipse2mvn {
+// example of eclipse deployment with German-language-pack
+
+underwork {
   config 'eclipse-kepler'
   source "$eclipseMirror/eclipse//technology/babel/babel_language_packs/R0.11.1/kepler/BabelLanguagePack-eclipse-de_4.3.0.v20131123020001.zip", languagePacksOnly: true
 }

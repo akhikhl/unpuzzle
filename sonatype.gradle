@@ -42,18 +42,18 @@ afterEvaluate {
             name project.name
             packaging 'jar'
             description 'Tools for mavenizing OSGI bundles'
-            url 'https://github.com/akhikhl/mavenize'
+            url 'https://github.com/akhikhl/underwork'
 
             scm {
-              url 'scm:https://github.com/akhikhl/mavenize.git'
-              connection 'scm:https://github.com/akhikhl/mavenize.git'
-              developerConnection 'scm:git@github.com:akhikhl/mavenize.git'
+              url 'scm:https://github.com/akhikhl/underwork.git'
+              connection 'scm:https://github.com/akhikhl/underwork.git'
+              developerConnection 'scm:git@github.com:akhikhl/underwork.git'
             }
 
             licenses {
               license {
                 name 'The MIT License'
-                url 'https://raw.github.com/akhikhl/mavenize/master/license.txt'
+                url 'https://raw.github.com/akhikhl/underwork/master/license.txt'
                 distribution 'repo'
               }
             }

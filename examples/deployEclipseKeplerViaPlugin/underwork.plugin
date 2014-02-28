@@ -1,0 +1,20 @@
+buildscript {
+  apply plugin: 'maven'
+
+  repositories {
+    mavenLocal()
+    mavenCentral()
+  }
+  
+  dependencies {
+    classpath 'org.akhikhl.underwork:underwork-gradle-plugin:+'
+  }
+}
+
+// apply plugin: 'underwork-gradle-plugin'
+
+import org.akhikhl.underwork.gradle.UnderworkPlugin
+
+if (!project.plugins.findPlugin(UnderworkPlugin))
+  project.apply(plugin: UnderworkPlugin)
+

@@ -1,12 +1,20 @@
-ext {
-  group = 'org.akhikhl.mavenize'
-  version = '0.0.1'
+buildscript {
+  apply plugin: 'maven'
+
+  repositories {
+    mavenLocal()
+    mavenCentral()
+  }
+
+  dependencies {
+    classpath 'org.akhikhl.rooty:rooty:0.0.4'
+  }
 }
 
-apply from: 'root.gradle'
+apply plugin: 'rooty'
 
-subprojects {
-  apply from: rootProject.file('common.gradle')
-  apply from: rootProject.file('sonatype.gradle')
+ext {
+  group = 'org.akhikhl.underwork'
+  version = '0.0.1'
 }
 

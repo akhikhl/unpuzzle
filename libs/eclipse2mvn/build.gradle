@@ -1,6 +1,0 @@
-apply plugin: 'groovy'
-
-dependencies {
-  compile project(':libs:osgi2mvn')
-  compile project(':libs:downloadhelpers')
-}

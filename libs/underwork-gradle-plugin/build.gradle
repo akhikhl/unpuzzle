@@ -1,0 +1,7 @@
+apply plugin: 'groovy'
+
+dependencies {
+  compile project(':libs:underwork-eclipse2maven')
+  compile gradleApi()
+}
+
