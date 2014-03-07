@@ -42,18 +42,18 @@ afterEvaluate {
             name project.name
             packaging 'jar'
             description 'Tools for mavenizing OSGI bundles'
-            url 'https://github.com/akhikhl/underwork'
+            url 'https://github.com/akhikhl/untangle'
 
             scm {
-              url 'scm:https://github.com/akhikhl/underwork.git'
-              connection 'scm:https://github.com/akhikhl/underwork.git'
-              developerConnection 'scm:git@github.com:akhikhl/underwork.git'
+              url 'scm:https://github.com/akhikhl/untangle.git'
+              connection 'scm:https://github.com/akhikhl/untangle.git'
+              developerConnection 'scm:git@github.com:akhikhl/untangle.git'
             }
 
             licenses {
               license {
                 name 'The MIT License'
-                url 'https://raw.github.com/akhikhl/underwork/master/license.txt'
+                url 'https://raw.github.com/akhikhl/untangle/master/license.txt'
                 distribution 'repo'
               }
             }

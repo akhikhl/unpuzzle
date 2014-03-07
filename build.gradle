@@ -14,7 +14,7 @@ buildscript {
 apply plugin: 'rooty'
 
 ext {
-  group = 'org.akhikhl.underwork'
+  group = 'org.akhikhl.untangle'
   version = '0.0.1'
 }
 

@@ -1,0 +1,7 @@
+apply plugin: 'groovy'
+
+dependencies {
+  compile project(':libs:untangle-eclipse2maven')
+  compile gradleApi()
+}
+

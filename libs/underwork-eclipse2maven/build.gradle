@@ -1,6 +1,0 @@
-apply plugin: 'groovy'
-
-dependencies {
-  compile project(':libs:underwork-osgi2maven')
-  compile project(':libs:underwork-utils')
-}
