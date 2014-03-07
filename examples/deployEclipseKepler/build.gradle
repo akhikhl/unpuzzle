@@ -7,14 +7,14 @@ buildscript {
   }
 
   dependencies {
-    classpath 'org.akhikhl.untangle:untangle-eclipse2maven:0.0.1'
+    classpath 'org.akhikhl.unpuzzle:unpuzzle-eclipse2maven:0.0.1'
   }
 }
 
-import org.akhikhl.untangle.eclipse2maven.EclipseDownloader
-import org.akhikhl.untangle.eclipse2maven.EclipseDeployer
-import org.akhikhl.untangle.eclipse2maven.EclipseSource
-import org.akhikhl.untangle.osgi2maven.Deployer
+import org.akhikhl.unpuzzle.eclipse2maven.EclipseDownloader
+import org.akhikhl.unpuzzle.eclipse2maven.EclipseDeployer
+import org.akhikhl.unpuzzle.eclipse2maven.EclipseSource
+import org.akhikhl.unpuzzle.osgi2maven.Deployer
 
 ext {
   current_os = System.getProperty("os.name")

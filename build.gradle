@@ -14,7 +14,7 @@ buildscript {
 apply plugin: 'rooty'
 
 ext {
-  group = 'org.akhikhl.untangle'
+  group = 'org.akhikhl.unpuzzle'
   version = '0.0.1'
 }
 

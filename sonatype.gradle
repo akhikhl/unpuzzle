@@ -42,18 +42,18 @@ afterEvaluate {
             name project.name
             packaging 'jar'
             description 'Tools for mavenizing OSGI bundles'
-            url 'https://github.com/akhikhl/untangle'
+            url 'https://github.com/akhikhl/unpuzzle'
 
             scm {
-              url 'scm:https://github.com/akhikhl/untangle.git'
-              connection 'scm:https://github.com/akhikhl/untangle.git'
-              developerConnection 'scm:git@github.com:akhikhl/untangle.git'
+              url 'scm:https://github.com/akhikhl/unpuzzle.git'
+              connection 'scm:https://github.com/akhikhl/unpuzzle.git'
+              developerConnection 'scm:git@github.com:akhikhl/unpuzzle.git'
             }
 
             licenses {
               license {
                 name 'The MIT License'
-                url 'https://raw.github.com/akhikhl/untangle/master/license.txt'
+                url 'https://raw.github.com/akhikhl/unpuzzle/master/license.txt'
                 distribution 'repo'
               }
             }
