@@ -1,4 +1,5 @@
-# Untangle [![Maintainer Status](http://stillmaintained.com/akhikhl/untangle.png)](http://stillmaintained.com/akhikhl/untangle) [![Build Status](https://travis-ci.org/akhikhl/untangle.png?branch=master)](https://travis-ci.org/akhikhl/untangle) [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/akhikhl/untangle/trend.png)](https://bitdeli.com/free "Bitdeli Badge") [![endorse](https://api.coderwall.com/akhikhl/endorsecount.png)](https://coderwall.com/akhikhl)
+# Untangle [![Maintainer Status](http://stillmaintained.com/akhikhl/untangle.png)](http://stillmaintained.com/akhikhl/untangle) [![Build Status](https://travis-ci.org/akhikhl/untangle.png?branch=master)](https://travis-ci.org/akhikhl/untangle) [![Latest Version](http://img.shields.io/badge/latest_version-0.0.1-blue.svg)](https://github.com/akhikhl/untangle/tree/v0.0.1) [![License](http://img.shields.io/badge/license-MIT-ff69b4.svg)](#copyright-and-license)
+
 
 **Untangle** is a set of tools for mavenizing OSGi-bundles.
 
