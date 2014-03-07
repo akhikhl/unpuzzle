@@ -234,17 +234,17 @@ Good example of Unpuzzle API usage is given in the file https://github.com/akhik
 
 Essentially, Unpuzzle API consists of four classes:
 
-- [EclipseDownloader](http://akhikhl.github.io/unpuzzle/groovydoc/unpuzzle/org/akhikhl/unpuzzle/unpuzzle/EclipseDownloader.html), 
+- [EclipseDownloader](http://akhikhl.github.io/unpuzzle/groovydoc/unpuzzle-eclipse2maven/org/akhikhl/unpuzzle/eclipse2maven/EclipseDownloader.html), 
   implements downloading and unpacking the specified set of sources.
 
-- [Deployer](http://akhikhl.github.io/unpuzzle/groovydoc/osgi2mvn/org/akhikhl/unpuzzle/osgi2mvn/Deployer.html), 
+- [Deployer](http://akhikhl.github.io/unpuzzle/groovydoc/unpuzzle-osgi2maven/org/akhikhl/unpuzzle/osgi2maven/Deployer.html), 
   implements deployment of single jar or directory with the specified POM to the specified repository.
 
-- [EclipseDeployer](http://akhikhl.github.io/unpuzzle/groovydoc/unpuzzle/org/akhikhl/unpuzzle/unpuzzle/EclipseDeployer.html), 
+- [EclipseDeployer](http://akhikhl.github.io/unpuzzle/groovydoc/unpuzzle-eclipse2maven/org/akhikhl/unpuzzle/eclipse2maven/EclipseDeployer.html), 
   implements dependency resolution and deployment of multiple OSGi bundles
   to the specified maven group and specified Deployer.
   
-- [EclipseSource](http://akhikhl.github.io/unpuzzle/groovydoc/unpuzzle/org/akhikhl/unpuzzle/unpuzzle/EclipseSource.html), 
+- [EclipseSource](http://akhikhl.github.io/unpuzzle/groovydoc/unpuzzle-eclipse2maven/org/akhikhl/unpuzzle/eclipse2maven/EclipseSource.html), 
   simple POJO class, storing information on download source.
 
 ## Copyright and License
