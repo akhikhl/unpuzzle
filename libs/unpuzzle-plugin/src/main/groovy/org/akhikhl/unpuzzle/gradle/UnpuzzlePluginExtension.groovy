@@ -15,6 +15,7 @@ import org.gradle.api.Project
  */
 class UnpuzzlePluginExtension {
 
+  boolean noDefaultConfig = false
   String group = 'eclipse-kepler'
   String current_os
   String current_arch
@@ -35,7 +36,15 @@ class UnpuzzlePluginExtension {
       current_arch = 'x86_64'
   }
 
-  private void applyConfig(String configName) {
+  void config(String configName) {
+    if(configName != 'eclipse-kepler') {
+      System.out.println("Configuration '$configName' is not supported.")
+      return
+    }
+    loadConfigFromResourceFile("${configName}.groovy")
+  }
+
+  void loadConfigFromResourceFile(String configFileName) {
     Binding binding = new Binding()
     def pluginExtension = this
     binding.unpuzzle = { Closure closure ->
@@ -44,16 +53,9 @@ class UnpuzzlePluginExtension {
       closure()
     }
     GroovyShell shell = new GroovyShell(binding)
-    this.getClass().getClassLoader().getResourceAsStream("${configName}.groovy").withReader('UTF-8') {
+    this.getClass().getClassLoader().getResourceAsStream(configFileName).withReader('UTF-8') {
       shell.evaluate(it)
     }
-  }
-
-  void config(String configName) {
-    if (configName in ['eclipse-kepler'])
-      applyConfig(configName)
-    else
-      System.err.println("Unrecognized unpuzzle configuration: $configName")
   }
 
   void source(Map options = [:], String url) {

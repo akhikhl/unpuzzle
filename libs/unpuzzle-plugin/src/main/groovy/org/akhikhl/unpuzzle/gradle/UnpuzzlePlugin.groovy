@@ -27,13 +27,13 @@ class UnpuzzlePlugin implements Plugin<Project> {
     project.extensions.create('unpuzzle', UnpuzzlePluginExtension)
 
     project.afterEvaluate {
+      if(!project.unpuzzle.noDefaultConfig)
+        project.extensions.unpuzzle.loadConfigFromResourceFile 'eclipse-kepler.groovy'
 
       project.task('downloadEclipse') {
         File markerFile = new File(project.buildDir, 'eclipseDownloaded')
         outputs.file markerFile
         doLast {
-          if(!project.unpuzzle.sources)
-            applyDefaultConfig(project)
           project.buildDir.mkdirs()
           new EclipseDownloader().downloadAndUnpack(project.unpuzzle.sources, project.buildDir)
           markerFile.text = new java.util.Date()
