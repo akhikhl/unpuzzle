@@ -17,7 +17,7 @@ All versions of Unpuzzle are available in maven central under the group 'org.akh
   - [installEclipse](#installeclipse)  
   - [uploadEclipse](#uploadeclipse)  
 4. [Gradle plugin extension](#gradle-plugin-extension)
-5. [uploadEclipse configuration](#uploadEclipse-configuration)
+5. [uploadEclipse configuration](#uploadeclipse-configuration)
 6. [Jar-library API](#jar-library-api)
 7. [Copyright and License](#copyright-and-license)
 
@@ -154,7 +154,7 @@ Here is the detailed description of all properties:
     distribution package contains only language fragments. Default value is false.
     Typical use-case: languagePacksOnly=true for eclipse language packs.
     
-- **uploadEclipse** - optional, hashmap. See more information at [uploadEclipse configuration](#uploadEclipse-configuration).     
+- **uploadEclipse** - optional, hashmap. See more information at [uploadEclipse configuration](#uploadeclipse-configuration).     
     
 Additionally the following properties are injected into unpuzzle plugin extension
 and can be used for deducting correct version of eclipse to download:
