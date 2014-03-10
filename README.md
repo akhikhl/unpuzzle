@@ -182,17 +182,6 @@ unpuzzle {
   ]  
 }
 ```
-- in "build.gradle" of the current project (project where unpuzzle gradle-plugin is being applied):
-```groovy
-ext {
-  // ...
-  uploadEclipse = [
-    url: 'http://example.com/repository',
-    user: 'someUser',
-    password: 'somePassword'
-  ]  
-}
-```
 - in "build.gradle" of the root project (in case of multiproject build):
 ```groovy
 ext {
