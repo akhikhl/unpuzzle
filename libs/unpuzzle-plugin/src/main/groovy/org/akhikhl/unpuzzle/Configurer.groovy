@@ -38,48 +38,12 @@ class Configurer {
 
     project.afterEvaluate {
 
-      String eclipseVersion
-      if(project.hasProperty('eclipseVersion'))
-        eclipseVersion = project.eclipseVersion
-      else {
-        eclipseVersion = ProjectUtils.findResultUpAncestorChain(project, { it.extensions.findByName('unpuzzle')?.defaultEclipseVersion })
-        if(eclipseVersion == null)
-          eclipseVersion = defaultConfig.defaultEclipseVersion
-      }
+      setupConfigChain(project)
 
-      project.unpuzzle.defaultEclipseVersion = eclipseVersion
-
-      List versions = []
-      applyToConfigs { Config config ->
-        versions.addAll(config.versionConfigs.keySet())
-      }
-      log.warn 'DBG versions={}', versions
-
-      Map version2EclipseMavenGroup = [:]
-      Map version2EclipseMirror = [:]
-
-      versions.each { version ->
-        version2EclipseMavenGroup[version] = findInConfigs { it.versionConfigs.get(version)?.eclipseMavenGroup }
-        version2EclipseMirror[version] = findInConfigs { it.versionConfigs.get(version)?.eclipseMirror }
-      }
-      log.warn 'DBG version2EclipseMavenGroup={}', version2EclipseMavenGroup
-      log.warn 'DBG version2EclipseMirror={}', version2EclipseMirror
-
-      applyToConfigs { Config config ->
-        log.warn 'DBG checking config, versionConfigs={}', config.versionConfigs
-        config.versionConfigs.each { version, versionConfig ->
-          log.warn 'DBG checking versionConfig.eclipseMavenGroup={}', versionConfig.eclipseMavenGroup
-          if(!versionConfig.eclipseMavenGroup) {
-            log.warn 'DBG assigning versionConfig.eclipseMavenGroup={} <- {}', versionConfig.eclipseMavenGroup, version2EclipseMavenGroup[version]
-            versionConfig.eclipseMavenGroup = version2EclipseMavenGroup[version]
-          }
-          if(!versionConfig.eclipseMirror)
-            versionConfig.eclipseMirror = version2EclipseMirror[version]
-        }
-      }
-
-      if(!findInConfigs { it.versionConfigs[eclipseVersion] }) {
-        log.error 'Eclipse version {} is not configured', eclipseVersion
+      Config econf = project.unpuzzle.effectiveConfig
+      EclipseVersionConfig vconf = econf.versionConfigs[econf.defaultEclipseVersion]
+      if(!vconf) {
+        log.error 'Eclipse version {} is not configured', econf.defaultEclipseVersion
         return
       }
 
@@ -88,13 +52,7 @@ class Configurer {
         outputs.file markerFile
         doLast {
           project.buildDir.mkdirs()
-          applyToConfigs { Config config ->
-            EclipseVersionConfig versionConfig = config.versionConfigs[eclipseVersion]
-            if(versionConfig) {
-              log.warn 'DBG versionConfig.eclipseMavenGroup={}, versionConfig.eclipseMirror={}', versionConfig.eclipseMavenGroup, versionConfig.eclipseMirror
-              new EclipseDownloader().downloadAndUnpack(versionConfig.sources, project.buildDir)
-            }
-          }
+          new EclipseDownloader().downloadAndUnpack(vconf.sources, project.buildDir)
           markerFile.text = new java.util.Date()
         }
       }
@@ -105,11 +63,7 @@ class Configurer {
         outputs.file outputMarkerFile
         doLast {
           def mavenDeployer = new Deployer(new File(System.getProperty('user.home'), '.m2/repository').toURI().toURL().toString())
-          applyToConfigs { Config config ->
-            EclipseVersionConfig versionConfig = config.versionConfigs[eclipseVersion]
-            if(versionConfig)
-              new EclipseDeployer(versionConfig.eclipseMavenGroup).deploy(versionConfig.sources, project.buildDir, mavenDeployer)
-          }
+          new EclipseDeployer(vconf.eclipseMavenGroup).deploy(vconf.sources, project.buildDir, mavenDeployer)
           outputMarkerFile.text = new java.util.Date()
         }
       }
@@ -130,11 +84,7 @@ class Configurer {
             return
           }
           Deployer mavenDeployer = new Deployer(uploadEclipse.url, user: uploadEclipse.user, password: uploadEclipse.password)
-          applyToConfigs { Config config ->
-            EclipseVersionConfig versionConfig = config.versionConfigs[eclipseVersion]
-            if(versionConfig)
-              new EclipseDeployer(versionConfig.eclipseMavenGroup).deploy(versionConfig.sources, project.buildDir, mavenDeployer)
-          }
+          new EclipseDeployer(vconf.eclipseMavenGroup).deploy(vconf.sources, project.buildDir, mavenDeployer)
         }
       }
 
@@ -148,28 +98,17 @@ class Configurer {
     } // project.afterEvaluate
   }
 
-  protected final void applyToConfigs(Closure closure) {
-
-    closure(defaultConfig)
-
-    ProjectUtils.collectWithAllAncestors(project).each { Project p ->
-      Config config = p.extensions.findByName('unpuzzle')
-      if(config)
-        closure(config)
+  private void setupConfigChain(Project project) {
+    if(project.unpuzzle.parentConfig == null) {
+      Project p = project.parent
+      while(p != null && !p.extensions.findByName('unpuzzle'))
+        p = p.parent
+      if(p == null)
+        project.unpuzzle.parentConfig = defaultConfig
+      else {
+        project.unpuzzle.parentConfig = p.unpuzzle
+        setupConfigChain(p)
+      }
     }
   }
-
-  protected final findInConfigs(Closure closure) {
-
-    def result = ProjectUtils.findResultUpAncestorChain(project, { Project p ->
-      Config config = p.extensions.findByName('unpuzzle')
-      config ? closure(config) : null
-    })
-
-    if(result == null)
-      result = closure(defaultConfig)
-
-    return result
-  }
 }
-

@@ -13,6 +13,26 @@ package org.akhikhl.unpuzzle
  */
 class Config {
 
+  private static void merge(Config target, Config source) {
+    if(source.parentConfig)
+      merge(target, source.parentConfig)
+    if(source.defaultEclipseVersion != null)
+      target.defaultEclipseVersion = source.defaultEclipseVersion
+    source.versionConfigs.each { String version, EclipseVersionConfig svc ->
+      EclipseVersionConfig tvc = target.versionConfigs[version]
+      if(tvc == null)
+        tvc = target.versionConfigs[version] = new EclipseVersionConfig()
+      if(svc.eclipseMavenGroup)
+        tvc.eclipseMavenGroup = svc.eclipseMavenGroup
+      if(svc.eclipseMirror)
+        tvc.eclipseMirror = svc.eclipseMirror
+      tvc.sources.addAll svc.sources
+    }
+    target.uploadEclipse << source.uploadEclipse
+  }
+
+  Config parentConfig
+
   String defaultEclipseVersion = null
 
   Map<String, EclipseVersionConfig> versionConfigs = [:]
@@ -25,5 +45,11 @@ class Config {
     closure.resolveStrategy = Closure.DELEGATE_FIRST
     closure.delegate = versionConfigs[versionString]
     closure()
+  }
+
+  Config getEffectiveConfig() {
+    Config result = new Config()
+    merge(result, this)
+    return result
   }
 }

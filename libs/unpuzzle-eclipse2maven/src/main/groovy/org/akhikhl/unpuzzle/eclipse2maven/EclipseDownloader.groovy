@@ -33,7 +33,10 @@ final class EclipseDownloader {
     Downloader downloader = new Downloader(console)
     ArchiveUnpacker archiveUnpacker = new ArchiveUnpacker(console)
     for(EclipseSource source in sources) {
-      String url = source.url
+      def url = source.url
+      if(url instanceof Closure)
+        url = url()
+      url = url as String
       String fileName = url.substring(url.lastIndexOf('/') + 1)
       File unpackDir = new File(targetDir, Utils.getArchiveNameNoExt(fileName))
       if(!unpackDir.exists()) {

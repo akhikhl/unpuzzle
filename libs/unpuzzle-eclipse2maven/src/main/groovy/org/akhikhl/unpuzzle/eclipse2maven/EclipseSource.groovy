@@ -7,12 +7,15 @@
  */
 package org.akhikhl.unpuzzle.eclipse2maven
 
+import groovy.transform.EqualsAndHashCode
+
 /**
  * POJO class holding information about eclipse distribution.
  * @author Andrey Hihlovskiy
  */
+@EqualsAndHashCode
 final class EclipseSource {
-  String url
+  def url
   boolean sourcesOnly = false
   boolean languagePacksOnly = false
 }

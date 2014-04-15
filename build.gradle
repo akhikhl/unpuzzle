@@ -13,8 +13,8 @@ buildscript {
 ext {
   group = 'org.akhikhl.unpuzzle'
   version = '0.0.2'
-  groovy_version = '2.2.2'
-  spock_version = '0.7-groovy-2.0'
+  groovy_version = '1.8.6'
+  spock_version = '0.7-groovy-1.8'
 }
 
 apply plugin: 'base' // add "clean" task to the root project.
@@ -37,7 +37,7 @@ clean.dependsOn cleanExamples
 
 subprojects {
   if(project.parent.name == 'libs') {
-  
+
     apply plugin: 'maven'
     apply plugin: 'groovy'
     apply plugin: 'signing'
@@ -45,11 +45,11 @@ subprojects {
     apply plugin: 'bintray'
 
     repositories {
-      jcenter()
       mavenLocal()
+      jcenter()
       mavenCentral()
     }
-    
+
     group = rootProject.ext.group
     version = rootProject.ext.version
 
@@ -76,7 +76,7 @@ subprojects {
         from groovydoc.destinationDir
       }
     }
-    
+
     artifacts {
       archives sourcesJar, javadocJar
     }
@@ -88,7 +88,7 @@ subprojects {
       assert project.hasProperty('signing.secretKeyRingFile')
       assert project.hasProperty('sonatypeUsername')
       assert project.hasProperty('sonatypePassword')
-      
+
       signing {
         sign configurations.archives
       }
