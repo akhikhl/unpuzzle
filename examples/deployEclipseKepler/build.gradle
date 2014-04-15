@@ -3,11 +3,12 @@ buildscript {
   
   repositories {
     mavenLocal()
+    jcenter()
     mavenCentral()
   }
 
   dependencies {
-    classpath 'org.akhikhl.unpuzzle:unpuzzle-eclipse2maven:0.0.1'
+    classpath 'org.akhikhl.unpuzzle:unpuzzle-eclipse2maven:0.0.2'
   }
 }
 
