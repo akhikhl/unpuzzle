@@ -19,7 +19,7 @@ class EclipseVersionConfig {
   String eclipseMirror
   List sources = []
 
-  void source(Map options = [:], String url) {
+  void source(Map options = [:], url) {
     def src = new EclipseSource(url: url)
     if(options.sourcesOnly)
       src.sourcesOnly = options.sourcesOnly

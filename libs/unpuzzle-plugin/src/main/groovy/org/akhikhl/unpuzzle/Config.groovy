@@ -7,6 +7,8 @@
  */
 package org.akhikhl.unpuzzle
 
+import org.akhikhl.unpuzzle.eclipse2maven.EclipseSource
+
 /**
  * Plugin extension for {@link org.akhikhl.unpuzzle.UnpuzzlePlugin}
  * @author akhikhl
@@ -26,7 +28,16 @@ class Config {
         tvc.eclipseMavenGroup = svc.eclipseMavenGroup
       if(svc.eclipseMirror)
         tvc.eclipseMirror = svc.eclipseMirror
-      tvc.sources.addAll svc.sources
+      svc.sources.each { EclipseSource s ->
+        EclipseSource t = new EclipseSource(url: s.url, sourcesOnly: s.sourcesOnly, languagePacksOnly: s.languagePacksOnly)
+        if(t.url instanceof Closure) {
+          def c = t.url
+          c = c.rehydrate(tvc, c.owner, c.thisObject)
+          c.resolveStrategy = Closure.DELEGATE_FIRST
+          t.url = c
+        }
+        tvc.sources.add(t)
+      }
     }
     target.uploadEclipse << source.uploadEclipse
   }
