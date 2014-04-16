@@ -48,54 +48,61 @@ class Configurer {
       }
 
       project.task('downloadEclipse') {
-        File markerFile = new File(project.buildDir, 'eclipseDownloaded')
-        outputs.file markerFile
+        group = 'unpuzzle'
+        description = 'Downloads eclipse distribution into project\'s buildDir'
         doLast {
-          project.buildDir.mkdirs()
-          new EclipseDownloader().downloadAndUnpack(vconf.sources, project.buildDir)
-          markerFile.text = new java.util.Date()
+          downloadEclipse()
         }
       }
 
       project.task('installEclipse') {
+        group = 'unpuzzle'
+        description = 'Installs mavenized artifacts of the eclipse distribution into local maven repository'
         dependsOn project.tasks.downloadEclipse
-        File outputMarkerFile = new File(project.buildDir, 'eclipseArtifactsInstalled')
-        outputs.file outputMarkerFile
         doLast {
-          def mavenDeployer = new Deployer(new File(System.getProperty('user.home'), '.m2/repository').toURI().toURL().toString())
-          new EclipseDeployer(vconf.eclipseMavenGroup).deploy(vconf.sources, project.buildDir, mavenDeployer)
-          outputMarkerFile.text = new java.util.Date()
+          installEclipse()
         }
       }
 
       project.task('uploadEclipse') {
+        group = 'unpuzzle'
+        description = 'Uploads mavenized artifacts of the eclipse distribution to remote maven repository'
         dependsOn project.tasks.downloadEclipse
         doLast {
-          def uploadEclipse
-          if(project.unpuzzle.uploadEclipse)
-            uploadEclipse = project.unpuzzle.uploadEclipse
-          else if(project.hasProperty('uploadEclipse'))
-            uploadEclipse = project.uploadEclipse
-          if(!uploadEclipse || !uploadEclipse.url || !uploadEclipse.user || !uploadEclipse.password) {
-            System.err.println uploadEclipse
-            System.err.println 'Could not upload eclipse: uploadEclipse properties not defined.'
-            System.err.println 'See Unpuzzle online documentation for more details:'
-            System.err.println 'https://github.com/akhikhl/unpuzzle/blob/master/README.md'
-            return
-          }
-          Deployer mavenDeployer = new Deployer(uploadEclipse.url, user: uploadEclipse.user, password: uploadEclipse.password)
-          new EclipseDeployer(vconf.eclipseMavenGroup).deploy(vconf.sources, project.buildDir, mavenDeployer)
+          uploadEclipse()
         }
       }
 
       if(!project.tasks.findByName('clean'))
         project.task('clean') {
+          group = 'unpuzzle'
+          description = 'Cleans buildDir'
           doLast {
             if(project.buildDir.exists())
               FileUtils.deleteDirectory(project.buildDir)
           }
         }
     } // project.afterEvaluate
+  }
+
+  void downloadEclipse() {
+    File markerFile = new File(project.buildDir, 'eclipseDownloaded')
+    if(!markerFile.exists()) {
+      project.buildDir.mkdirs()
+      new EclipseDownloader().downloadAndUnpack(vconf.sources, project.buildDir)
+      markerFile.mkdirs()
+      markerFile.text = new java.util.Date()
+    }
+  }
+
+  void installEclipse() {
+    File markerFile = new File(project.buildDir, 'eclipseArtifactsInstalled')
+    if(!markerFile.exists()) {
+      project.buildDir.mkdirs()
+      def mavenDeployer = new Deployer(new File(System.getProperty('user.home'), '.m2/repository').toURI().toURL().toString())
+      new EclipseDeployer(vconf.eclipseMavenGroup).deploy(vconf.sources, project.buildDir, mavenDeployer)
+      markerFile.text = new java.util.Date()
+    }
   }
 
   private void setupConfigChain(Project project) {
@@ -110,5 +117,22 @@ class Configurer {
         setupConfigChain(p)
       }
     }
+  }
+
+  void uploadEclipse() {
+    def uploadEclipse
+    if(project.unpuzzle.uploadEclipse)
+      uploadEclipse = project.unpuzzle.uploadEclipse
+    else if(project.hasProperty('uploadEclipse'))
+      uploadEclipse = project.uploadEclipse
+    if(!uploadEclipse || !uploadEclipse.url || !uploadEclipse.user || !uploadEclipse.password) {
+      System.err.println uploadEclipse
+      System.err.println 'Could not upload eclipse: uploadEclipse properties not defined.'
+      System.err.println 'See Unpuzzle online documentation for more details:'
+      System.err.println 'https://github.com/akhikhl/unpuzzle/blob/master/README.md'
+      return
+    }
+    Deployer mavenDeployer = new Deployer(uploadEclipse.url, user: uploadEclipse.user, password: uploadEclipse.password)
+    new EclipseDeployer(vconf.eclipseMavenGroup).deploy(vconf.sources, project.buildDir, mavenDeployer)
   }
 }
