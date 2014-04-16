@@ -73,10 +73,7 @@ final class EclipseDeployer {
 
   void deploy(List<EclipseSource> sources, File targetDir, Deployer mavenDeployer) {
     for(EclipseSource source in sources) {
-      def url = source.url
-      if(url instanceof Closure)
-        url = url()
-      url = url as String
+      String url = source.url
       String fileName = url.substring(url.lastIndexOf('/') + 1)
       File unpackDir = new File(targetDir, Utils.getArchiveNameNoExt(fileName))
       collectArtifactsInFolder(source, new File(unpackDir, 'plugins'))

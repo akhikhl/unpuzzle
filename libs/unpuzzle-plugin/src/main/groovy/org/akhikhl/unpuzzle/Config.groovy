@@ -20,24 +20,11 @@ class Config {
       merge(target, source.parentConfig)
     if(source.defaultEclipseVersion != null)
       target.defaultEclipseVersion = source.defaultEclipseVersion
-    source.versionConfigs.each { String version, EclipseVersionConfig svc ->
-      EclipseVersionConfig tvc = target.versionConfigs[version]
-      if(tvc == null)
-        tvc = target.versionConfigs[version] = new EclipseVersionConfig()
-      if(svc.eclipseMavenGroup)
-        tvc.eclipseMavenGroup = svc.eclipseMavenGroup
-      if(svc.eclipseMirror)
-        tvc.eclipseMirror = svc.eclipseMirror
-      svc.sources.each { EclipseSource s ->
-        EclipseSource t = new EclipseSource(url: s.url, sourcesOnly: s.sourcesOnly, languagePacksOnly: s.languagePacksOnly)
-        if(t.url instanceof Closure) {
-          def c = t.url
-          c = c.rehydrate(tvc, c.owner, c.thisObject)
-          c.resolveStrategy = Closure.DELEGATE_FIRST
-          t.url = c
-        }
-        tvc.sources.add(t)
-      }
+    source.lazyVersions.each { String versionString, List<Closure> sourceClosureList ->
+      List<Closure> targetClosureList = target.lazyVersions[versionString]
+      if(targetClosureList == null)
+        targetClosureList = target.lazyVersions[versionString] = []
+      targetClosureList.addAll(sourceClosureList)
     }
     target.uploadEclipse << source.uploadEclipse
   }
@@ -46,21 +33,37 @@ class Config {
 
   String defaultEclipseVersion = null
 
-  Map<String, EclipseVersionConfig> versionConfigs = [:]
+  Map<String, List<Closure>> lazyVersions = [:]
+  private Map<String, EclipseVersionConfig> versionConfigs = null
 
   Map uploadEclipse = [:]
 
   void eclipseVersion(String versionString, Closure closure) {
-    if(versionConfigs[versionString] == null)
-      versionConfigs[versionString] = new EclipseVersionConfig()
-    closure.resolveStrategy = Closure.DELEGATE_FIRST
-    closure.delegate = versionConfigs[versionString]
-    closure()
+    List<Closure> closureList = lazyVersions[versionString]
+    if(closureList == null)
+      closureList = lazyVersions[versionString] = []
+    closureList.add(closure)
+    versionConfigs = null
   }
 
   Config getEffectiveConfig() {
     Config result = new Config()
     merge(result, this)
     return result
+  }
+
+  Map<String, EclipseVersionConfig> getVersionConfigs() {
+    if(versionConfigs == null) {
+      versionConfigs = [:]
+      lazyVersions.each { String versionString, List<Closure> closureList ->
+        def versionConfig = versionConfigs[versionString] = new EclipseVersionConfig()
+        for(Closure closure in closureList) {
+          closure = closure.rehydrate(versionConfig, closure.owner, closure.thisObject)
+          closure.resolveStrategy = Closure.DELEGATE_FIRST
+          closure()
+        }
+      }
+    }
+    return versionConfigs
   }
 }

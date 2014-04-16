@@ -15,7 +15,7 @@ import groovy.transform.EqualsAndHashCode
  */
 @EqualsAndHashCode
 final class EclipseSource {
-  def url
+  String url
   boolean sourcesOnly = false
   boolean languagePacksOnly = false
 }
