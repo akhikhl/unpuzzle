@@ -15,7 +15,7 @@ import spock.lang.Specification
  *
  * @author akhikhl
  */
-class ConfigTest extends Specification {
+class ConfigHierarchyTest extends Specification {
 
   def 'should support defaultEclipseVersion inheritance'() {
   when:
