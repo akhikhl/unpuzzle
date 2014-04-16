@@ -16,7 +16,7 @@ import org.akhikhl.unpuzzle.osgi2maven.Deployer
 
 /**
  * Deploys eclipse plugins to maven.
- * @author Andrey Hihlovskiy
+ * @author akhikhl
  */
 final class EclipseDeployer {
 

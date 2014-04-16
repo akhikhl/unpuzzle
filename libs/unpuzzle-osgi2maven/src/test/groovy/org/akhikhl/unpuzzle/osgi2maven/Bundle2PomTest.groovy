@@ -14,7 +14,7 @@ import spock.lang.Specification
 
 /**
  * Unit-test for {@link org.akhikhl.unpuzzle.osgi2maven.Bundle2Pom} class.
- * @author Andrey Hihlovskiy
+ * @author akhikhl
  */
 class Bundle2PomTest extends Specification {
 

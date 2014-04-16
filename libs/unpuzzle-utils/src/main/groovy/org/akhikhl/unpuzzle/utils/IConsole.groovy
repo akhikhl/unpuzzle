@@ -9,7 +9,7 @@ package org.akhikhl.unpuzzle.utils
 
 /**
  * Console interface used by ArchivePacker and Downloader.
- * @author Andrey Hihlovskiy
+ * @author akhikhl
  */
 interface IConsole {
 

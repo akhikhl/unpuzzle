@@ -11,7 +11,7 @@ import org.akhikhl.unpuzzle.osgi2maven.Pom
 
 /**
  * OSGi-specific version.
- * @author Andrey Hihlovskiy
+ * @author akhikhl
  */
 final class Version {
 

@@ -8,7 +8,10 @@
 package org.akhikhl.unpuzzle
 
 import org.apache.commons.io.FileUtils
+import org.gradle.api.GradleException
 import org.akhikhl.unpuzzle.eclipse2maven.EclipseDownloader
+import java.nio.file.Path
+import java.nio.file.Paths
 import org.akhikhl.unpuzzle.eclipse2maven.EclipseDeployer
 import org.akhikhl.unpuzzle.eclipse2maven.EclipseSource
 import org.akhikhl.unpuzzle.osgi2maven.Deployer
@@ -24,6 +27,10 @@ class Configurer {
 
   protected static final Logger log = LoggerFactory.getLogger(Configurer)
 
+  private static File getLocalMavenRepositoryDir() {
+    Paths.get(System.getProperty('user.home'), '.m2', 'repository').toFile()
+  }
+
   private final Project project
   private final Config defaultConfig
 
@@ -34,18 +41,14 @@ class Configurer {
 
   void apply() {
 
-    project.extensions.create('unpuzzle', Config)
-
+    if(!project.rootProject.extensions.findByName('unpuzzle')) {
+      project.extensions.create('unpuzzle', Config)
+      project.unpuzzle.parentConfig = defaultConfig
+    }
+    
     project.afterEvaluate {
 
       setupConfigChain(project)
-
-      Config econf = project.unpuzzle.effectiveConfig
-      EclipseVersionConfig vconf = econf.versionConfigs[econf.defaultEclipseVersion]
-      if(!vconf) {
-        log.error 'Eclipse version {} is not configured', econf.defaultEclipseVersion
-        return
-      }
 
       project.task('downloadEclipse') {
         group = 'unpuzzle'
@@ -58,9 +61,22 @@ class Configurer {
       project.task('installEclipse') {
         group = 'unpuzzle'
         description = 'Installs mavenized artifacts of the eclipse distribution into local maven repository'
-        dependsOn project.tasks.downloadEclipse
+        outputs.upToDateWhen {
+          installEclipseUpToDate()
+        }
         doLast {
           installEclipse()
+        }
+      }
+
+      project.task('uninstallEclipse') {
+        group = 'unpuzzle'
+        description = 'Uninstalls mavenized artifacts of the eclipse distribution from local maven repository'
+        outputs.upToDateWhen {
+          uninstallEclipseUpToDate()
+        }
+        doLast {
+          uninstallEclipse()
         }
       }
 
@@ -86,23 +102,34 @@ class Configurer {
   }
 
   void downloadEclipse() {
-    File markerFile = new File(project.buildDir, 'eclipseDownloaded')
-    if(!markerFile.exists()) {
-      project.buildDir.mkdirs()
-      new EclipseDownloader().downloadAndUnpack(vconf.sources, project.buildDir)
-      markerFile.mkdirs()
-      markerFile.text = new java.util.Date()
-    }
+    project.buildDir.mkdirs()
+    def vconf = getEclipseVersionConfig()
+    new EclipseDownloader().downloadAndUnpack(vconf.sources, project.buildDir)
+  }
+
+  EclipseVersionConfig getEclipseVersionConfig() {
+    Config econf = project.unpuzzle.effectiveConfig
+    EclipseVersionConfig vconf = econf.versionConfigs[econf.defaultEclipseVersion]
+    if(!vconf)
+      throw new GradleException("Eclipse version ${econf.defaultEclipseVersion} is not configured")
+    return vconf
   }
 
   void installEclipse() {
-    File markerFile = new File(project.buildDir, 'eclipseArtifactsInstalled')
-    if(!markerFile.exists()) {
-      project.buildDir.mkdirs()
-      def mavenDeployer = new Deployer(new File(System.getProperty('user.home'), '.m2/repository').toURI().toURL().toString())
-      new EclipseDeployer(vconf.eclipseMavenGroup).deploy(vconf.sources, project.buildDir, mavenDeployer)
-      markerFile.text = new java.util.Date()
+    File repoDir = getLocalMavenRepositoryDir()
+    def vconf = getEclipseVersionConfig()
+    File groupDir = new File(repoDir, vconf.eclipseMavenGroup)
+    if(!groupDir.exists()) {
+      downloadEclipse()
+      new EclipseDeployer(vconf.eclipseMavenGroup).deploy(vconf.sources, project.buildDir, new Deployer(repoDir))
     }
+  }
+
+  boolean installEclipseUpToDate() {
+    File repoDir = getLocalMavenRepositoryDir()
+    def vconf = getEclipseVersionConfig()
+    File groupDir = new File(repoDir, vconf.eclipseMavenGroup)
+    groupDir.exists()
   }
 
   private void setupConfigChain(Project project) {
@@ -119,12 +146,26 @@ class Configurer {
     }
   }
 
+  void uninstallEclipse() {
+    File repoDir = getLocalMavenRepositoryDir()
+    def vconf = getEclipseVersionConfig()
+    File groupDir = new File(repoDir, vconf.eclipseMavenGroup)
+    if(groupDir.exists())
+      groupDir.deleteDir()
+  }
+
+  boolean uninstallEclipseUpToDate() {
+    File repoDir = getLocalMavenRepositoryDir()
+    def vconf = getEclipseVersionConfig()
+    File groupDir = new File(repoDir, vconf.eclipseMavenGroup)
+    !groupDir.exists()
+  }
+
   void uploadEclipse() {
-    def uploadEclipse
-    if(project.unpuzzle.uploadEclipse)
-      uploadEclipse = project.unpuzzle.uploadEclipse
-    else if(project.hasProperty('uploadEclipse'))
-      uploadEclipse = project.uploadEclipse
+    def uploadEclipse = [:]
+    if(project.hasProperty('uploadEclipse'))
+      uploadEclipse << project.uploadEclipse
+    uploadEclipse << project.unpuzzle.effectiveConfig.uploadEclipse
     if(!uploadEclipse || !uploadEclipse.url || !uploadEclipse.user || !uploadEclipse.password) {
       System.err.println uploadEclipse
       System.err.println 'Could not upload eclipse: uploadEclipse properties not defined.'
@@ -133,6 +174,7 @@ class Configurer {
       return
     }
     Deployer mavenDeployer = new Deployer(uploadEclipse.url, user: uploadEclipse.user, password: uploadEclipse.password)
+    def vconf = getEclipseVersionConfig()
     new EclipseDeployer(vconf.eclipseMavenGroup).deploy(vconf.sources, project.buildDir, mavenDeployer)
   }
 }

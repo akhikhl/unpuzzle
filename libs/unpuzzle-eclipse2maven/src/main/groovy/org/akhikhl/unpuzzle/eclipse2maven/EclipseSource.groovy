@@ -11,7 +11,7 @@ import groovy.transform.EqualsAndHashCode
 
 /**
  * POJO class holding information about eclipse distribution.
- * @author Andrey Hihlovskiy
+ * @author akhikhl
  */
 @EqualsAndHashCode
 final class EclipseSource {

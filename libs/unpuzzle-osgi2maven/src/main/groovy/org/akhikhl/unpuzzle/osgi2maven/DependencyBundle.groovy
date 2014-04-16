@@ -11,7 +11,7 @@ import groovy.transform.ToString
 
 /**
  * POJO class holding data on dependency bundle. Used by {@link org.akhikhl.unpuzzle.osgi2maven.Pom} class.
- * @author Andrey Hihlovskiy
+ * @author akhikhl
  */
 @ToString
 final class DependencyBundle {

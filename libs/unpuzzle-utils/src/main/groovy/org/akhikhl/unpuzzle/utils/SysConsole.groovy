@@ -13,7 +13,7 @@ import org.apache.commons.lang3.StringUtils
 
 /**
  * Console implementation, writes everything to System.out.
- * @author Andrey Hihlovskiy
+ * @author akhikhl
  */
 final class SysConsole implements IConsole {
 

@@ -12,7 +12,7 @@ import java.io.OutputStream
 
 /**
  * Decorator stream, counting the bytes being written.
- * @author Andrey Hihlovskiy
+ * @author akhikhl
  */
 class CountingOutputStream extends OutputStream {
 

@@ -11,7 +11,7 @@ import groovy.xml.NamespaceBuilder
 
 /**
  * Deploys OSGI bundle (jar or directory) to maven repository
- * @author Andrey Hihlovskiy
+ * @author akhikhl
  */
 class Deployer {
 
@@ -20,6 +20,15 @@ class Deployer {
   private AntBuilder ant
   private mvn
   private File workFolder
+
+  /**
+   * Constructs Deployer with the specified parameters.
+   * @param deployerOptions - may contain properties "user" and "password"
+   * @param localRepositoryDir - target maven repository
+   */
+  Deployer(Map deployerOptions = [:], File localRepositoryDir) {
+    this(deployerOptions, localRepositoryDir.toURI().toURL().toString())
+  }
 
   /**
    * Constructs Deployer with the specified parameters.

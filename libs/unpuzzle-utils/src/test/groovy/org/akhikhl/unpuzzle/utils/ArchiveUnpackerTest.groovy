@@ -11,7 +11,7 @@ import spock.lang.Specification
 
 /**
  * Unit-test for {@link org.akhikhl.unpuzzle.utils.ArchiveUnpacker} class.
- * @author Andrey Hihlovskiy
+ * @author akhikhl
  */
 class ArchiveUnpackerTest {
 

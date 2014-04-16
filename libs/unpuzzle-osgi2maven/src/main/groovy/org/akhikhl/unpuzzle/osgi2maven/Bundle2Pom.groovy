@@ -14,7 +14,7 @@ import org.osgi.framework.Constants
 
 /**
  * Converts bundle manifest to POM.
- * @author Andrey Hihlovskiy
+ * @author akhikhl
  */
 final class Bundle2Pom {
 

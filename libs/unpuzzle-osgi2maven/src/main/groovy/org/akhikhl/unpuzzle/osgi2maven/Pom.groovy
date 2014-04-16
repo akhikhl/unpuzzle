@@ -13,7 +13,7 @@ import org.osgi.framework.Constants
 
 /**
  * POJO class holding data extracted from bundle and needed for POM generation.
- * @author Andrey Hihlovskiy
+ * @author akhikhl
  */
 final class Pom {
 

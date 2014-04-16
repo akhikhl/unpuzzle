@@ -9,7 +9,7 @@ package org.akhikhl.unpuzzle.eclipse2maven
 
 /**
  * Various utility functions.
- * @author Andrey Hihlovskiy
+ * @author akhikhl
  */
 final class Utils {
 

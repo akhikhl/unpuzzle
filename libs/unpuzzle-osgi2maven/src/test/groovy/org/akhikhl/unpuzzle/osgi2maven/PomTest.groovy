@@ -14,7 +14,7 @@ import spock.lang.Specification
 
 /**
  * Unit-test for {@link org.akhikhl.unpuzzle.osgi2maven.Pom} class.
- * @author Andrey Hihlovskiy
+ * @author akhikhl
  */
 class PomTest extends Specification {
 

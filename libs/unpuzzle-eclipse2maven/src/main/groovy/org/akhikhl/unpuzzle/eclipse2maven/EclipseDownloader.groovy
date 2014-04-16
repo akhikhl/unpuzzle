@@ -14,7 +14,7 @@ import org.akhikhl.unpuzzle.utils.ArchiveUnpacker
 
 /**
  * Downloads and unpacks more or more eclipse distributions from the specified URLs.
- * @author Andrey Hihlovskiy
+ * @author akhikhl
  */
 final class EclipseDownloader {
 

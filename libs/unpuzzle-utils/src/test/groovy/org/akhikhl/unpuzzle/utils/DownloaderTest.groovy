@@ -13,7 +13,7 @@ import java.util.UUID
 
 /**
  * Unit-test for {@link org.akhikhl.unpuzzle.utils.Downloader} class.
- * @author Andrey Hihlovskiy
+ * @author akhikhl
  */
 class DownloaderTest extends Specification {
 
