@@ -1,5 +1,8 @@
 # Unpuzzle 
-[![Maintainer Status](http://stillmaintained.com/akhikhl/unpuzzle.png)](http://stillmaintained.com/akhikhl/unpuzzle) [![Build Status](https://travis-ci.org/akhikhl/unpuzzle.png?branch=master)](https://travis-ci.org/akhikhl/unpuzzle) [![Latest Version](http://img.shields.io/badge/latest_version-0.0.2-blue.svg)](https://github.com/akhikhl/unpuzzle/tree/v0.0.2) [![License](http://img.shields.io/badge/license-MIT-ff69b4.svg)](#copyright-and-license)
+[![Maintainer Status](http://stillmaintained.com/akhikhl/unpuzzle.png)](http://stillmaintained.com/akhikhl/unpuzzle) 
+[![Build Status](https://travis-ci.org/akhikhl/unpuzzle.png?branch=master)](https://travis-ci.org/akhikhl/unpuzzle) 
+[![Latest Version](http://img.shields.io/badge/latest_version-0.0.3-blue.svg)](https://github.com/akhikhl/unpuzzle/tree/v0.0.3) 
+[![License](http://img.shields.io/badge/license-MIT-ff69b4.svg)](#copyright-and-license)
 
 **Unpuzzle** is a set of tools for mavenizing OSGi-bundles.
 
@@ -14,6 +17,7 @@ All versions of Unpuzzle are available in maven central under the group 'org.akh
 3. [Gradle tasks](#gradle-tasks)
   - [downloadEclipse](#downloadeclipse)
   - [installEclipse](#installeclipse)  
+  - [uninstallEclipse](#uninstalleclipse)  
   - [uploadEclipse](#uploadeclipse)  
 4. [Gradle plugin extension](#gradle-plugin-extension)
 5. [uploadEclipse configuration](#uploadeclipse-configuration)
@@ -92,13 +96,12 @@ and installs the generated maven artifacts to local maven repository ($HOME/.m2/
 By default all OSGi-bundles are installed into "eclipse-kepler" maven group.
 You can define other maven group by providing your own [configuration](#gradle-plugin-extension).
 
-Before installing maven artifacts this task checks whether folder $HOME/.m2/repository/eclipse-kepler
-already exists. If it does, no installation is performed.
-
-**Hint**: you can force re-installation of maven artifacts by manually deleting $HOME/.m2/repository/eclipse-kepler
-folder or by invoking [uninstallEclipse](#uninstalleclipse] task.
-
 installEclipse task depends on [downloadEclipse](#downloadeclipse] task.
+
+### uninstallEclipse
+
+**uninstallEclipse** task uninstalls installed OSGi-bundles of the downloaded eclipse distribution 
+from the local maven repository ($HOME/.m2/repository).
 
 ### uploadEclipse
 
@@ -122,7 +125,7 @@ Unpuzzle works without configuration out of the box. You just apply gradle plugi
 run [installEclipse](#installeclipse) task and Unpuzzle does it's job with reasonable defaults.
 
 However, there are cases when you need to fine-tune Unpuzzle. For example you might
-want to change maven group or to download/unpuzzle/install other version of eclipse distribution.
+want to download/install another version of eclipse distribution.
 
 Unpuzzle supports the following gradle plugin extension:
 
@@ -196,7 +199,7 @@ unpuzzle {
     url: 'http://example.com/repository',
     user: 'someUser',
     password: 'somePassword'
-  ]  
+  ]
 }
 ```
 - in "build.gradle" of the root project (in case of multiproject build):
@@ -207,7 +210,7 @@ ext {
     url: 'http://example.com/repository',
     user: 'someUser',
     password: 'somePassword'
-  ]  
+  ]
 }
 ```
 - in "init.gradle" script:
