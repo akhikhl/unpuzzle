@@ -15,10 +15,9 @@ import groovy.xml.NamespaceBuilder
  */
 class Deployer {
 
-  private Map deployerOptions
-  private String repositoryUrl
+  final Map deployerOptions
+  final URL repositoryUrl
   private AntBuilder ant
-  private mvn
   private File workFolder
 
   /**
@@ -27,7 +26,11 @@ class Deployer {
    * @param localRepositoryDir - target maven repository
    */
   Deployer(Map deployerOptions = [:], File localRepositoryDir) {
-    this(deployerOptions, localRepositoryDir.toURI().toURL().toString())
+    this(deployerOptions, localRepositoryDir.toURI().toURL())
+  }
+
+  Deployer(Map deployerOptions = [:], String repositoryUrl) {
+    this(deployerOptions, new URL(repositoryUrl))
   }
 
   /**
@@ -35,10 +38,10 @@ class Deployer {
    * @param deployerOptions - may contain properties "user" and "password"
    * @param repositoryUrl - URL of the target maven repository
    */
-  Deployer(Map deployerOptions = [:], String repositoryUrl) {
-    this.deployerOptions = deployerOptions
-    if(deployerOptions.ant)
-      this.ant = deployerOptions.ant
+  Deployer(Map deployerOptions = [:], URL repositoryUrl) {
+    this.deployerOptions = ([:] << deployerOptions).asImmutable()
+    if(this.deployerOptions.ant)
+      this.ant = this.deployerOptions.ant
     else {
       URLClassLoader classLoader = (URLClassLoader)this.getClass().getClassLoader()
       URL mavenAntTasks = classLoader.URLs.find { it.toString().contains('maven-ant-tasks') }
@@ -83,11 +86,11 @@ class Deployer {
         pom refid: 'mypom'
         if(sourceFile)
           attach file: sourceFile, type: 'jar', classifier: 'sources'
-       remoteRepository url: repositoryUrl, {
-        if(deployerOptions.user && deployerOptions.password)
-          authentication username: deployerOptions.user, password: deployerOptions.password
-       }
-     }
+        remoteRepository url: repositoryUrl.toString(), {
+          if(deployerOptions.user && deployerOptions.password)
+            authentication username: deployerOptions.user, password: deployerOptions.password
+        }
+      }
     }
   }
 }

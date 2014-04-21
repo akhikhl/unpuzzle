@@ -7,6 +7,8 @@
  */
 package org.akhikhl.unpuzzle.eclipse2maven
 
+import org.apache.commons.codec.digest.DigestUtils
+
 import org.akhikhl.unpuzzle.utils.IConsole
 import org.akhikhl.unpuzzle.utils.SysConsole
 import org.akhikhl.unpuzzle.utils.Downloader
@@ -35,11 +37,18 @@ final class EclipseDownloader {
     for(EclipseSource source in sources) {
       String url = source.url
       String fileName = url.substring(url.lastIndexOf('/') + 1)
-      File unpackDir = new File(targetDir, Utils.getArchiveNameNoExt(fileName))
+      File unpackDir = new File(targetDir, "unpacked/${Utils.getArchiveNameNoExt(fileName)}")
       if(!unpackDir.exists()) {
-        File archiveFile = new File(targetDir, fileName)
+        File archiveFile = new File(targetDir, "downloaded/${fileName}")
         downloader.downloadFile(new URL(url), archiveFile)
-        File unpackTempDir = new File(targetDir, UUID.randomUUID().toString())
+        String archiveFileMd5
+        archiveFile.withInputStream {
+          archiveFileMd5 = DigestUtils.md5Hex(it)
+        }
+        File checksumFile = new File(targetDir, "downloaded-checksums/${fileName}.md5")
+        checksumFile.parentFile.mkdirs()
+        checksumFile.text = archiveFileMd5
+        File unpackTempDir = new File(targetDir, "unpacked/${UUID.randomUUID().toString()}")
         archiveUnpacker.unpack(archiveFile, unpackTempDir)
         File[] files = unpackTempDir.listFiles()
         if(files != null) {
@@ -56,4 +65,3 @@ final class EclipseDownloader {
     }
   }
 }
-

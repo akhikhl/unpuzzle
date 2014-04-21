@@ -7,6 +7,8 @@
  */
 package org.akhikhl.unpuzzle.eclipse2maven
 
+import org.apache.commons.codec.digest.DigestUtils
+
 import org.akhikhl.unpuzzle.utils.IConsole
 import org.akhikhl.unpuzzle.utils.SysConsole
 import org.akhikhl.unpuzzle.osgi2maven.Pom
@@ -14,11 +16,72 @@ import org.akhikhl.unpuzzle.osgi2maven.Bundle2Pom
 import org.akhikhl.unpuzzle.osgi2maven.DependencyBundle
 import org.akhikhl.unpuzzle.osgi2maven.Deployer
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+
 /**
  * Deploys eclipse plugins to maven.
  * @author akhikhl
  */
 final class EclipseDeployer {
+
+  protected static final Logger log = LoggerFactory.getLogger(EclipseDeployer)
+
+  static boolean allDownloadedPackagesAreInstalled(List<EclipseSource> sources, File targetDir, Deployer mavenDeployer) {
+    if(mavenDeployer.repositoryUrl.protocol == 'file') {
+      String repositoryUrlMd5 = DigestUtils.md5Hex(mavenDeployer.repositoryUrl.toString())
+      for(EclipseSource source in sources) {
+        String url = source.url
+        String fileName = url.substring(url.lastIndexOf('/') + 1)
+        String downloadedChecksum
+        File downloadedChecksumFile = new File(targetDir, "downloaded-checksums/${fileName}.md5")
+        if(downloadedChecksumFile.exists())
+          downloadedChecksum = downloadedChecksumFile.text
+        if(downloadedChecksum == null) {
+          log.info 'allDownloadedPackagesAreInstalled, url={}, downloadedChecksum={}, returning false', url, downloadedChecksum
+          return false
+        }
+        String installedChecksum
+        File installedChecksumFile = new File(targetDir, "installed-checksums/${repositoryUrlMd5}/${fileName}.md5")
+        if(installedChecksumFile.exists())
+          installedChecksum = installedChecksumFile.text
+        if(downloadedChecksum != installedChecksum) {
+          log.info 'allDownloadedPackagesAreInstalled, url={}, downloadedChecksum={}, installedChecksum={}, returning false', url, downloadedChecksum, installedChecksum
+          return false
+        }
+      }
+      log.info 'allDownloadedPackagesAreInstalled, repository={}, all checksums match, returning true', mavenDeployer.repositoryUrl
+      return true
+    }
+    log.info 'allDownloadedPackagesAreInstalled, repository={}, non-file protocol, returning false', mavenDeployer.repositoryUrl
+    return false
+  }
+
+  static boolean allDownloadedPackagesAreUninstalled(List<EclipseSource> sources, File targetDir, Deployer mavenDeployer) {
+    if(mavenDeployer.repositoryUrl.protocol == 'file') {
+      String repositoryUrlMd5 = DigestUtils.md5Hex(mavenDeployer.repositoryUrl.toString())
+      for(EclipseSource source in sources) {
+        String url = source.url
+        String fileName = url.substring(url.lastIndexOf('/') + 1)
+        String downloadedChecksum
+        File downloadedChecksumFile = new File(targetDir, "downloaded-checksums/${fileName}.md5")
+        if(downloadedChecksumFile.exists())
+          downloadedChecksum = downloadedChecksumFile.text
+        String installedChecksum
+        File installedChecksumFile = new File(targetDir, "installed-checksums/${repositoryUrlMd5}/${fileName}.md5")
+        if(installedChecksumFile.exists())
+          installedChecksum = installedChecksumFile.text
+        if(downloadedChecksum != null && downloadedChecksum == installedChecksum) {
+          log.info 'allDownloadedPackagesAreUninstalled, url={}, checksum match, returning false', url
+          return false
+        }
+      }
+      log.info 'allDownloadedPackagesAreUninstalled, repository={}, all checksums removed, returning true', mavenDeployer.repositoryUrl
+      return true
+    }
+    log.info 'allDownloadedPackagesAreUninstalled, repository={}, non-file protocol, returning false', mavenDeployer.repositoryUrl
+    return false
+  }
 
   private IConsole console
   private String eclipseGroup
@@ -72,17 +135,33 @@ final class EclipseDeployer {
   }
 
   void deploy(List<EclipseSource> sources, File targetDir, Deployer mavenDeployer) {
+
+    String repositoryUrlMd5
+
     for(EclipseSource source in sources) {
       String url = source.url
       String fileName = url.substring(url.lastIndexOf('/') + 1)
-      File unpackDir = new File(targetDir, Utils.getArchiveNameNoExt(fileName))
-      collectArtifactsInFolder(source, new File(unpackDir, 'plugins'))
+      File unpackDir = new File(targetDir, "unpacked/${Utils.getArchiveNameNoExt(fileName)}")
+      boolean packageInstalled = false
+      if(mavenDeployer.repositoryUrl.protocol == 'file') {
+        if(!repositoryUrlMd5)
+          repositoryUrlMd5 = DigestUtils.md5Hex(mavenDeployer.repositoryUrl.toString())
+        String downloadedChecksum
+        File downloadedChecksumFile = new File(targetDir, "downloaded-checksums/${fileName}.md5")
+        if(downloadedChecksumFile.exists())
+          downloadedChecksum = downloadedChecksumFile.text
+        String installedChecksum
+        File installedChecksumFile = new File(targetDir, "installed-checksums/${repositoryUrlMd5}/${fileName}.md5")
+        if(installedChecksumFile.exists())
+          installedChecksum = installedChecksumFile.text
+        packageInstalled = downloadedChecksum == installedChecksum
+      }
+      if(!packageInstalled)
+        collectArtifactsInFolder(source, new File(unpackDir, 'plugins'))
     }
-    fixDependencies()
-    deployArtifacts(mavenDeployer)
-  }
 
-  private void deployArtifacts(Deployer mavenDeployer) {
+    fixDependencies()
+
     console.startProgress('Deploying artifacts')
     try {
       artifacts.each { name, artifactVersions ->
@@ -98,6 +177,16 @@ final class EclipseDeployer {
     } finally {
       console.endProgress()
     }
+
+    if(mavenDeployer.repositoryUrl.protocol == 'file')
+      for(EclipseSource source in sources) {
+        String url = source.url
+        String fileName = url.substring(url.lastIndexOf('/') + 1)
+        File downloadedChecksumFile = new File(targetDir, "downloaded-checksums/${fileName}.md5")
+        File installedChecksumFile = new File(targetDir, "installed-checksums/${repositoryUrlMd5}/${fileName}.md5")
+        installedChecksumFile.parentFile.mkdirs()
+        installedChecksumFile.text = downloadedChecksumFile.text
+      }
   }
 
   private void fixDependencies() {
@@ -146,5 +235,66 @@ final class EclipseDeployer {
     } finally {
       console.endProgress()
     }
+  }
+
+  void uninstall(List<EclipseSource> sources, File targetDir, Deployer mavenDeployer) {
+
+    if(mavenDeployer.repositoryUrl.protocol != 'file') {
+      console.progressError("Could not uninstall from non-file URL: ${mavenDeployer.repositoryUrl}")
+      return
+    }
+
+    String repositoryUrlMd5 = DigestUtils.md5Hex(mavenDeployer.repositoryUrl.toString())
+    File repositoryDir = new File(mavenDeployer.repositoryUrl.toURI())
+
+    for(EclipseSource source in sources) {
+      String url = source.url
+      String fileName = url.substring(url.lastIndexOf('/') + 1)
+      File unpackDir = new File(targetDir, "unpacked/${Utils.getArchiveNameNoExt(fileName)}")
+      boolean packageInstalled = false
+      if(mavenDeployer.repositoryUrl.protocol == 'file') {
+        String downloadedChecksum
+        File downloadedChecksumFile = new File(targetDir, "downloaded-checksums/${fileName}.md5")
+        if(downloadedChecksumFile.exists())
+          downloadedChecksum = downloadedChecksumFile.text
+        String installedChecksum
+        File installedChecksumFile = new File(targetDir, "installed-checksums/${repositoryUrlMd5}/${fileName}.md5")
+        if(installedChecksumFile.exists())
+          installedChecksum = installedChecksumFile.text
+        packageInstalled = downloadedChecksum == installedChecksum
+      }
+      if(packageInstalled)
+        collectArtifactsInFolder(source, new File(unpackDir, 'plugins'))
+    }
+
+    fixDependencies()
+
+    def deleteArtifactDir = { pom ->
+      File artifactDir = new File(repositoryDir, "${eclipseGroup}/${pom.artifact}")
+      if(artifactDir.exists())
+        artifactDir.deleteDir()
+    }
+
+    console.startProgress('Uninstalling artifacts')
+    try {
+      artifacts.each { name, artifactVersions ->
+        artifactVersions.each deleteArtifactDir
+      }
+      artifactsNl.each { language, map_nl ->
+        map_nl.each { artifactName, pom ->
+          deleteArtifactDir(pom)
+        }
+      }
+    } finally {
+      console.endProgress()
+    }
+
+    if(mavenDeployer.repositoryUrl.protocol == 'file')
+      for(EclipseSource source in sources) {
+        String url = source.url
+        String fileName = url.substring(url.lastIndexOf('/') + 1)
+        File installedChecksumFile = new File(targetDir, "installed-checksums/${repositoryUrlMd5}/${fileName}.md5")
+        installedChecksumFile.delete()
+      }
   }
 }

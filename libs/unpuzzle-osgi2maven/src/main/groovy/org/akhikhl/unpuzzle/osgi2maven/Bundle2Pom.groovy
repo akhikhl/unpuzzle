@@ -50,6 +50,7 @@ final class Bundle2Pom {
     pom.artifact = manifest.attr.getValue(Constants.BUNDLE_SYMBOLICNAME)
     if (pom.artifact.contains(';'))
       pom.artifact = pom.artifact.split(';')[0]
+    pom.artifact = pom.artifact.trim()
 
     pom.group = group ?: pom.artifact
     pom.dependencyGroup = dependencyGroup

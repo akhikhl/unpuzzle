@@ -27,32 +27,32 @@ class Configurer {
 
   protected static final Logger log = LoggerFactory.getLogger(Configurer)
 
-  private static File getLocalMavenRepositoryDir() {
-    Paths.get(System.getProperty('user.home'), '.m2', 'repository').toFile()
-  }
-
   private final Project project
   private final Config defaultConfig
+  private final File localMavenRepositoryDir
+  private final File unpuzzleDir
 
   Configurer(Project project) {
     this.project = project
-    this.defaultConfig = new ConfigReader().readFromResource('defaultConfig.groovy')
+    defaultConfig = new ConfigReader().readFromResource('defaultConfig.groovy')
+    localMavenRepositoryDir = new File(System.getProperty('user.home'), '.m2/repository')
+    unpuzzleDir = new File(System.getProperty('user.home'), '.unpuzzle')
   }
 
   void apply() {
 
-    if(!project.rootProject.extensions.findByName('unpuzzle')) {
+    if(!project.extensions.findByName('unpuzzle')) {
       project.extensions.create('unpuzzle', Config)
       project.unpuzzle.parentConfig = defaultConfig
     }
-    
+
     project.afterEvaluate {
 
       setupConfigChain(project)
 
       project.task('downloadEclipse') {
         group = 'unpuzzle'
-        description = 'Downloads eclipse distribution into project\'s buildDir'
+        description = 'Downloads eclipse distribution into $HOME/.unpuzzle directory'
         doLast {
           downloadEclipse()
         }
@@ -60,7 +60,7 @@ class Configurer {
 
       project.task('installEclipse') {
         group = 'unpuzzle'
-        description = 'Installs mavenized artifacts of the eclipse distribution into local maven repository'
+        description = 'Mavenizes and installs bundles of the eclipse distribution into local maven repository'
         outputs.upToDateWhen {
           installEclipseUpToDate()
         }
@@ -92,9 +92,9 @@ class Configurer {
       if(!project.tasks.findByName('clean'))
         project.task('clean') {
           group = 'unpuzzle'
-          description = 'Cleans buildDir'
+          description = 'Cleans $HOME/.unpuzzle directory'
           doLast {
-            if(project.buildDir.exists())
+            if(get.exists())
               FileUtils.deleteDirectory(project.buildDir)
           }
         }
@@ -102,12 +102,11 @@ class Configurer {
   }
 
   void downloadEclipse() {
-    project.buildDir.mkdirs()
     def vconf = getEclipseVersionConfig()
-    new EclipseDownloader().downloadAndUnpack(vconf.sources, project.buildDir)
+    new EclipseDownloader().downloadAndUnpack(vconf.sources, unpuzzleDir)
   }
 
-  EclipseVersionConfig getEclipseVersionConfig() {
+  private EclipseVersionConfig getEclipseVersionConfig() {
     Config econf = project.unpuzzle.effectiveConfig
     EclipseVersionConfig vconf = econf.versionConfigs[econf.defaultEclipseVersion]
     if(!vconf)
@@ -116,20 +115,18 @@ class Configurer {
   }
 
   void installEclipse() {
-    File repoDir = getLocalMavenRepositoryDir()
     def vconf = getEclipseVersionConfig()
-    File groupDir = new File(repoDir, vconf.eclipseMavenGroup)
-    if(!groupDir.exists()) {
+    def mavenDeployer = new Deployer(localMavenRepositoryDir)
+    if(!EclipseDeployer.allDownloadedPackagesAreInstalled(vconf.sources, unpuzzleDir, mavenDeployer)) {
       downloadEclipse()
-      new EclipseDeployer(vconf.eclipseMavenGroup).deploy(vconf.sources, project.buildDir, new Deployer(repoDir))
+      new EclipseDeployer(vconf.eclipseMavenGroup).deploy(vconf.sources, unpuzzleDir, mavenDeployer)
     }
   }
 
   boolean installEclipseUpToDate() {
-    File repoDir = getLocalMavenRepositoryDir()
     def vconf = getEclipseVersionConfig()
-    File groupDir = new File(repoDir, vconf.eclipseMavenGroup)
-    groupDir.exists()
+    def mavenDeployer = new Deployer(localMavenRepositoryDir)
+    EclipseDeployer.allDownloadedPackagesAreInstalled(vconf.sources, unpuzzleDir, mavenDeployer)
   }
 
   private void setupConfigChain(Project project) {
@@ -147,18 +144,16 @@ class Configurer {
   }
 
   void uninstallEclipse() {
-    File repoDir = getLocalMavenRepositoryDir()
     def vconf = getEclipseVersionConfig()
-    File groupDir = new File(repoDir, vconf.eclipseMavenGroup)
-    if(groupDir.exists())
-      groupDir.deleteDir()
+    def mavenDeployer = new Deployer(localMavenRepositoryDir)
+    if(!EclipseDeployer.allDownloadedPackagesAreUninstalled(vconf.sources, unpuzzleDir, mavenDeployer))
+      new EclipseDeployer(vconf.eclipseMavenGroup).uninstall(vconf.sources, unpuzzleDir, mavenDeployer)
   }
 
   boolean uninstallEclipseUpToDate() {
-    File repoDir = getLocalMavenRepositoryDir()
     def vconf = getEclipseVersionConfig()
-    File groupDir = new File(repoDir, vconf.eclipseMavenGroup)
-    !groupDir.exists()
+    def mavenDeployer = new Deployer(localMavenRepositoryDir)
+    EclipseDeployer.allDownloadedPackagesAreUninstalled(vconf.sources, unpuzzleDir, mavenDeployer)
   }
 
   void uploadEclipse() {
