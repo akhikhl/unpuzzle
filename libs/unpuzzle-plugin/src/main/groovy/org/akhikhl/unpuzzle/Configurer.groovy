@@ -89,15 +89,18 @@ class Configurer {
         }
       }
 
-      if(!project.tasks.findByName('clean'))
-        project.task('clean') {
-          group = 'unpuzzle'
-          description = 'Cleans $HOME/.unpuzzle directory'
-          doLast {
-            if(get.exists())
-              FileUtils.deleteDirectory(project.buildDir)
-          }
+      project.task('cleanUnpuzzle') {
+        group = 'unpuzzle'
+        description = 'Cleans $HOME/.unpuzzle directory, uninstalls mavenized artifacts'
+        dependsOn project.tasks.uninstallEclipse
+        outputs.upToDateWhen {
+          !unpuzzleDir.exists()
         }
+        doLast {
+          if(unpuzzleDir.exists())
+            unpuzzleDir.deleteDir()
+        }
+      }
     } // project.afterEvaluate
   }
 
