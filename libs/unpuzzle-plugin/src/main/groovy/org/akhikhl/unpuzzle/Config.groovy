@@ -20,6 +20,7 @@ class Config {
       merge(target, source.parentConfig)
     if(source.defaultEclipseVersion != null)
       target.defaultEclipseVersion = source.defaultEclipseVersion
+    target.languagePacks.addAll(source.languagePacks)
     source.lazyVersions.each { String versionString, List<Closure> sourceClosureList ->
       List<Closure> targetClosureList = target.lazyVersions[versionString]
       if(targetClosureList == null)
@@ -32,10 +33,9 @@ class Config {
   Config parentConfig
 
   String defaultEclipseVersion = null
-
+  List<String> languagePacks = []
   Map<String, List<Closure>> lazyVersions = [:]
   private Map<String, EclipseVersionConfig> versionConfigs = null
-
   Map uploadEclipse = [:]
 
   void eclipseVersion(String versionString, Closure closure) {
@@ -44,6 +44,10 @@ class Config {
       closureList = lazyVersions[versionString] = []
     closureList.add(closure)
     versionConfigs = null
+  }
+
+  void languagePack(String language) {
+    languagePacks.add(language)
   }
 
   Config getEffectiveConfig() {
@@ -62,6 +66,8 @@ class Config {
           closure.resolveStrategy = Closure.DELEGATE_FIRST
           closure()
         }
+        for(String language in languagePacks)
+          versionConfig.languagePack(language)
       }
     }
     return versionConfigs

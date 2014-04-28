@@ -17,7 +17,18 @@ class EclipseVersionConfig {
 
   String eclipseMavenGroup
   String eclipseMirror
-  List sources = []
+  List<EclipseSource> sources = []
+  List<String> languagePackTemplates = []
+
+  void languagePack(String language) {
+    def engine = new groovy.text.GStringTemplateEngine()
+    for(String template in languagePackTemplates)
+      source engine.createTemplate(template).make([eclipseMirror: eclipseMirror, language: language]).toString(), languagePacksOnly: true
+  }
+
+  void languagePackTemplate(String template) {
+    languagePackTemplates.add(template)
+  }
 
   void source(Map options = [:], String url) {
     def src = new EclipseSource(url: url)
