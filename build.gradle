@@ -12,7 +12,7 @@ buildscript {
 
 ext {
   group = 'org.akhikhl.unpuzzle'
-  version = '0.0.4'
+  version = '0.0.5'
   groovy_version = '1.8.6'
   spock_version = '0.7-groovy-1.8'
 }
@@ -26,14 +26,14 @@ task('buildExamples', type: GradleBuild) { task ->
   tasks = [ 'build' ]
 }
 
-build.finalizedBy buildExamples
+// build.finalizedBy buildExamples
 
 task('cleanExamples', type: GradleBuild) { task ->
   dir = file('examples')
   tasks = [ 'clean' ]
 }
 
-clean.dependsOn cleanExamples
+// clean.dependsOn cleanExamples
 
 subprojects {
   if(project.parent.name == 'libs') {
