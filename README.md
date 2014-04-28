@@ -76,17 +76,13 @@ or feel free copying (and modifying) the declarations from this script to your "
 ### downloadEclipse
 
 **downloadEclipse** task downloads eclipse distribution from the official site,
-then unpacks it to the buildDir folder. 
+then unpacks it to the $HOME/.unpuzzle folder. 
 
-By default Unpuzzle downloads eclipse kepler SR1, delta-pack and eclipse-SDK.
-You can fine-tune, which version of eclipse is downloaded and with which add-ons
-by providing your own [configuration](#gradle-plugin-extension).
+By default Unpuzzle downloads eclipse kepler SR1, delta-pack and eclipse-SDK. You can fine-tune, which version of eclipse is downloaded and with which add-ons by providing your own [configuration](#gradle-plugin-extension).
 
-Before downloading a distribution package this task compares file size to the one
-returned by HTTP HEAD request. If file size did not change, no download is performed.
+Before downloading a distribution package this task compares file size to the one returned by HTTP HEAD request. If file size did not change, no download is performed.
 
-**Hint**: you can force re-download of eclipse distribution by simply deleting *.zip and *.tar.gz files
-in the buildDir.
+**Hint**: you can force re-download of eclipse distribution simply by deleting *.zip and *.tar.gz files in the folder $HOME/.unpuzzle/downloaded.
 
 ### installEclipse
 
@@ -100,13 +96,11 @@ installEclipse task depends on [downloadEclipse](#downloadeclipse] task.
 
 ### uninstallEclipse
 
-**uninstallEclipse** task uninstalls installed OSGi-bundles of the downloaded eclipse distribution 
-from the local maven repository ($HOME/.m2/repository).
+**uninstallEclipse** task uninstalls installed OSGi-bundles of the downloaded eclipse distribution from the local maven repository ($HOME/.m2/repository).
 
 ### uploadEclipse
 
-**uploadEclipse** task mavenizes all OSGi-bundles of the downloaded eclipse distribution 
-and installs the generated maven artifacts to remote maven repository.
+**uploadEclipse** task mavenizes all OSGi-bundles of the downloaded eclipse distribution and installs the generated maven artifacts to remote maven repository.
 
 You should specify [uploadEclipse configuration](#uploadEclipse-configuration] in order to make uploadEclipse work.
 
@@ -115,9 +109,9 @@ You can define other maven group by providing your own [configuration](#gradle-p
 
 uploadEclipse task depends on [downloadEclipse](#downloadeclipse] task.
 
-### uninstallEclipse
+### cleanUnpuzzle
 
-**uninstallEclipse** task deletes folder $HOME/.m2/repository/eclipse-kepler.
+**cleanUnpuzzle** task cleans everything specific to Unpuzzle plugin. Particularly, it uninstalls installed maven artifacts and deletes directory $HOME/.unpuzzle.
 
 ## Gradle plugin extension
 
