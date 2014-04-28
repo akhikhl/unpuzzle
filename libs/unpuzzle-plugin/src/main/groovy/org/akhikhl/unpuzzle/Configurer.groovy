@@ -40,15 +40,12 @@ class Configurer {
   }
 
   void apply() {
-
-    if(!project.extensions.findByName('unpuzzle')) {
+    if(!project.extensions.findByName('unpuzzle'))
       project.extensions.create('unpuzzle', Config)
-      project.unpuzzle.parentConfig = defaultConfig
-    }
+
+    setupConfigChain(project)
 
     project.afterEvaluate {
-
-      setupConfigChain(project)
 
       project.task('downloadEclipse') {
         group = 'unpuzzle'
@@ -137,9 +134,12 @@ class Configurer {
       Project p = project.parent
       while(p != null && !p.extensions.findByName('unpuzzle'))
         p = p.parent
-      if(p == null)
+      if(p == null) {
+        log.debug 'there\'s no parent unpuzzle extension for {}, setting parent to defaultConfig', project.name
         project.unpuzzle.parentConfig = defaultConfig
+      }
       else {
+        log.debug 'setting parent unpuzzle {} -> {}', project.name, p.name
         project.unpuzzle.parentConfig = p.unpuzzle
         setupConfigChain(p)
       }
