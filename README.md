@@ -19,7 +19,7 @@ All versions of Unpuzzle are available in maven central under the group 'org.akh
   - [installEclipse](#installeclipse)  
   - [uninstallEclipse](#uninstalleclipse)  
   - [uploadEclipse](#uploadeclipse)
-  - [cleanUnpuzzle](#cleanUnpuzzle)
+  - [cleanUnpuzzle](#cleanunpuzzle)
 4. [Gradle plugin extension](#gradle-plugin-extension)
 5. [uploadEclipse configuration](#uploadeclipse-configuration)
 6. [Jar-library API](#jar-library-api)
