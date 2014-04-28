@@ -1,7 +1,7 @@
 # Unpuzzle 
 [![Maintainer Status](http://stillmaintained.com/akhikhl/unpuzzle.png)](http://stillmaintained.com/akhikhl/unpuzzle) 
 [![Build Status](https://travis-ci.org/akhikhl/unpuzzle.png?branch=master)](https://travis-ci.org/akhikhl/unpuzzle) 
-[![Latest Version](http://img.shields.io/badge/latest_version-0.0.3-blue.svg)](https://github.com/akhikhl/unpuzzle/tree/v0.0.3) 
+[![Latest Version](http://img.shields.io/badge/latest_version-0.0.4-blue.svg)](https://github.com/akhikhl/unpuzzle/tree/v0.0.4) 
 [![License](http://img.shields.io/badge/license-MIT-ff69b4.svg)](#copyright-and-license)
 
 **Unpuzzle** is a set of tools for mavenizing OSGi-bundles.
