@@ -28,13 +28,11 @@ class Configurer {
   protected static final Logger log = LoggerFactory.getLogger(Configurer)
 
   private final Project project
-  private final Config defaultConfig
   private final File localMavenRepositoryDir
   private final File unpuzzleDir
 
   Configurer(Project project) {
     this.project = project
-    defaultConfig = new ConfigReader().readFromResource('defaultConfig.groovy')
     localMavenRepositoryDir = new File(System.getProperty('user.home'), '.m2/repository')
     unpuzzleDir = new File(System.getProperty('user.home'), '.unpuzzle')
   }
@@ -136,7 +134,7 @@ class Configurer {
         p = p.parent
       if(p == null) {
         log.debug '{}.unpuzzle.parentConfig <- defaultConfig', project.name
-        project.unpuzzle.parentConfig = defaultConfig
+        project.unpuzzle.parentConfig = new ConfigReader().readFromResource('defaultConfig.groovy')
       }
       else {
         log.debug '{}.unpuzzle.parentConfig <- {}.unpuzzle', project.name, p.name
