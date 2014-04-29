@@ -135,15 +135,16 @@ class Configurer {
       while(p != null && !p.extensions.findByName('unpuzzle'))
         p = p.parent
       if(p == null) {
-        log.debug 'there\'s no parent unpuzzle extension for {}, setting parent to defaultConfig', project.name
+        log.debug '{}.unpuzzle.parentConfig <- defaultConfig', project.name
         project.unpuzzle.parentConfig = defaultConfig
       }
       else {
-        log.debug 'setting parent unpuzzle {} -> {}', project.name, p.name
+        log.debug '{}.unpuzzle.parentConfig <- {}.unpuzzle', project.name, p.name
         project.unpuzzle.parentConfig = p.unpuzzle
         setupConfigChain(p)
       }
-    }
+    } else
+      log.debug '{}.unpuzzle already has parentConfig, setupConfigChain skipped', project.name
   }
 
   void uninstallEclipse() {
