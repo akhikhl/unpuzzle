@@ -100,31 +100,32 @@ class Configurer {
   }
 
   void downloadEclipse() {
-    def vconf = getEclipseVersionConfig()
+    def vconf = getSelectedVersionConfig()
     new EclipseDownloader().downloadAndUnpack(vconf.sources, unpuzzleDir)
   }
 
-  private EclipseVersionConfig getEclipseVersionConfig() {
+  private EclipseVersionConfig getSelectedVersionConfig() {
     Config econf = project.unpuzzle.effectiveConfig
-    EclipseVersionConfig vconf = econf.versionConfigs[econf.selectedEclipseVersion]
+    EclipseVersionConfig vconf = econf.selectedVersionConfig
     if(!vconf)
       throw new GradleException("Eclipse version ${econf.selectedEclipseVersion} is not configured")
     return vconf
   }
 
   void installEclipse() {
-    def vconf = getEclipseVersionConfig()
+    def vconf = getSelectedVersionConfig()
     def mavenDeployer = new Deployer(localMavenRepositoryDir)
-    if(!EclipseDeployer.allDownloadedPackagesAreInstalled(vconf.sources, unpuzzleDir, mavenDeployer)) {
+    def eclipseDeployer = new EclipseDeployer(unpuzzleDir, vconf.eclipseMavenGroup, mavenDeployer)
+    if(!eclipseDeployer.allDownloadedPackagesAreInstalled(vconf.sources)) {
       downloadEclipse()
-      new EclipseDeployer(vconf.eclipseMavenGroup).deploy(vconf.sources, unpuzzleDir, mavenDeployer)
+      eclipseDeployer.deploy(vconf.sources)
     }
   }
 
   boolean installEclipseUpToDate() {
-    def vconf = getEclipseVersionConfig()
+    def vconf = getSelectedVersionConfig()
     def mavenDeployer = new Deployer(localMavenRepositoryDir)
-    EclipseDeployer.allDownloadedPackagesAreInstalled(vconf.sources, unpuzzleDir, mavenDeployer)
+    new EclipseDeployer(unpuzzleDir, vconf.eclipseMavenGroup, mavenDeployer).allDownloadedPackagesAreInstalled(vconf.sources)
   }
 
   private static void setupConfigChain(Project project) {
@@ -146,16 +147,18 @@ class Configurer {
   }
 
   void uninstallEclipse() {
-    def vconf = getEclipseVersionConfig()
+    def vconf = getSelectedVersionConfig()
     def mavenDeployer = new Deployer(localMavenRepositoryDir)
-    if(!EclipseDeployer.allDownloadedPackagesAreUninstalled(vconf.sources, unpuzzleDir, mavenDeployer))
-      new EclipseDeployer(vconf.eclipseMavenGroup).uninstall(vconf.sources, unpuzzleDir, mavenDeployer)
+    def eclipseDeployer = new EclipseDeployer(unpuzzleDir, vconf.eclipseMavenGroup, mavenDeployer)
+    if(!eclipseDeployer.allDownloadedPackagesAreUninstalled(vconf.sources))
+      eclipseDeployer.uninstall(vconf.sources)
   }
 
   boolean uninstallEclipseUpToDate() {
-    def vconf = getEclipseVersionConfig()
+    def vconf = getSelectedVersionConfig()
     def mavenDeployer = new Deployer(localMavenRepositoryDir)
-    EclipseDeployer.allDownloadedPackagesAreUninstalled(vconf.sources, unpuzzleDir, mavenDeployer)
+    def eclipseDeployer = new EclipseDeployer(unpuzzleDir, vconf.eclipseMavenGroup, mavenDeployer)
+    eclipseDeployer.allDownloadedPackagesAreUninstalled(vconf.sources)
   }
 
   void uploadEclipse() {
@@ -170,8 +173,9 @@ class Configurer {
       System.err.println 'https://github.com/akhikhl/unpuzzle/blob/master/README.md'
       return
     }
+    def vconf = getSelectedVersionConfig()
     Deployer mavenDeployer = new Deployer(uploadEclipse.url, user: uploadEclipse.user, password: uploadEclipse.password)
-    def vconf = getEclipseVersionConfig()
-    new EclipseDeployer(vconf.eclipseMavenGroup).deploy(vconf.sources, project.buildDir, mavenDeployer)
+    def eclipseDeployer = new EclipseDeployer(unpuzzleDir, vconf.eclipseMavenGroup, mavenDeployer)
+    eclipseDeployer.deploy(vconf.sources)
   }
 }

@@ -15,24 +15,9 @@ import org.akhikhl.unpuzzle.eclipse2maven.EclipseSource
  */
 class Config {
 
-  private static void merge(Config target, Config source) {
-    if(source.parentConfig)
-      merge(target, source.parentConfig)
-    if(source.selectedEclipseVersion != null)
-      target.selectedEclipseVersion = source.selectedEclipseVersion
-    target.languagePacks.addAll(source.languagePacks)
-    source.lazyVersions.each { String versionString, List<Closure> sourceClosureList ->
-      List<Closure> targetClosureList = target.lazyVersions[versionString]
-      if(targetClosureList == null)
-        targetClosureList = target.lazyVersions[versionString] = []
-      targetClosureList.addAll(sourceClosureList)
-    }
-    target.uploadEclipse << source.uploadEclipse
-  }
-
   Config parentConfig
 
-  String selectedEclipseVersion = null
+  String selectedEclipseVersion
   Set<String> languagePacks = new LinkedHashSet()
   Map<String, List<Closure>> lazyVersions = [:]
   private Map<String, EclipseVersionConfig> versionConfigs = null
@@ -57,7 +42,7 @@ class Config {
   }
 
   EclipseVersionConfig getSelectedVersionConfig() {
-    getVersionConfigs()[selectedEclipseVersion]
+    getVersionConfigs()[getSelectedEclipseVersion()]
   }
 
   Map<String, EclipseVersionConfig> getVersionConfigs() {
@@ -75,5 +60,20 @@ class Config {
       }
     }
     return versionConfigs
+  }
+
+  private static void merge(Config target, Config source) {
+    if(source.parentConfig)
+      merge(target, source.parentConfig)
+    if(source.selectedEclipseVersion != null)
+      target.selectedEclipseVersion = source.selectedEclipseVersion
+    target.languagePacks.addAll(source.languagePacks)
+    source.lazyVersions.each { String versionString, List<Closure> sourceClosureList ->
+      List<Closure> targetClosureList = target.lazyVersions[versionString]
+      if(targetClosureList == null)
+        targetClosureList = target.lazyVersions[versionString] = []
+      targetClosureList.addAll(sourceClosureList)
+    }
+    target.uploadEclipse << source.uploadEclipse
   }
 }

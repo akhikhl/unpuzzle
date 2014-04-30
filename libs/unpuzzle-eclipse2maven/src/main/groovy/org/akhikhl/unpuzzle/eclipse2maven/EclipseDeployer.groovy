@@ -27,9 +27,25 @@ final class EclipseDeployer {
 
   protected static final Logger log = LoggerFactory.getLogger(EclipseDeployer)
 
-  static boolean allDownloadedPackagesAreInstalled(List<EclipseSource> sources, File targetDir, Deployer mavenDeployer) {
+  private File targetDir
+  private String eclipseGroup
+  private Deployer mavenDeployer
+  private Map artifacts = [:]
+  private Map artifactsNl = [:]
+  private Map artifactFiles = [:]
+  private Map sourceFiles = [:]
+  private IConsole console
+
+  EclipseDeployer(File targetDir, String eclipseGroup, Deployer mavenDeployer, IConsole console = null) {
+    this.targetDir = targetDir
+    this.eclipseGroup = eclipseGroup
+    this.mavenDeployer = mavenDeployer
+    this.console = console ?: new SysConsole()
+  }
+
+  boolean allDownloadedPackagesAreInstalled(List<EclipseSource> sources) {
     if(mavenDeployer.repositoryUrl.protocol == 'file') {
-      String repositoryUrlMd5 = DigestUtils.md5Hex(mavenDeployer.repositoryUrl.toString())
+      String installGroupChecksum = getInstallGroupChecksum()
       for(EclipseSource source in sources) {
         String url = source.url
         String fileName = url.substring(url.lastIndexOf('/') + 1)
@@ -42,7 +58,7 @@ final class EclipseDeployer {
           return false
         }
         String installedChecksum
-        File installedChecksumFile = new File(targetDir, "installed-checksums/${repositoryUrlMd5}/${fileName}.md5")
+        File installedChecksumFile = new File(targetDir, "installed-checksums/${installGroupChecksum}/${fileName}.md5")
         if(installedChecksumFile.exists())
           installedChecksum = installedChecksumFile.text
         if(downloadedChecksum != installedChecksum) {
@@ -57,9 +73,9 @@ final class EclipseDeployer {
     return false
   }
 
-  static boolean allDownloadedPackagesAreUninstalled(List<EclipseSource> sources, File targetDir, Deployer mavenDeployer) {
+  boolean allDownloadedPackagesAreUninstalled(List<EclipseSource> sources) {
     if(mavenDeployer.repositoryUrl.protocol == 'file') {
-      String repositoryUrlMd5 = DigestUtils.md5Hex(mavenDeployer.repositoryUrl.toString())
+      String installGroupChecksum = getInstallGroupChecksum()
       for(EclipseSource source in sources) {
         String url = source.url
         String fileName = url.substring(url.lastIndexOf('/') + 1)
@@ -68,7 +84,7 @@ final class EclipseDeployer {
         if(downloadedChecksumFile.exists())
           downloadedChecksum = downloadedChecksumFile.text
         String installedChecksum
-        File installedChecksumFile = new File(targetDir, "installed-checksums/${repositoryUrlMd5}/${fileName}.md5")
+        File installedChecksumFile = new File(targetDir, "installed-checksums/${installGroupChecksum}/${fileName}.md5")
         if(installedChecksumFile.exists())
           installedChecksum = installedChecksumFile.text
         if(downloadedChecksum != null && downloadedChecksum == installedChecksum) {
@@ -81,23 +97,6 @@ final class EclipseDeployer {
     }
     log.info 'allDownloadedPackagesAreUninstalled, repository={}, non-file protocol, returning false', mavenDeployer.repositoryUrl
     return false
-  }
-
-  private IConsole console
-  private String eclipseGroup
-  private Map artifacts = [:]
-  private Map artifactsNl = [:]
-  private Map artifactFiles = [:]
-  private Map sourceFiles = [:]
-
-  EclipseDeployer(String eclipseGroup) {
-    this.console = new SysConsole()
-    this.eclipseGroup = eclipseGroup
-  }
-
-  EclipseDeployer(IConsole console, String eclipseGroup) {
-    this.console = console
-    this.eclipseGroup = eclipseGroup
   }
 
   private void collectArtifactsInFolder(EclipseSource source, artifactsSourceDir) {
@@ -134,9 +133,9 @@ final class EclipseDeployer {
     }
   }
 
-  void deploy(List<EclipseSource> sources, File targetDir, Deployer mavenDeployer) {
+  void deploy(List<EclipseSource> sources) {
 
-    String repositoryUrlMd5
+    String installGroupChecksum
 
     for(EclipseSource source in sources) {
       String url = source.url
@@ -144,14 +143,14 @@ final class EclipseDeployer {
       File unpackDir = new File(targetDir, "unpacked/${Utils.getArchiveNameNoExt(fileName)}")
       boolean packageInstalled = false
       if(mavenDeployer.repositoryUrl.protocol == 'file') {
-        if(!repositoryUrlMd5)
-          repositoryUrlMd5 = DigestUtils.md5Hex(mavenDeployer.repositoryUrl.toString())
+        if(!installGroupChecksum)
+          installGroupChecksum = getInstallGroupChecksum()
         String downloadedChecksum
         File downloadedChecksumFile = new File(targetDir, "downloaded-checksums/${fileName}.md5")
         if(downloadedChecksumFile.exists())
           downloadedChecksum = downloadedChecksumFile.text
         String installedChecksum
-        File installedChecksumFile = new File(targetDir, "installed-checksums/${repositoryUrlMd5}/${fileName}.md5")
+        File installedChecksumFile = new File(targetDir, "installed-checksums/${installGroupChecksum}/${fileName}.md5")
         if(installedChecksumFile.exists())
           installedChecksum = installedChecksumFile.text
         packageInstalled = downloadedChecksum == installedChecksum
@@ -183,7 +182,7 @@ final class EclipseDeployer {
         String url = source.url
         String fileName = url.substring(url.lastIndexOf('/') + 1)
         File downloadedChecksumFile = new File(targetDir, "downloaded-checksums/${fileName}.md5")
-        File installedChecksumFile = new File(targetDir, "installed-checksums/${repositoryUrlMd5}/${fileName}.md5")
+        File installedChecksumFile = new File(targetDir, "installed-checksums/${installGroupChecksum}/${fileName}.md5")
         installedChecksumFile.parentFile.mkdirs()
         installedChecksumFile.text = downloadedChecksumFile.text
       }
@@ -237,14 +236,19 @@ final class EclipseDeployer {
     }
   }
 
-  void uninstall(List<EclipseSource> sources, File targetDir, Deployer mavenDeployer) {
+  String getInstallGroupChecksum() {
+    String groupPath = eclipseGroup ? eclipseGroup.replace('.', '/') : ''
+    DigestUtils.md5Hex(mavenDeployer.repositoryUrl.toString() + '/' + groupPath)
+  }
+
+  void uninstall(List<EclipseSource> sources) {
 
     if(mavenDeployer.repositoryUrl.protocol != 'file') {
       console.progressError("Could not uninstall from non-file URL: ${mavenDeployer.repositoryUrl}")
       return
     }
 
-    String repositoryUrlMd5 = DigestUtils.md5Hex(mavenDeployer.repositoryUrl.toString())
+    String installGroupChecksum = getInstallGroupChecksum()
     File repositoryDir = new File(mavenDeployer.repositoryUrl.toURI())
 
     for(EclipseSource source in sources) {
@@ -258,7 +262,7 @@ final class EclipseDeployer {
         if(downloadedChecksumFile.exists())
           downloadedChecksum = downloadedChecksumFile.text
         String installedChecksum
-        File installedChecksumFile = new File(targetDir, "installed-checksums/${repositoryUrlMd5}/${fileName}.md5")
+        File installedChecksumFile = new File(targetDir, "installed-checksums/${installGroupChecksum}/${fileName}.md5")
         if(installedChecksumFile.exists())
           installedChecksum = installedChecksumFile.text
         packageInstalled = downloadedChecksum == installedChecksum
@@ -293,7 +297,7 @@ final class EclipseDeployer {
       for(EclipseSource source in sources) {
         String url = source.url
         String fileName = url.substring(url.lastIndexOf('/') + 1)
-        File installedChecksumFile = new File(targetDir, "installed-checksums/${repositoryUrlMd5}/${fileName}.md5")
+        File installedChecksumFile = new File(targetDir, "installed-checksums/${installGroupChecksum}/${fileName}.md5")
         installedChecksumFile.delete()
       }
   }
