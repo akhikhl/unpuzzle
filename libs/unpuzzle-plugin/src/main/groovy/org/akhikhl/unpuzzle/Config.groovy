@@ -60,7 +60,7 @@ class Config {
       }
       versionConfigs = m
     }
-    return versionConfigs
+    return versionConfigs.asImmutable()
   }
 
   private static void merge(Config target, Config source) {
