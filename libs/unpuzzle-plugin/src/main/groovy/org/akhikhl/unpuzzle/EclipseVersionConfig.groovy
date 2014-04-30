@@ -17,26 +17,37 @@ class EclipseVersionConfig {
 
   String eclipseMavenGroup
   String eclipseMirror
-  List<EclipseSource> sources = []
-  List<String> languagePackTemplates = []
+  String eclipseArchiveMirror
+  List<Closure> lazySources = []
+  Set<String> languagePacks = new LinkedHashSet()
+
+  void sources(Closure closure) {
+    lazySources.add(closure)
+  }
+
+  Collection<EclipseSource> getSources() {
+    getSourcesConfig().sources
+  }
+
+  EclipseSourcesConfig getSourcesConfig() {
+    EclipseSourcesConfig sourcesConfig = new EclipseSourcesConfig(eclipseMirror: eclipseMirror, eclipseArchiveMirror: eclipseArchiveMirror)
+    for(Closure closure in lazySources) {
+      closure = closure.rehydrate(sourcesConfig, closure.owner, this)
+      closure.resolveStrategy = Closure.DELEGATE_FIRST
+      closure()
+    }
+    for(String language in languagePacks)
+      sourcesConfig.languagePack(language)
+    return sourcesConfig
+  }
 
   void languagePack(String language) {
-    def engine = new groovy.text.GStringTemplateEngine()
-    for(String template in languagePackTemplates)
-      source engine.createTemplate(template).make([eclipseMirror: eclipseMirror, language: language]).toString(), languagePacksOnly: true
+    languagePacks.add(language)
   }
 
-  void languagePackTemplate(String template) {
-    languagePackTemplates.add(template)
-  }
-
-  void source(Map options = [:], String url) {
-    def src = new EclipseSource(url: url)
-    if(options.sourcesOnly)
-      src.sourcesOnly = options.sourcesOnly
-    if(options.languagePacksOnly)
-      src.languagePacksOnly = options.languagePacksOnly
-    sources.add(src)
+  @Override
+  String toString() {
+    "EclipseVersionConfig(eclipseMavenGroup=${eclipseMavenGroup}, eclipseMirror=${eclipseMirror}, eclipseArchiveMirror=${eclipseArchiveMirror}, lazySources[${lazySources.size()}], languagePacks=${languagePacks})"
   }
 }
 

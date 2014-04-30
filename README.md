@@ -1,7 +1,7 @@
 # Unpuzzle 
 [![Maintainer Status](http://stillmaintained.com/akhikhl/unpuzzle.png)](http://stillmaintained.com/akhikhl/unpuzzle) 
 [![Build Status](https://travis-ci.org/akhikhl/unpuzzle.png?branch=master)](https://travis-ci.org/akhikhl/unpuzzle) 
-[![Latest Version](http://img.shields.io/badge/latest_version-0.0.6-blue.svg)](https://github.com/akhikhl/unpuzzle/tree/v0.0.6) 
+[![Latest Version](http://img.shields.io/badge/latest_version-0.0.7-blue.svg)](https://github.com/akhikhl/unpuzzle/tree/v0.0.7) 
 [![License](http://img.shields.io/badge/license-MIT-ff69b4.svg)](#copyright-and-license)
 
 **Unpuzzle** is a set of tools for mavenizing OSGi-bundles.
@@ -127,17 +127,28 @@ Unpuzzle supports the following gradle plugin extension:
 ```groovy
 unpuzzle {
 
-  defaultEclipseVersion = '4.3'
+  selectedEclipseVersion = '4.3'
 
   eclipseVersion('4.3') {
 
     eclipseMavenGroup = 'eclipse-kepler'
 
     eclipseMirror = 'http://mirror.netcologne.de'
+
+    eclipseArchiveMirror = 'http://archive.eclipse.org'
     
-    source "$eclipseMirror/eclipse//technology/epp/downloads/release/kepler/SR1/eclipse-jee-kepler-SR1-linux-gtk-x86_64.tar.gz"
-    source "$eclipseMirror/eclipse//eclipse/downloads/drops4/R-4.3.1-201309111000/eclipse-SDK-4.3.1-linux-gtk-x86_64.tar.gz", sourcesOnly: true
-    source "$eclipseMirror/eclipse//technology/babel/babel_language_packs/R0.11.1/kepler/BabelLanguagePack-eclipse-de_4.3.0.v20131123020001.zip", languagePacksOnly: true
+    sources {
+
+      source "$eclipseMirror/eclipse//technology/epp/downloads/release/kepler/SR2/eclipse-jee-kepler-SR2-linux-gtk-x86_64.tar.gz"
+      source "$eclipseMirror/eclipse//eclipse/downloads/drops4/R-4.3.2-201402211700/eclipse-SDK-4.3.2-linux-gtk-x86_64.tar.gz", sourcesOnly: true
+      source "$eclipseMirror/eclipse//eclipse/downloads/drops4/R-4.3.2-201402211700/eclipse-4.3.2-delta-pack.zip"
+      
+      languagePackTemplate '${eclipseMirror}/eclipse//technology/babel/babel_language_packs/R0.11.1/kepler/BabelLanguagePack-eclipse-${language}_4.3.0.v20131123020001.zip'
+      
+      languagePack 'de'
+      languagePack 'fr'
+      languagePack 'es'
+    }
   }
 
   uploadEclipse = [
@@ -149,15 +160,19 @@ unpuzzle {
 ```
 Here is the detailed description of configuration options:
 
-- **defaultEclipseVersion** - string, optional, default value is '4.3'. When specified, defines which version of eclipse is to be downloaded and installed
+- **selectedEclipseVersion** - string, optional, default value is '4.3'. When specified, defines which version of eclipse is to be downloaded and installed
   by Unpuzzle tasks.
   
 - **eclipseVersion** - function(String, Closure), multiplicity 0..n. When called, defines version-specific configuration. Unpuzzle configuration may contain multiple
-  version-specific configurations. Only one version-specific configuration is "active" - this is defined by defaultEclipseVersion.
+  version-specific configurations. Only one version-specific configuration is "active" - this is defined by selectedEclipseVersion.
 
 - **eclipseMavenGroup** - string, optional, default value (for version '4.3') is 'eclipse-kepler'.
 
-- **eclipseMirror** - string, optional, default is null. Can be used for specifying common base URL for multiple sources.
+- **eclipseMirror** - string, optional, default is 'http://mirror.netcologne.de'. Can be used for specifying common base URL.
+
+- **eclipseArchiveMirror** - string, optional, default is 'http://archive.eclipse.org'. Can be used for specifying common base URL for older packages.
+
+- **sources** - function(Closure), multiplicity 0..n.
   
 - **source** - function(Map, String), multiplicity 0..n. Essentially "source" specifies URL
   from which Unpuzzle should download eclipse distribution (or add-on distributions,
@@ -168,6 +183,12 @@ Here is the detailed description of configuration options:
   - **languagePacksOnly** - optional, boolean. When specified, signifies whether the given
     distribution package contains only language fragments. Default value is false.
     Typical use-case: languagePacksOnly=true for eclipse language packs.
+    
+- **languagePackTemplate** - function(String), multiplicity 0..n. Adds the specified string to the list of language-pack templates.
+
+- **languagePack** - function(String), multiplicity 0..n. Iterates all language-pack templates, for each template does:
+  - substritute given language and other parameters
+  - create source with the resulting url
     
 - **uploadEclipse** - optional, hashmap. See more information at [uploadEclipse configuration](#uploadeclipse-configuration).     
     

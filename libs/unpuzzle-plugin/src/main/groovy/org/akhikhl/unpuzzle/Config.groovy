@@ -18,8 +18,8 @@ class Config {
   private static void merge(Config target, Config source) {
     if(source.parentConfig)
       merge(target, source.parentConfig)
-    if(source.defaultEclipseVersion != null)
-      target.defaultEclipseVersion = source.defaultEclipseVersion
+    if(source.selectedEclipseVersion != null)
+      target.selectedEclipseVersion = source.selectedEclipseVersion
     target.languagePacks.addAll(source.languagePacks)
     source.lazyVersions.each { String versionString, List<Closure> sourceClosureList ->
       List<Closure> targetClosureList = target.lazyVersions[versionString]
@@ -32,8 +32,8 @@ class Config {
 
   Config parentConfig
 
-  String defaultEclipseVersion = null
-  List<String> languagePacks = []
+  String selectedEclipseVersion = null
+  Set<String> languagePacks = new LinkedHashSet()
   Map<String, List<Closure>> lazyVersions = [:]
   private Map<String, EclipseVersionConfig> versionConfigs = null
   Map uploadEclipse = [:]
@@ -54,6 +54,10 @@ class Config {
     Config result = new Config()
     merge(result, this)
     return result
+  }
+
+  EclipseVersionConfig getSelectedVersionConfig() {
+    getVersionConfigs()[selectedEclipseVersion]
   }
 
   Map<String, EclipseVersionConfig> getVersionConfigs() {

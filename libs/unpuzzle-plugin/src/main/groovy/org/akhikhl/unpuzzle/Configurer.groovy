@@ -106,9 +106,9 @@ class Configurer {
 
   private EclipseVersionConfig getEclipseVersionConfig() {
     Config econf = project.unpuzzle.effectiveConfig
-    EclipseVersionConfig vconf = econf.versionConfigs[econf.defaultEclipseVersion]
+    EclipseVersionConfig vconf = econf.versionConfigs[econf.selectedEclipseVersion]
     if(!vconf)
-      throw new GradleException("Eclipse version ${econf.defaultEclipseVersion} is not configured")
+      throw new GradleException("Eclipse version ${econf.selectedEclipseVersion} is not configured")
     return vconf
   }
 
@@ -127,7 +127,7 @@ class Configurer {
     EclipseDeployer.allDownloadedPackagesAreInstalled(vconf.sources, unpuzzleDir, mavenDeployer)
   }
 
-  private void setupConfigChain(Project project) {
+  private static void setupConfigChain(Project project) {
     if(project.unpuzzle.parentConfig == null) {
       Project p = project.parent
       while(p != null && !p.extensions.findByName('unpuzzle'))
