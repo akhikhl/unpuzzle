@@ -36,6 +36,7 @@ Binding binding = new Binding()
 binding.current_os = project.ext.current_os
 binding.current_arch = project.ext.current_arch
 binding.group = 'eclipse'
+binding.eclipseMirror = 'http://mirror.netcologne.de'
 binding.source = { Map options = [:], String url ->
   def src = new EclipseSource(url: url)
   if(options.sourcesOnly)
@@ -66,7 +67,7 @@ task('installEclipse') {
   outputs.file outputMarkerFile
   doLast {
     Deployer mavenDeployer = new Deployer(new File(System.getProperty('user.home'), '.m2/repository').toURI().toURL().toString())
-    new EclipseDeployer(project.ext.eclipseGroup).deploy(project.ext.eclipseSources, buildDir, mavenDeployer)
+    new EclipseDeployer(buildDir, project.ext.eclipseGroup, mavenDeployer).deploy(project.ext.eclipseSources)
     outputMarkerFile.text = new java.util.Date()
   }
 }
@@ -76,7 +77,7 @@ task('uploadEclipse') {
   doLast {
     def corporateDeployment = rootProject.ext.corporateDeployment
     Deployer mavenDeployer = new Deployer(corporateDeployment.url, user: corporateDeployment.user, password: corporateDeployment.password)
-    new EclipseDeployer(project.ext.eclipseGroup).deploy(project.ext.eclipseSources, buildDir, mavenDeployer)
+    new EclipseDeployer(buildDir, project.ext.eclipseGroup, mavenDeployer).deploy(project.ext.eclipseSources)
   }
 }
 
