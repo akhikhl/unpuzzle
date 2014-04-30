@@ -42,14 +42,14 @@ class Config {
   }
 
   EclipseVersionConfig getSelectedVersionConfig() {
-    getVersionConfigs()[getSelectedEclipseVersion()]
+    getVersionConfigs()[selectedEclipseVersion]
   }
 
   Map<String, EclipseVersionConfig> getVersionConfigs() {
     if(versionConfigs == null) {
-      versionConfigs = [:]
+      Map m = [:]
       lazyVersions.each { String versionString, List<Closure> closureList ->
-        def versionConfig = versionConfigs[versionString] = new EclipseVersionConfig()
+        def versionConfig = m[versionString] = new EclipseVersionConfig()
         for(Closure closure in closureList) {
           closure = closure.rehydrate(versionConfig, closure.owner, closure.thisObject)
           closure.resolveStrategy = Closure.DELEGATE_FIRST
@@ -58,6 +58,7 @@ class Config {
         for(String language in languagePacks)
           versionConfig.languagePack(language)
       }
+      versionConfigs = m
     }
     return versionConfigs
   }
