@@ -131,15 +131,15 @@ class Configurer {
 
   void installEclipse() {
     def vconf = getSelectedVersionConfig()
-    log.warn 'Installing eclipse version {} to maven-repo {}, maven-group {}', effectiveConfig.selectedEclipseVersion, localMavenRepositoryDir.toURI().toString(), vconf.eclipseMavenGroup
     if(effectiveConfig.dryRun) {
-      log.warn 'unpuzzle.dryRun=true, no work done'
+      log.warn 'installEclipse: unpuzzle.dryRun=true, no work done'
       return
     }
     def mavenDeployer = new Deployer(localMavenRepositoryDir)
     def eclipseDeployer = new EclipseDeployer(unpuzzleDir, vconf.eclipseMavenGroup, mavenDeployer)
     if(!eclipseDeployer.allDownloadedPackagesAreInstalled(vconf.sources)) {
       downloadEclipse()
+      log.warn 'Installing eclipse version {} to maven-repo {}, maven-group {}', effectiveConfig.selectedEclipseVersion, localMavenRepositoryDir.toURI().toString(), vconf.eclipseMavenGroup
       eclipseDeployer.deploy(vconf.sources)
     }
   }
@@ -172,15 +172,16 @@ class Configurer {
 
   void uninstallEclipse() {
     def vconf = getSelectedVersionConfig()
-    log.warn 'Uninstalling eclipse version {} from maven-repo {}, maven-group {}', effectiveConfig.selectedEclipseVersion, localMavenRepositoryDir.toURI().toString(), vconf.eclipseMavenGroup
     if(effectiveConfig.dryRun) {
-      log.warn 'unpuzzle.dryRun=true, no work done'
+      log.warn 'uninstallEclipse: unpuzzle.dryRun=true, no work done'
       return
     }
     def mavenDeployer = new Deployer(localMavenRepositoryDir)
     def eclipseDeployer = new EclipseDeployer(unpuzzleDir, vconf.eclipseMavenGroup, mavenDeployer)
-    if(!eclipseDeployer.allDownloadedPackagesAreUninstalled(vconf.sources))
+    if(!eclipseDeployer.allDownloadedPackagesAreUninstalled(vconf.sources)) {
+      log.warn 'Uninstalling eclipse version {} from maven-repo {}, maven-group {}', effectiveConfig.selectedEclipseVersion, localMavenRepositoryDir.toURI().toString(), vconf.eclipseMavenGroup
       eclipseDeployer.uninstall(vconf.sources)
+    }
   }
 
   boolean uninstallEclipseUpToDate() {
@@ -204,11 +205,11 @@ class Configurer {
       return
     }
     def vconf = getSelectedVersionConfig()
-    log.warn 'Deploying eclipse version {} to maven-repo {}, maven-group {}', effectiveConfig.selectedEclipseVersion, uploadEclipse.url, vconf.eclipseMavenGroup
     if(effectiveConfig.dryRun) {
-      log.warn 'unpuzzle.dryRun=true, no work done'
+      log.warn 'uploadEclipse: unpuzzle.dryRun=true, no work done'
       return
     }
+    log.warn 'Deploying eclipse version {} to maven-repo {}, maven-group {}', effectiveConfig.selectedEclipseVersion, uploadEclipse.url, vconf.eclipseMavenGroup
     Deployer mavenDeployer = new Deployer(uploadEclipse.url, user: uploadEclipse.user, password: uploadEclipse.password)
     def eclipseDeployer = new EclipseDeployer(unpuzzleDir, vconf.eclipseMavenGroup, mavenDeployer)
     eclipseDeployer.deploy(vconf.sources)
