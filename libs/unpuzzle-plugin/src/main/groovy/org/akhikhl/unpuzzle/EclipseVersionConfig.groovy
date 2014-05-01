@@ -21,10 +21,6 @@ class EclipseVersionConfig {
   List<Closure> lazySources = []
   Set<String> languagePacks = new LinkedHashSet()
 
-  void sources(Closure closure) {
-    lazySources.add(closure)
-  }
-
   Collection<EclipseSource> getSources() {
     getSourcesConfig().sources
   }
@@ -43,6 +39,10 @@ class EclipseVersionConfig {
 
   void languagePack(String language) {
     languagePacks.add(language)
+  }
+
+  void sources(Closure closure) {
+    lazySources.add(closure)
   }
 
   @Override
