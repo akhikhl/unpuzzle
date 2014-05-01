@@ -154,4 +154,35 @@ class ConfigHierarchyTest extends Specification {
     p1.effectiveUnpuzzle.versionConfigs.a.sources.collect { it.url } == ['aaa/source-1', 'aaa/source-2']
     p2.effectiveUnpuzzle.versionConfigs.a.sources.collect { it.url } == ['bbb/source-1', 'bbb/source-2', 'bbb/source-3']
   }
+
+  def 'should support language pack templates'() {
+  when:
+    Project p1 = ProjectBuilder.builder().withName('p1').build()
+    plugin.apply(p1)
+    p1.unpuzzle.with {
+      selectedEclipseVersion = 'a'
+      eclipseVersion 'a', {
+        eclipseMirror = 'aaa'
+        sources {
+          // intentional: string, not GString (resolved when language pack is applied)
+          languagePackTemplate '${eclipseMirror}/someFolder/somePackage_${language}.tar.gz'
+          languagePack 'de'
+        }
+      }
+    }
+    Project p2 = ProjectBuilder.builder().withName('p2').withParent(p1).build()
+    plugin.apply(p2)
+    p2.unpuzzle.with {
+      eclipseVersion 'a', {
+        eclipseMirror = 'bbb'
+        sources {
+          languagePack 'fr'
+          languagePack 'es'
+        }
+      }
+    }
+  then:
+    p1.effectiveUnpuzzle.versionConfigs.a.sources.collect { it.url } == ['aaa/someFolder/somePackage_de.tar.gz']
+    p2.effectiveUnpuzzle.versionConfigs.a.sources.collect { it.url } == ['bbb/someFolder/somePackage_de.tar.gz', 'bbb/someFolder/somePackage_fr.tar.gz', 'bbb/someFolder/somePackage_es.tar.gz']
+  }
 }
