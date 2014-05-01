@@ -12,9 +12,6 @@ import org.akhikhl.unpuzzle.eclipse2maven.EclipseSource
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
-
 import spock.lang.Specification
 
 /**
@@ -23,12 +20,7 @@ import spock.lang.Specification
  */
 class ConfigHierarchyTest extends Specification {
 
-  private static Logger log
   private UnpuzzlePlugin plugin
-
-  def setupSpec() {
-    log = LoggerFactory.getLogger(ConfigHierarchyTest)
-  }
 
   def setup() {
     plugin = new UnpuzzlePlugin()
