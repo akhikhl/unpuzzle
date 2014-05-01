@@ -41,6 +41,15 @@ class Configurer {
     if(!project.extensions.findByName('unpuzzle'))
       project.extensions.create('unpuzzle', Config)
 
+    def self = this
+
+    project.metaClass {
+
+      getEffectiveUnpuzzle = {
+        self.getEffectiveConfig()
+      }
+    }
+
     setupConfigChain(project)
 
     project.afterEvaluate {
@@ -104,16 +113,29 @@ class Configurer {
     new EclipseDownloader().downloadAndUnpack(vconf.sources, unpuzzleDir)
   }
 
+  final Config getEffectiveConfig() {
+    if(!project.ext.has('_effectiveUnpuzzle')) {
+      Config econfig = new Config()
+      Config.merge(econfig, project.unpuzzle)
+      project.ext._effectiveUnpuzzle = econfig
+    }
+    return project._effectiveUnpuzzle
+  }
+
   private EclipseVersionConfig getSelectedVersionConfig() {
-    Config econf = project.unpuzzle.effectiveConfig
-    EclipseVersionConfig vconf = econf.selectedVersionConfig
+    EclipseVersionConfig vconf = effectiveConfig.selectedVersionConfig
     if(!vconf)
-      throw new GradleException("Eclipse version ${econf.selectedEclipseVersion} is not configured")
+      throw new GradleException("Eclipse version ${effectiveConfig.selectedEclipseVersion} is not configured")
     return vconf
   }
 
   void installEclipse() {
     def vconf = getSelectedVersionConfig()
+    log.warn 'Installing eclipse version {} to maven-repo {}, maven-group {}', effectiveConfig.selectedEclipseVersion, localMavenRepositoryDir.toURI().toString(), vconf.eclipseMavenGroup
+    if(effectiveConfig.dryRun) {
+      log.warn 'unpuzzle.dryRun=true, no work done'
+      return
+    }
     def mavenDeployer = new Deployer(localMavenRepositoryDir)
     def eclipseDeployer = new EclipseDeployer(unpuzzleDir, vconf.eclipseMavenGroup, mavenDeployer)
     if(!eclipseDeployer.allDownloadedPackagesAreInstalled(vconf.sources)) {
@@ -124,6 +146,8 @@ class Configurer {
 
   boolean installEclipseUpToDate() {
     def vconf = getSelectedVersionConfig()
+    if(effectiveConfig.dryRun)
+      return false
     def mavenDeployer = new Deployer(localMavenRepositoryDir)
     new EclipseDeployer(unpuzzleDir, vconf.eclipseMavenGroup, mavenDeployer).allDownloadedPackagesAreInstalled(vconf.sources)
   }
@@ -148,6 +172,11 @@ class Configurer {
 
   void uninstallEclipse() {
     def vconf = getSelectedVersionConfig()
+    log.warn 'Uninstalling eclipse version {} from maven-repo {}, maven-group {}', effectiveConfig.selectedEclipseVersion, localMavenRepositoryDir.toURI().toString(), vconf.eclipseMavenGroup
+    if(effectiveConfig.dryRun) {
+      log.warn 'unpuzzle.dryRun=true, no work done'
+      return
+    }
     def mavenDeployer = new Deployer(localMavenRepositoryDir)
     def eclipseDeployer = new EclipseDeployer(unpuzzleDir, vconf.eclipseMavenGroup, mavenDeployer)
     if(!eclipseDeployer.allDownloadedPackagesAreUninstalled(vconf.sources))
@@ -156,6 +185,8 @@ class Configurer {
 
   boolean uninstallEclipseUpToDate() {
     def vconf = getSelectedVersionConfig()
+    if(effectiveConfig.dryRun)
+      return false
     def mavenDeployer = new Deployer(localMavenRepositoryDir)
     def eclipseDeployer = new EclipseDeployer(unpuzzleDir, vconf.eclipseMavenGroup, mavenDeployer)
     eclipseDeployer.allDownloadedPackagesAreUninstalled(vconf.sources)
@@ -165,15 +196,19 @@ class Configurer {
     def uploadEclipse = [:]
     if(project.hasProperty('uploadEclipse'))
       uploadEclipse << project.uploadEclipse
-    uploadEclipse << project.unpuzzle.effectiveConfig.uploadEclipse
+    uploadEclipse << effectiveConfig.uploadEclipse
     if(!uploadEclipse || !uploadEclipse.url || !uploadEclipse.user || !uploadEclipse.password) {
-      System.err.println uploadEclipse
-      System.err.println 'Could not upload eclipse: uploadEclipse properties not defined.'
-      System.err.println 'See Unpuzzle online documentation for more details:'
-      System.err.println 'https://github.com/akhikhl/unpuzzle/blob/master/README.md'
+      log.error 'Could not upload eclipse: uploadEclipse properties not defined.'
+      log.error 'See Unpuzzle online documentation for more details:'
+      log.error 'https://github.com/akhikhl/unpuzzle/blob/master/README.md'
       return
     }
     def vconf = getSelectedVersionConfig()
+    log.warn 'Deploying eclipse version {} to maven-repo {}, maven-group {}', effectiveConfig.selectedEclipseVersion, uploadEclipse.url, vconf.eclipseMavenGroup
+    if(effectiveConfig.dryRun) {
+      log.warn 'unpuzzle.dryRun=true, no work done'
+      return
+    }
     Deployer mavenDeployer = new Deployer(uploadEclipse.url, user: uploadEclipse.user, password: uploadEclipse.password)
     def eclipseDeployer = new EclipseDeployer(unpuzzleDir, vconf.eclipseMavenGroup, mavenDeployer)
     eclipseDeployer.deploy(vconf.sources)

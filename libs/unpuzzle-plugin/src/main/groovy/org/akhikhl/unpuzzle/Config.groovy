@@ -23,6 +23,9 @@ class Config {
   private Map<String, EclipseVersionConfig> versionConfigs = null
   Map uploadEclipse = [:]
 
+  // use this only for testing/debugging!
+  boolean dryRun = false
+
   void eclipseVersion(String versionString, Closure closure) {
     List<Closure> closureList = lazyVersions[versionString]
     if(closureList == null)
@@ -33,12 +36,6 @@ class Config {
 
   void languagePack(String language) {
     languagePacks.add(language)
-  }
-
-  Config getEffectiveConfig() {
-    Config result = new Config()
-    merge(result, this)
-    return result
   }
 
   EclipseVersionConfig getSelectedVersionConfig() {
@@ -63,7 +60,7 @@ class Config {
     return versionConfigs.asImmutable()
   }
 
-  private static void merge(Config target, Config source) {
+  protected static void merge(Config target, Config source) {
     if(source.parentConfig)
       merge(target, source.parentConfig)
     if(source.selectedEclipseVersion != null)
@@ -76,5 +73,7 @@ class Config {
       targetClosureList.addAll(sourceClosureList)
     }
     target.uploadEclipse << source.uploadEclipse
+    if(source.dryRun)
+      target.dryRun = true
   }
 }

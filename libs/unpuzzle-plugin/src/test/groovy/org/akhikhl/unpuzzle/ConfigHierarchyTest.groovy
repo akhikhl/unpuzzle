@@ -9,10 +9,13 @@ package org.akhikhl.unpuzzle
 
 import org.akhikhl.unpuzzle.eclipse2maven.EclipseSource
 
-import spock.lang.Specification
+import org.gradle.api.Project
+import org.gradle.testfixtures.ProjectBuilder
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+
+import spock.lang.Specification
 
 /**
  *
@@ -20,106 +23,143 @@ import org.slf4j.LoggerFactory
  */
 class ConfigHierarchyTest extends Specification {
 
-  private static final Logger log = LoggerFactory.getLogger(ConfigHierarchyTest)
+  private static Logger log
+  private UnpuzzlePlugin plugin
+
+  def setupSpec() {
+    log = LoggerFactory.getLogger(ConfigHierarchyTest)
+  }
+
+  def setup() {
+    plugin = new UnpuzzlePlugin()
+  }
 
   def 'should support selectedEclipseVersion inheritance and override'() {
   when:
-    def c1 = new Config(selectedEclipseVersion: 'a')
-    def c2 = new Config(parentConfig: c1)
-    def c3 = new Config(parentConfig: c2, selectedEclipseVersion: 'b')
-    def c4 = new Config(parentConfig: c3)
-    def c5 = new Config(parentConfig: c4)
+    Project p1 = ProjectBuilder.builder().withName('p1').build()
+    plugin.apply(p1)
+    p1.unpuzzle.selectedEclipseVersion = 'a'
+    Project p2 = ProjectBuilder.builder().withName('p2').withParent(p1).build()
+    plugin.apply(p2)
+    Project p3 = ProjectBuilder.builder().withName('p3').withParent(p2).build()
+    plugin.apply(p3)
+    p3.unpuzzle.selectedEclipseVersion = 'b'
+    Project p4 = ProjectBuilder.builder().withName('p4').withParent(p3).build()
+    plugin.apply(p4)
+    Project p5 = ProjectBuilder.builder().withName('p5').withParent(p4).build()
+    plugin.apply(p5)
   then:
-    c1.effectiveConfig.selectedEclipseVersion == 'a'
-    c2.effectiveConfig.selectedEclipseVersion == 'a'
-    c3.effectiveConfig.selectedEclipseVersion == 'b'
-    c4.effectiveConfig.selectedEclipseVersion == 'b'
-    c5.effectiveConfig.selectedEclipseVersion == 'b'
+    p1.effectiveUnpuzzle.selectedEclipseVersion == 'a'
+    p2.effectiveUnpuzzle.selectedEclipseVersion == 'a'
+    p3.effectiveUnpuzzle.selectedEclipseVersion == 'b'
+    p4.effectiveUnpuzzle.selectedEclipseVersion == 'b'
+    p5.effectiveUnpuzzle.selectedEclipseVersion == 'b'
   }
 
   def 'should support eclipseMavenGroup inheritance'() {
   when:
-    def c1 = new Config(selectedEclipseVersion: 'a')
-    c1.eclipseVersion 'a', {
-      eclipseMavenGroup = 'x'
+    Project p1 = ProjectBuilder.builder().withName('p1').build()
+    plugin.apply(p1)
+    p1.unpuzzle.with {
+      selectedEclipseVersion = 'a'
+      eclipseVersion 'a', {
+        eclipseMavenGroup = 'x'
+      }
+      eclipseVersion 'b', {
+      }
+      eclipseVersion 'c', {
+        eclipseMavenGroup = 'x1'
+      }
     }
-    c1.eclipseVersion 'b', {
-    }
-    c1.eclipseVersion 'c', {
-      eclipseMavenGroup = 'x1'
-    }
-    def c2 = new Config(parentConfig: c1)
-    c2.eclipseVersion 'a', {
-      eclipseMavenGroup = 'y'
-    }
-    c2.eclipseVersion 'b', {
-      eclipseMavenGroup = 'z'
+    Project p2 = ProjectBuilder.builder().withName('p2').withParent(p1).build()
+    plugin.apply(p2)
+    p2.unpuzzle.with {
+      eclipseVersion 'a', {
+        eclipseMavenGroup = 'y'
+      }
+      eclipseVersion 'b', {
+        eclipseMavenGroup = 'z'
+      }
     }
   then:
-    c1.effectiveConfig.versionConfigs.a.eclipseMavenGroup == 'x'
-    c1.effectiveConfig.versionConfigs.b.eclipseMavenGroup == null
-    c1.effectiveConfig.versionConfigs.c.eclipseMavenGroup == 'x1'
-    c2.effectiveConfig.versionConfigs.a.eclipseMavenGroup == 'y'
-    c2.effectiveConfig.versionConfigs.b.eclipseMavenGroup == 'z'
-    c2.effectiveConfig.versionConfigs.c.eclipseMavenGroup == 'x1'
+    p1.effectiveUnpuzzle.versionConfigs.a.eclipseMavenGroup == 'x'
+    p1.effectiveUnpuzzle.versionConfigs.b.eclipseMavenGroup == null
+    p1.effectiveUnpuzzle.versionConfigs.c.eclipseMavenGroup == 'x1'
+    p2.effectiveUnpuzzle.versionConfigs.a.eclipseMavenGroup == 'y'
+    p2.effectiveUnpuzzle.versionConfigs.b.eclipseMavenGroup == 'z'
+    p2.effectiveUnpuzzle.versionConfigs.c.eclipseMavenGroup == 'x1'
   }
 
   def 'should support source inheritance'() {
   when:
-    def c1 = new Config(selectedEclipseVersion: 'a')
-    c1.eclipseVersion 'a', {
-      sources {
-        source 'source-1'
-        source 'source-2'
+    Project p1 = ProjectBuilder.builder().withName('p1').build()
+    plugin.apply(p1)
+    p1.unpuzzle.with {
+      selectedEclipseVersion = 'a'
+      eclipseVersion 'a', {
+        sources {
+          source 'source-1'
+          source 'source-2'
+        }
+      }
+      eclipseVersion 'b', {
+      }
+      eclipseVersion 'c', {
+        sources {
+          source 'source-3'
+          source 'source-4'
+        }
       }
     }
-    c1.eclipseVersion 'b', {
-    }
-    c1.eclipseVersion 'c', {
-      sources {
-        source 'source-3'
-        source 'source-4'
+    Project p2 = ProjectBuilder.builder().withName('p2').withParent(p1).build()
+    plugin.apply(p2)
+    p2.unpuzzle.with {
+      eclipseVersion 'a', {
+        sources {
+          source 'source-5'
+        }
       }
-    }
-    def c2 = new Config(parentConfig: c1)
-    c2.eclipseVersion 'a', {
-      sources {
-        source 'source-5'
-      }
-    }
-    c2.eclipseVersion 'b', {
-      sources {
-        source 'source-6'
+      eclipseVersion 'b', {
+        sources {
+          source 'source-6'
+        }
       }
     }
   then:
-    c1.effectiveConfig.versionConfigs.a.sources.collect { it.url } == ['source-1', 'source-2']
-    c1.effectiveConfig.versionConfigs.b.sources.collect { it.url } == []
-    c1.effectiveConfig.versionConfigs.c.sources.collect { it.url } == ['source-3', 'source-4']
-    c2.effectiveConfig.versionConfigs.a.sources.collect { it.url } == ['source-1', 'source-2', 'source-5']
-    c2.effectiveConfig.versionConfigs.b.sources.collect { it.url } == ['source-6']
-    c2.effectiveConfig.versionConfigs.c.sources.collect { it.url } == ['source-3', 'source-4']
+    p1.effectiveUnpuzzle.versionConfigs.a.sources.collect { it.url } == ['source-1', 'source-2']
+    p1.effectiveUnpuzzle.versionConfigs.b.sources.collect { it.url } == []
+    p1.effectiveUnpuzzle.versionConfigs.c.sources.collect { it.url } == ['source-3', 'source-4']
+    p2.effectiveUnpuzzle.versionConfigs.a.sources.collect { it.url } == ['source-1', 'source-2', 'source-5']
+    p2.effectiveUnpuzzle.versionConfigs.b.sources.collect { it.url } == ['source-6']
+    p2.effectiveUnpuzzle.versionConfigs.c.sources.collect { it.url } == ['source-3', 'source-4']
   }
 
   def 'should support mirror override'() {
   when:
-    def c1 = new Config(selectedEclipseVersion: 'a')
-    c1.eclipseVersion 'a', {
-      eclipseMirror = 'aaa'
-      sources {
-        source "${eclipseMirror}/source-1"
-        source "${eclipseMirror}/source-2"
+    Project p1 = ProjectBuilder.builder().withName('p1').build()
+    plugin.apply(p1)
+    p1.unpuzzle.with {
+      selectedEclipseVersion = 'a'
+      eclipseVersion 'a', {
+        eclipseMirror = 'aaa'
+        sources {
+          source "${eclipseMirror}/source-1"
+          source "${eclipseMirror}/source-2"
+        }
       }
     }
-    def c2 = new Config(parentConfig: c1)
-    c2.eclipseVersion 'a', {
-      eclipseMirror = 'bbb'
-      sources {
-        source "${eclipseMirror}/source-3"
+    Project p2 = ProjectBuilder.builder().withName('p2').withParent(p1).build()
+    plugin.apply(p2)
+    p2.unpuzzle.with {
+      eclipseVersion 'a', {
+        eclipseMirror = 'bbb'
+        sources {
+          source "${eclipseMirror}/source-3"
+        }
       }
     }
   then:
-    c1.effectiveConfig.versionConfigs.a.sources.collect { it.url } == ['aaa/source-1', 'aaa/source-2']
-    c2.effectiveConfig.versionConfigs.a.sources.collect { it.url } == ['bbb/source-1', 'bbb/source-2', 'bbb/source-3']
+    p1.effectiveUnpuzzle.versionConfigs.a.sources.collect { it.url } == ['aaa/source-1', 'aaa/source-2']
+    p2.effectiveUnpuzzle.versionConfigs.a.sources.collect { it.url } == ['bbb/source-1', 'bbb/source-2', 'bbb/source-3']
   }
 }
