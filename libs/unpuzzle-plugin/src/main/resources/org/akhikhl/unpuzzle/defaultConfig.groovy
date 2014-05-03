@@ -94,7 +94,7 @@ unpuzzle {
 
   eclipseVersion('3.7.2') {
 
-    eclipseMavenGroup = 'eclipse-indigo'
+    eclipseMavenGroup = 'eclipse-indigo-sr2'
 
     eclipseMirror = 'http://mirror.netcologne.de'
 
@@ -117,7 +117,7 @@ unpuzzle {
 
   eclipseVersion('3.7.1') {
 
-    eclipseMavenGroup = 'eclipse-indigo'
+    eclipseMavenGroup = 'eclipse-indigo-sr1'
 
     eclipseMirror = 'http://mirror.netcologne.de'
 
