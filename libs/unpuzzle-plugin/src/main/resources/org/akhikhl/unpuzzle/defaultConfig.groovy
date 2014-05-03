@@ -1,10 +1,10 @@
 unpuzzle {
 
-  selectedEclipseVersion = '4.3'
+  selectedEclipseVersion = '4.3.2'
 
-  eclipseVersion('4.3') {
+  eclipseVersion('4.3.2') {
 
-    eclipseMavenGroup = 'eclipse-kepler'
+    eclipseMavenGroup = 'eclipse-kepler-sr2'
 
     eclipseMirror = 'http://mirror.netcologne.de'
 
@@ -24,9 +24,31 @@ unpuzzle {
     }
   }
 
-  eclipseVersion('4.2') {
+  eclipseVersion('4.3.1') {
 
-    eclipseMavenGroup = 'eclipse-juno'
+    eclipseMavenGroup = 'eclipse-kepler-sr1'
+
+    eclipseMirror = 'http://mirror.netcologne.de'
+
+    eclipseArchiveMirror = 'http://archive.eclipse.org'
+
+    sources {
+
+      def suffix_os = [ 'linux': 'linux-gtk', 'windows': 'win32' ]
+      def suffix_arch = [ 'x86_32': '', 'x86_64': '-x86_64' ]
+      def fileExt_os = [ 'linux': 'tar.gz', 'windows': 'zip' ]
+
+      source "$eclipseMirror/eclipse//technology/epp/downloads/release/kepler/SR1/eclipse-jee-kepler-SR1-${suffix_os[current_os]}${suffix_arch[current_arch]}.${fileExt_os[current_os]}"
+      source "$eclipseMirror/eclipse//eclipse/downloads/drops4/R-4.3.1-201309111000/eclipse-SDK-4.3.1-${suffix_os[current_os]}${suffix_arch[current_arch]}.${fileExt_os[current_os]}", sourcesOnly: true
+      source "$eclipseMirror/eclipse//eclipse/downloads/drops4/R-4.3.1-201309111000/eclipse-4.3.1-delta-pack.zip"
+
+      languagePackTemplate '${eclipseMirror}/eclipse//technology/babel/babel_language_packs/R0.11.1/kepler/BabelLanguagePack-eclipse-${language}_4.3.0.v20131123020001.zip'
+    }
+  }
+
+  eclipseVersion('4.2.2') {
+
+    eclipseMavenGroup = 'eclipse-juno-sr2'
 
     eclipseMirror = 'http://mirror.netcologne.de'
 
@@ -47,7 +69,30 @@ unpuzzle {
     }
   }
 
-  eclipseVersion('3.7') {
+  eclipseVersion('4.2.1') {
+
+    eclipseMavenGroup = 'eclipse-juno-sr1'
+
+    eclipseMirror = 'http://mirror.netcologne.de'
+
+    eclipseArchiveMirror = 'http://archive.eclipse.org'
+
+    sources {
+
+      def suffix_os = [ 'linux': 'linux-gtk', 'windows': 'win32' ]
+      def suffix_arch = [ 'x86_32': '', 'x86_64': '-x86_64' ]
+      def fileExt_os = [ 'linux': 'tar.gz', 'windows': 'zip' ]
+
+      source "$eclipseArchiveMirror/technology/epp/downloads/release/juno/SR1/eclipse-jee-juno-SR1-${suffix_os[current_os]}${suffix_arch[current_arch]}.${fileExt_os[current_os]}"
+      source "$eclipseArchiveMirror/eclipse/downloads/drops4/R-4.2.1-201209141800/eclipse-SDK-4.2.1-${suffix_os[current_os]}${suffix_arch[current_arch]}.${fileExt_os[current_os]}", sourcesOnly: true
+      source "$eclipseArchiveMirror/eclipse/downloads/drops4/R-4.2.1-201209141800/eclipse-4.2.1-delta-pack.zip"
+
+      languagePackTemplate '${eclipseMirror}/eclipse//technology/babel/babel_language_packs/R0.11.1/juno/BabelLanguagePack-eclipse-${language}_4.2.0.v20131123041006.zip'
+      languagePackTemplate '${eclipseMirror}/eclipse//technology/babel/babel_language_packs/R0.11.1/juno/BabelLanguagePack-rt.equinox-${language}_4.2.0.v20131123041006.zip'
+    }
+  }
+
+  eclipseVersion('3.7.2') {
 
     eclipseMavenGroup = 'eclipse-indigo'
 
@@ -69,4 +114,27 @@ unpuzzle {
       languagePackTemplate '${eclipseMirror}/eclipse//technology/babel/babel_language_packs/R0.11.1/indigo/BabelLanguagePack-rt.equinox-${language}_3.7.0.v20131123061707.zip'
     }
   }
+
+  eclipseVersion('3.7.1') {
+
+    eclipseMavenGroup = 'eclipse-indigo'
+
+    eclipseMirror = 'http://mirror.netcologne.de'
+
+    eclipseArchiveMirror = 'http://archive.eclipse.org'
+
+    sources {
+
+      def suffix_os = [ 'linux': 'linux-gtk', 'windows': 'win32' ]
+      def suffix_arch = [ 'x86_32': '', 'x86_64': '-x86_64' ]
+      def fileExt_os = [ 'linux': 'tar.gz', 'windows': 'zip' ]
+
+      source "$eclipseArchiveMirror/technology/epp/downloads/release/indigo/SR1/eclipse-java-indigo-SR1-${suffix_os[current_os]}${suffix_arch[current_arch]}.${fileExt_os[current_os]}"
+      source "$eclipseArchiveMirror/eclipse/downloads/drops/R-3.7.1-201109091335/eclipse-SDK-3.7.1-${suffix_os[current_os]}${suffix_arch[current_arch]}.${fileExt_os[current_os]}", sourcesOnly: true
+      source "$eclipseArchiveMirror/eclipse/downloads/drops/R-3.7.1-201109091335/eclipse-3.7.1-delta-pack.zip"
+
+      languagePackTemplate '${eclipseMirror}/eclipse//technology/babel/babel_language_packs/R0.11.1/indigo/BabelLanguagePack-eclipse-${language}_3.7.0.v20131123061707.zip'
+      languagePackTemplate '${eclipseMirror}/eclipse//technology/babel/babel_language_packs/R0.11.1/indigo/BabelLanguagePack-rt.equinox-${language}_3.7.0.v20131123061707.zip'
+    }
+  }  
 }
