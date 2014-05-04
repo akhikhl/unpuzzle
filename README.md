@@ -212,7 +212,7 @@ and can be used for calculating correct version of eclipse to download:
 
 - **current_arch** - string assigned to 'x86_32' or 'x86_64', depending on the current processor architecture.
     
-You can see the complete and working Unpuzzle configuration [here](blob/master/libs/unpuzzle-plugin/src/main/resources/org/akhikhl/unpuzzle/defaultConfig.groovy)
+You can see the complete and working Unpuzzle configuration [here](libs/unpuzzle-plugin/src/main/resources/org/akhikhl/unpuzzle/defaultConfig.groovy)
 
 ## uploadEclipse configuration
 
@@ -287,7 +287,7 @@ The following properties are appended rather then overridden:
 - eclipseVersion/sources/languagePackTemplate
 - eclipseVersion/sources/languagePack
 
-Examples of hierarchical configurations are given in [ConfigHierarchyTest.groovy](blob/master/libs/unpuzzle-plugin/src/test/groovy/org/akhikhl/unpuzzle/ConfigHierarchyTest.groovy)
+Examples of hierarchical configurations are given in [ConfigHierarchyTest.groovy](libs/unpuzzle-plugin/src/test/groovy/org/akhikhl/unpuzzle/ConfigHierarchyTest.groovy)
 unit-test.
 
 ## Support of multiple Eclipse versions
@@ -301,7 +301,7 @@ unpuzzle {
 }
 ```
 
-Distribution packages for these versions are predefined in internal script [defaultConfig.groovy](blob/master/libs/unpuzzle-plugin/src/main/resources/org/akhikhl/unpuzzle/defaultConfig.groovy).
+Distribution packages for these versions are predefined in internal script [defaultConfig.groovy](libs/unpuzzle-plugin/src/main/resources/org/akhikhl/unpuzzle/defaultConfig.groovy).
 This script is always loaded as an implicit ancestor for Unpuzzle configuration.
 
 You are not restricted to using only the designated versions of Eclipse.
@@ -312,7 +312,7 @@ Any other Eclipse versions (and any additional packages to them) could be config
 Gradle plugin might be sufficient for the most use-cases requiring mavenizing OSGi-bundles.
 However, you can mavenize OSGi-bundles even without gradle plugin, just by using Unpuzzle API functions.
 
-Good example of Unpuzzle API usage is given[here](blob/master/examples/deployEclipseKepler/build.gradle).
+Good example of Unpuzzle API usage is given[here](examples/deployEclipseKepler/build.gradle).
 
 Essentially, Unpuzzle API consists of four classes:
 
@@ -333,5 +333,5 @@ Essentially, Unpuzzle API consists of four classes:
 
 Copyright 2014 (c) Andrey Hihlovskiy
 
-All versions, present and past, of Unpuzzle are licensed under [MIT license](blob/master/license.txt).
+All versions, present and past, of Unpuzzle are licensed under [MIT license](license.txt).
 
