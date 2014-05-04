@@ -21,8 +21,8 @@ All versions of Unpuzzle are available at jcenter and maven-central under the gr
   - [cleanUnpuzzle](#cleanunpuzzle)
 4. [Unpuzzle configuration](#Unpuzzle-configuration)
 5. [uploadEclipse configuration](#uploadeclipse-configuration)
-6. [Configuration hierarchy](#Configuration-hierarchy)
-7. [Support of multiple Eclipse versions](#Support-of-multiple-eclipse-versions)
+6. [Configuration hierarchy](#configuration-hierarchy)
+7. [Support of multiple Eclipse versions](#support-of-multiple-eclipse-versions)
 8. [Jar-library API](#jar-library-api)
 9. [Copyright and License](#copyright-and-license)
 
