@@ -19,10 +19,12 @@ All versions of Unpuzzle are available at jcenter and maven-central under the gr
   - [uninstallEclipse](#uninstalleclipse)  
   - [uploadEclipse](#uploadeclipse)
   - [cleanUnpuzzle](#cleanunpuzzle)
-4. [Gradle plugin extension](#gradle-plugin-extension)
+4. [Unpuzzle configuration](#Unpuzzle-configuration)
 5. [uploadEclipse configuration](#uploadeclipse-configuration)
-6. [Jar-library API](#jar-library-api)
-7. [Copyright and License](#copyright-and-license)
+6. [Configuration hierarchy](#Configuration-hierarchy)
+7. [Support of multiple Eclipse versions](#Support-of-multiple-eclipse-versions)
+8. [Jar-library API](#jar-library-api)
+9. [Copyright and License](#copyright-and-license)
 
 ## What "mavenizing" means?
 
@@ -113,7 +115,7 @@ uploadEclipse task depends on [downloadEclipse](#downloadeclipse] task.
 
 **cleanUnpuzzle** task cleans everything specific to Unpuzzle plugin. Particularly, it uninstalls installed maven artifacts and deletes directory $HOME/.unpuzzle.
 
-## Gradle plugin extension
+## Unpuzzle configuration
 
 Unpuzzle works without configuration out of the box. You just apply gradle plugin,
 run [installEclipse](#installeclipse) task and Unpuzzle does it's job with reasonable defaults.
@@ -125,6 +127,10 @@ Unpuzzle supports the following gradle plugin extension:
 
 ```groovy
 unpuzzle {
+
+  localMavenRepositoryDir = new File(System.getProperty('user.home'), '.m2/repository')
+
+  unpuzzleDir = new File(System.getProperty('user.home'), '.unpuzzle')
 
   selectedEclipseVersion = '4.3'
 
@@ -157,10 +163,18 @@ unpuzzle {
   ]  
 }
 ```
-Here is the detailed description of configuration options:
+Here is the detailed description of configuration properties:
 
-- **selectedEclipseVersion** - string, optional, default value is '4.3'. When specified, defines which version of eclipse is to be downloaded and installed
-  by Unpuzzle tasks.
+- **localMavenRepositoryDir** - java.io.File, optional, default value is `new File(System.getProperty('user.home'), '.m2/repository')`.
+  Defines which local directory is used as local maven repository for installation of eclipse artifacts.
+  
+- **unpuzzleDir** - java.io.File, optional, default value is `new File(System.getProperty('user.home'), '.unpuzzle')`.
+  Defines which local directory is used for caching downloaded eclipse distributions.
+  unpuzzleDir can be safely deleted from the file system any time. Unpuzzle re-creates this directory
+  and downloads eclipse distributions into it as needed.
+
+- **selectedEclipseVersion** - string, optional, default value is '4.3'. 
+  Defines which version of eclipse is to be downloaded and installed by Unpuzzle tasks.
   
 - **eclipseVersion** - function(String, Closure), multiplicity 0..n. When called, defines version-specific configuration. Unpuzzle configuration may contain multiple
   version-specific configurations. Only one version-specific configuration is "active" - this is defined by selectedEclipseVersion.
@@ -198,7 +212,7 @@ and can be used for calculating correct version of eclipse to download:
 
 - **current_arch** - string assigned to 'x86_32' or 'x86_64', depending on the current processor architecture.
     
-You can see the complete and working configuration at https://github.com/akhikhl/unpuzzle/blob/master/libs/unpuzzle-plugin/src/main/resources/org/akhikhl/unpuzzle/defaultConfig.groovy
+You can see the complete and working Unpuzzle configuration [here](blob/master/libs/unpuzzle-plugin/src/main/resources/org/akhikhl/unpuzzle/defaultConfig.groovy)
 
 ## uploadEclipse configuration
 
@@ -250,12 +264,55 @@ A healthy decision would be to use the last option - store user name
 and password in "init.gradle" script outside of the project. See more information
 about init scripts in [official gradle documentation](http://www.gradle.org/docs/current/userguide/init_scripts.html).
 
+## Configuration hierarchy
+
+Unpuzzle configurations are hierarchical. That is: when both parent and child project
+are facilitated with Unpuzzle extension (i.e. when unpuzzle-plugin is included in both),
+child's extension inherits properties from parent's extension. Child project's extension may
+override or append individual properties of parent project's extension.
+
+The following properties are overridden rather then appended: 
+- localMavenRepositoryDir
+- unpuzzleDir
+- selectedEclipseVersion
+- eclipseVersion/eclipseMavenGroup
+- eclipseVersion/eclipseMirror
+- eclipseVersion/eclipseArchiveMirror
+- uploadEclipse
+
+The following properties are appended rather then overridden: 
+- eclipseVersion
+- eclipseVersion/sources
+- eclipseVersion/sources/source
+- eclipseVersion/sources/languagePackTemplate
+- eclipseVersion/sources/languagePack
+
+Examples of hierarchical configurations are given in [ConfigHierarchyTest.groovy](blob/master/libs/unpuzzle-plugin/src/test/groovy/org/akhikhl/unpuzzle/ConfigHierarchyTest.groovy)
+unit-test.
+
+## Support of multiple Eclipse versions
+
+Unpuzzle supports Eclipse versions 4.3.2, 4.3.1, 4.2.2, 4.2.1, 3.7.2, 3.7.1 out of the box.
+You can easily switch between Eclipse versions by simply specifying eclipse version in "build.gradle":
+
+```groovy
+unpuzzle {
+  selectedEclipseVersion = '3.7.1'
+}
+```
+
+Distribution packages for these versions are predefined in internal script [defaultConfig.groovy](blob/master/libs/unpuzzle-plugin/src/main/resources/org/akhikhl/unpuzzle/defaultConfig.groovy).
+This script is always loaded as an implicit ancestor for Unpuzzle configuration.
+
+You are not restricted to using only the designated versions of Eclipse.
+Any other Eclipse versions (and any additional packages to them) could be configured in "build.gradle" using the same syntax.
+
 ## Jar library API
 
 Gradle plugin might be sufficient for the most use-cases requiring mavenizing OSGi-bundles.
 However, you can mavenize OSGi-bundles even without gradle plugin, just by using Unpuzzle API functions.
 
-Good example of Unpuzzle API usage is given in the file https://github.com/akhikhl/unpuzzle/blob/master/examples/deployEclipseKepler/build.gradle
+Good example of Unpuzzle API usage is given[here](blob/master/examples/deployEclipseKepler/build.gradle).
 
 Essentially, Unpuzzle API consists of four classes:
 
@@ -276,5 +333,5 @@ Essentially, Unpuzzle API consists of four classes:
 
 Copyright 2014 (c) Andrey Hihlovskiy
 
-All versions, present and past, of Unpuzzle are licensed under [MIT license](https://github.com/akhikhl/unpuzzle/blob/master/license.txt).
+All versions, present and past, of Unpuzzle are licensed under [MIT license](blob/master/license.txt).
 
