@@ -3,7 +3,7 @@
  *
  * Copyright 2014  Andrey Hihlovskiy.
  *
- * See the file "license.txt" for copying and usage permission.
+ * See the file "LICENSE" for copying and usage permission.
  */
 package org.akhikhl.unpuzzle.osgi2maven
 
@@ -13,7 +13,7 @@ import org.osgi.framework.Constants
 
 /**
  * POJO class holding data extracted from bundle and needed for POM generation.
- * @author Andrey Hihlovskiy
+ * @author akhikhl
  */
 final class Pom {
 

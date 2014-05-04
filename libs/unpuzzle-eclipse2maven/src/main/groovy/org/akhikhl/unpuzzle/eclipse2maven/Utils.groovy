@@ -3,13 +3,13 @@
  *
  * Copyright 2014  Andrey Hihlovskiy.
  *
- * See the file "license.txt" for copying and usage permission.
+ * See the file "LICENSE" for copying and usage permission.
  */
 package org.akhikhl.unpuzzle.eclipse2maven
 
 /**
  * Various utility functions.
- * @author Andrey Hihlovskiy
+ * @author akhikhl
  */
 final class Utils {
 

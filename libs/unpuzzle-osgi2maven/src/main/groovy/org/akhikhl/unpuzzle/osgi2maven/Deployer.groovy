@@ -3,7 +3,7 @@
  *
  * Copyright 2014  Andrey Hihlovskiy.
  *
- * See the file "license.txt" for copying and usage permission.
+ * See the file "LICENSE" for copying and usage permission.
  */
 package org.akhikhl.unpuzzle.osgi2maven
 
@@ -11,25 +11,37 @@ import groovy.xml.NamespaceBuilder
 
 /**
  * Deploys OSGI bundle (jar or directory) to maven repository
- * @author Andrey Hihlovskiy
+ * @author akhikhl
  */
 class Deployer {
 
-  private Map deployerOptions
-  private String repositoryUrl
+  final Map deployerOptions
+  final URL repositoryUrl
   private AntBuilder ant
-  private mvn
   private File workFolder
+
+  /**
+   * Constructs Deployer with the specified parameters.
+   * @param deployerOptions - may contain properties "user" and "password"
+   * @param localRepositoryDir - target maven repository
+   */
+  Deployer(Map deployerOptions = [:], File localRepositoryDir) {
+    this(deployerOptions, localRepositoryDir.toURI().toURL())
+  }
+
+  Deployer(Map deployerOptions = [:], String repositoryUrl) {
+    this(deployerOptions, new URL(repositoryUrl))
+  }
 
   /**
    * Constructs Deployer with the specified parameters.
    * @param deployerOptions - may contain properties "user" and "password"
    * @param repositoryUrl - URL of the target maven repository
    */
-  Deployer(Map deployerOptions = [:], String repositoryUrl) {
-    this.deployerOptions = deployerOptions
-    if(deployerOptions.ant)
-      this.ant = deployerOptions.ant
+  Deployer(Map deployerOptions = [:], URL repositoryUrl) {
+    this.deployerOptions = ([:] << deployerOptions).asImmutable()
+    if(this.deployerOptions.ant)
+      this.ant = this.deployerOptions.ant
     else {
       URLClassLoader classLoader = (URLClassLoader)this.getClass().getClassLoader()
       URL mavenAntTasks = classLoader.URLs.find { it.toString().contains('maven-ant-tasks') }
@@ -74,11 +86,11 @@ class Deployer {
         pom refid: 'mypom'
         if(sourceFile)
           attach file: sourceFile, type: 'jar', classifier: 'sources'
-       remoteRepository url: repositoryUrl, {
-        if(deployerOptions.user && deployerOptions.password)
-          authentication username: deployerOptions.user, password: deployerOptions.password
-       }
-     }
+        remoteRepository url: repositoryUrl.toString(), {
+          if(deployerOptions.user && deployerOptions.password)
+            authentication username: deployerOptions.user, password: deployerOptions.password
+        }
+      }
     }
   }
 }

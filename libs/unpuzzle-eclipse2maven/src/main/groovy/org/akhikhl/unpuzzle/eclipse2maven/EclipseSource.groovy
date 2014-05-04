@@ -3,14 +3,17 @@
  *
  * Copyright 2014  Andrey Hihlovskiy.
  *
- * See the file "license.txt" for copying and usage permission.
+ * See the file "LICENSE" for copying and usage permission.
  */
 package org.akhikhl.unpuzzle.eclipse2maven
 
+import groovy.transform.EqualsAndHashCode
+
 /**
  * POJO class holding information about eclipse distribution.
- * @author Andrey Hihlovskiy
+ * @author akhikhl
  */
+@EqualsAndHashCode
 final class EclipseSource {
   String url
   boolean sourcesOnly = false

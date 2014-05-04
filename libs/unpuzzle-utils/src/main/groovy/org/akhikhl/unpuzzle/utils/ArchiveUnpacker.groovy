@@ -3,7 +3,7 @@
  *
  * Copyright 2014  Andrey Hihlovskiy.
  *
- * See the file "license.txt" for copying and usage permission.
+ * See the file "LICENSE" for copying and usage permission.
  */
 package org.akhikhl.unpuzzle.utils
 
@@ -26,7 +26,7 @@ import org.apache.commons.lang3.StringUtils
 /**
  * Unpacks the specified archive file - .zip, .tar.gz, .gz or .tar
  * As a convenience feature prints the number of unpacked bytes to console.
- * @author Andrey Hihlovskiy
+ * @author akhikhl
  */
 final class ArchiveUnpacker {
 

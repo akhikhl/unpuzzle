@@ -1,20 +1,168 @@
 buildscript {
-  apply plugin: 'maven'
-
   repositories {
     mavenLocal()
+    jcenter()
     mavenCentral()
   }
 
   dependencies {
-    classpath 'org.akhikhl.rooty:rooty:0.0.4'
+    classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:0.3'
   }
 }
 
-apply plugin: 'rooty'
-
 ext {
   group = 'org.akhikhl.unpuzzle'
-  version = '0.0.1'
+  version = '0.0.7'
+  groovy_version = '1.8.6'
+  spock_version = '0.7-groovy-1.8'
 }
 
+apply plugin: 'base' // add "clean" task to the root project.
+
+task('build')
+
+task('buildExamples', type: GradleBuild) { task ->
+  dir = file('examples')
+  tasks = [ 'build' ]
+}
+
+// build.finalizedBy buildExamples
+
+task('cleanExamples', type: GradleBuild) { task ->
+  dir = file('examples')
+  tasks = [ 'clean' ]
+}
+
+// clean.dependsOn cleanExamples
+
+subprojects {
+  if(project.parent.name == 'libs') {
+
+    apply plugin: 'maven'
+    apply plugin: 'groovy'
+    apply plugin: 'signing'
+    apply plugin: 'maven-publish'
+    apply plugin: 'bintray'
+
+    repositories {
+      mavenLocal()
+      jcenter()
+      mavenCentral()
+    }
+
+    group = rootProject.ext.group
+    version = rootProject.ext.version
+
+    dependencies {
+      compile "org.codehaus.groovy:groovy-all:${rootProject.ext.groovy_version}"
+      testCompile "org.spockframework:spock-core:${rootProject.ext.spock_version}"
+    }
+
+    // lib projects should be always installed into "$HOME/.m2"
+    project.tasks.build.finalizedBy project.tasks.install
+    rootProject.tasks.buildExamples.dependsOn project.tasks.install
+
+    task sourcesJar(type: Jar, dependsOn: classes, description: 'Creates sources jar') {
+      classifier = 'sources'
+      from sourceSets.main.allSource
+    }
+
+    task javadocJar(type: Jar, description: 'Creates javadoc jar') {
+      dependsOn javadoc
+      classifier = 'javadoc'
+      from javadoc.destinationDir
+      if(tasks.findByName('groovydoc')) {
+        dependsOn groovydoc
+        from groovydoc.destinationDir
+      }
+    }
+
+    artifacts {
+      archives sourcesJar, javadocJar
+    }
+
+    if(project.hasProperty('publishToSonatype')) {
+
+      assert project.hasProperty('signing.keyId')
+      assert project.hasProperty('signing.password')
+      assert project.hasProperty('signing.secretKeyRingFile')
+      assert project.hasProperty('sonatypeUsername')
+      assert project.hasProperty('sonatypePassword')
+
+      signing {
+        sign configurations.archives
+      }
+
+      uploadArchives {
+        repositories {
+          mavenDeployer {
+            beforeDeployment { deployment -> signing.signPom(deployment) }
+
+            repository(url: 'https://oss.sonatype.org/service/local/staging/deploy/maven2/') {
+              authentication(userName: project.sonatypeUsername, password: project.sonatypePassword)
+            }
+
+            pom.project {
+              name project.name
+              packaging 'jar'
+              description 'Tools for mavenizing OSGi-bundles'
+              url 'https://github.com/akhikhl/unpuzzle'
+
+              scm {
+                url 'scm:https://github.com/akhikhl/unpuzzle.git'
+                connection 'scm:https://github.com/akhikhl/unpuzzle.git'
+                developerConnection 'scm:git@github.com:akhikhl/unpuzzle.git'
+              }
+
+              licenses {
+                license {
+                  name 'The MIT License'
+                  url 'https://raw.github.com/akhikhl/unpuzzle/master/license.txt'
+                  distribution 'repo'
+                }
+              }
+
+              developers {
+                developer {
+                  id 'akhikhl'
+                  name 'Andrey Hihlovskiy'
+                }
+              }
+            }
+          }
+        }
+      } // uploadArchives
+    } // publishToSonatype
+
+    // used by bintray
+    publishing {
+      publications {
+        mavenAll(MavenPublication) {
+          if (plugins.hasPlugin('java')) {
+            from components.java
+          }
+          artifact sourcesJar {
+            classifier "sources"
+          }
+          artifact javadocJar {
+            classifier "javadoc"
+          }
+        }
+      }
+    } // publishing
+
+    bintray {
+      user = project.hasProperty('bintrayUser') ? project.bintrayUser : ''
+      key = project.hasProperty('bintrayKey') ? project.bintrayKey : ''
+      publications = ['mavenAll'] // When uploading Maven-based publication files
+      pkg {
+        repo = 'maven'
+        name = 'unpuzzle'
+        desc = 'Tools for mavenizing OSGi-bundles'
+        licenses = ['MIT']
+        labels = ['unpuzzle', 'gradle', 'plugin', 'osgi', 'eclipse']
+      }
+      dryRun = false
+    }
+  } // if libs
+} // subprojects

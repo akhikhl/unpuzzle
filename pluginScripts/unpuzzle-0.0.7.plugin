@@ -1,6 +1,4 @@
 buildscript {
-  apply plugin: 'maven'
-
   repositories {
     mavenLocal()
     jcenter()

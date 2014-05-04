@@ -1,8 +1,9 @@
 apply from: 'unpuzzle.plugin'
 
-// example of eclipse deployment with German-language-pack
+// example of eclipse deployment with language packs
 
 unpuzzle {
-  config 'eclipse-kepler'
-  source "$eclipseMirror/eclipse//technology/babel/babel_language_packs/R0.11.1/kepler/BabelLanguagePack-eclipse-de_4.3.0.v20131123020001.zip", languagePacksOnly: true
+  languagePack 'de'
+  languagePack 'fr'
+  languagePack 'es'
 }

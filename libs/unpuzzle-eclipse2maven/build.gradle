@@ -3,4 +3,6 @@ apply plugin: 'groovy'
 dependencies {
   compile project(':libs:unpuzzle-osgi2maven')
   compile project(':libs:unpuzzle-utils')
+  compile 'commons-codec:commons-codec:1.9'
+  compile 'ch.qos.logback:logback-classic:1.1.2'
 }

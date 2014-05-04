@@ -3,7 +3,7 @@
  *
  * Copyright 2014  Andrey Hihlovskiy.
  *
- * See the file "license.txt" for copying and usage permission.
+ * See the file "LICENSE" for copying and usage permission.
  */
 package org.akhikhl.unpuzzle.utils
 
@@ -11,7 +11,7 @@ import spock.lang.Specification
 
 /**
  * Unit-test for {@link org.akhikhl.unpuzzle.utils.ArchiveUnpacker} class.
- * @author Andrey Hihlovskiy
+ * @author akhikhl
  */
 class ArchiveUnpackerTest {
 

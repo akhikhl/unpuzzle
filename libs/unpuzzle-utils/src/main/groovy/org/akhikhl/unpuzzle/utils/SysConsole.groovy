@@ -3,7 +3,7 @@
  *
  * Copyright 2014  Andrey Hihlovskiy.
  *
- * See the file "license.txt" for copying and usage permission.
+ * See the file "LICENSE" for copying and usage permission.
  */
 package org.akhikhl.unpuzzle.utils
 
@@ -13,7 +13,7 @@ import org.apache.commons.lang3.StringUtils
 
 /**
  * Console implementation, writes everything to System.out.
- * @author Andrey Hihlovskiy
+ * @author akhikhl
  */
 final class SysConsole implements IConsole {
 

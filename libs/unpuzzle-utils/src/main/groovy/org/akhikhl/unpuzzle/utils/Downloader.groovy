@@ -3,7 +3,7 @@
  *
  * Copyright 2014  Andrey Hihlovskiy.
  *
- * See the file "license.txt" for copying and usage permission.
+ * See the file "LICENSE" for copying and usage permission.
  */
 package org.akhikhl.unpuzzle.utils
 
@@ -20,7 +20,7 @@ import org.apache.commons.io.IOUtils
 /**
  * Downloads the specified file from the specified URL to the specified target folder.
  * As a convenience feature prints the number of downloaded bytes to console.
- * @author Andrey Hihlovskiy
+ * @author akhikhl
  */
 final class Downloader {
 

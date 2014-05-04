@@ -3,7 +3,7 @@
  *
  * Copyright 2014  Andrey Hihlovskiy.
  *
- * See the file "license.txt" for copying and usage permission.
+ * See the file "LICENSE" for copying and usage permission.
  */
 package org.akhikhl.unpuzzle.osgi2maven
 
@@ -14,7 +14,7 @@ import org.osgi.framework.Constants
 
 /**
  * Converts bundle manifest to POM.
- * @author Andrey Hihlovskiy
+ * @author akhikhl
  */
 final class Bundle2Pom {
 
@@ -50,6 +50,7 @@ final class Bundle2Pom {
     pom.artifact = manifest.attr.getValue(Constants.BUNDLE_SYMBOLICNAME)
     if (pom.artifact.contains(';'))
       pom.artifact = pom.artifact.split(';')[0]
+    pom.artifact = pom.artifact.trim()
 
     pom.group = group ?: pom.artifact
     pom.dependencyGroup = dependencyGroup

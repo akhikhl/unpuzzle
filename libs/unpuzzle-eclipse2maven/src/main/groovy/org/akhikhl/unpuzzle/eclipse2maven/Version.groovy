@@ -3,7 +3,7 @@
  *
  * Copyright 2014  Andrey Hihlovskiy.
  *
- * See the file "license.txt" for copying and usage permission.
+ * See the file "LICENSE" for copying and usage permission.
  */
 package org.akhikhl.unpuzzle.eclipse2maven
 
@@ -11,7 +11,7 @@ import org.akhikhl.unpuzzle.osgi2maven.Pom
 
 /**
  * OSGi-specific version.
- * @author Andrey Hihlovskiy
+ * @author akhikhl
  */
 final class Version {
 

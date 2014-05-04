@@ -1,5 +1,8 @@
-# Unpuzzle [![Maintainer Status](http://stillmaintained.com/akhikhl/unpuzzle.png)](http://stillmaintained.com/akhikhl/unpuzzle) [![Build Status](https://travis-ci.org/akhikhl/unpuzzle.png?branch=master)](https://travis-ci.org/akhikhl/unpuzzle) [![Latest Version](http://img.shields.io/badge/latest_version-0.0.1-blue.svg)](https://github.com/akhikhl/unpuzzle/tree/v0.0.1) [![License](http://img.shields.io/badge/license-MIT-ff69b4.svg)](#copyright-and-license)
-
+# Unpuzzle 
+[![Maintainer Status](http://stillmaintained.com/akhikhl/unpuzzle.png)](http://stillmaintained.com/akhikhl/unpuzzle) 
+[![Build Status](https://travis-ci.org/akhikhl/unpuzzle.png?branch=master)](https://travis-ci.org/akhikhl/unpuzzle) 
+[![Latest Version](http://img.shields.io/badge/latest_version-0.0.7-blue.svg)](https://github.com/akhikhl/unpuzzle/tree/v0.0.7) 
+[![License](http://img.shields.io/badge/license-MIT-ff69b4.svg)](#copyright-and-license)
 
 **Unpuzzle** is a set of tools for mavenizing OSGi-bundles.
 
@@ -14,15 +17,17 @@ All versions of Unpuzzle are available in maven central under the group 'org.akh
 3. [Gradle tasks](#gradle-tasks)
   - [downloadEclipse](#downloadeclipse)
   - [installEclipse](#installeclipse)  
-  - [uploadEclipse](#uploadeclipse)  
+  - [uninstallEclipse](#uninstalleclipse)  
+  - [uploadEclipse](#uploadeclipse)
+  - [cleanUnpuzzle](#cleanunpuzzle)
 4. [Gradle plugin extension](#gradle-plugin-extension)
-5. [uploadEclipse configuration](#uploadEclipse-configuration)
+5. [uploadEclipse configuration](#uploadeclipse-configuration)
 6. [Jar-library API](#jar-library-api)
 7. [Copyright and License](#copyright-and-license)
 
 ## What "mavenizing" means?
 
-Under "mavenizing" OSGi-bundles we mean the following:
+When OSGi-bundle is being "mavenized", the following happens:
 
 - The program generates pom.xml for every OSGi-bundle (of eclipse distribution, for example).
   The generated pom.xml contains maven coordinates "group:artifact:version", 
@@ -72,18 +77,13 @@ or feel free copying (and modifying) the declarations from this script to your "
 ### downloadEclipse
 
 **downloadEclipse** task downloads eclipse distribution from the official site,
-then unpacks it to the buildDir folder. 
+then unpacks it to the $HOME/.unpuzzle folder. 
 
-By default Unpuzzle downloads eclipse kepler SR1, with delta-pack and eclipse-SDK.
-You can fine-tune, which version of eclipse is downloaded and with which add-ons
-by providing your own [configuration](#gradle-plugin-extension).
+By default Unpuzzle downloads eclipse kepler SR1, delta-pack and eclipse-SDK. You can fine-tune, which version of eclipse is downloaded and with which add-ons by providing your own [configuration](#gradle-plugin-extension).
 
-If download finishes with success, Unpuzzle "remembers" it by creating marker file 
-"$buildDir/eclipseDownloaded". If downloadEclipse task is invoked again later, 
-it will first check whether marker file exists. If it does, the download is skipped.
+Before downloading a distribution package this task compares file size to the one returned by HTTP HEAD request. If file size did not change, no download is performed.
 
-**Hint**: you can force re-download of eclipse distribution by simply deleting marker file
-(or the complete buildDir).
+**Hint**: you can force re-download of eclipse distribution simply by deleting *.zip and *.tar.gz files in the folder $HOME/.unpuzzle/downloaded.
 
 ### installEclipse
 
@@ -93,16 +93,15 @@ and installs the generated maven artifacts to local maven repository ($HOME/.m2/
 By default all OSGi-bundles are installed into "eclipse-kepler" maven group.
 You can define other maven group by providing your own [configuration](#gradle-plugin-extension).
 
-If installation finishes with success, Unpuzzle "remembers" it by creating marker file 
-"$buildDir/eclipseArtifactsInstalled". If installEclipse task is invoked again later, 
-it will first check whether marker file exists. If it does, the installation is skipped.
-
 installEclipse task depends on [downloadEclipse](#downloadeclipse] task.
+
+### uninstallEclipse
+
+**uninstallEclipse** task uninstalls installed OSGi-bundles of the downloaded eclipse distribution from the local maven repository ($HOME/.m2/repository).
 
 ### uploadEclipse
 
-**uploadEclipse** task mavenizes all OSGi-bundles of the downloaded eclipse distribution 
-and installs the generated maven artifacts to remote maven repository.
+**uploadEclipse** task mavenizes all OSGi-bundles of the downloaded eclipse distribution and installs the generated maven artifacts to remote maven repository.
 
 You should specify [uploadEclipse configuration](#uploadEclipse-configuration] in order to make uploadEclipse work.
 
@@ -111,21 +110,47 @@ You can define other maven group by providing your own [configuration](#gradle-p
 
 uploadEclipse task depends on [downloadEclipse](#downloadeclipse] task.
 
+### cleanUnpuzzle
+
+**cleanUnpuzzle** task cleans everything specific to Unpuzzle plugin. Particularly, it uninstalls installed maven artifacts and deletes directory $HOME/.unpuzzle.
+
 ## Gradle plugin extension
 
 Unpuzzle works without configuration out of the box. You just apply gradle plugin,
 run [installEclipse](#installeclipse) task and Unpuzzle does it's job with reasonable defaults.
 
 However, there are cases when you need to fine-tune Unpuzzle. For example you might
-want to change maven group or to download/unpuzzle/install other version of eclipse distribution.
+want to download/install another version of eclipse distribution.
 
 Unpuzzle supports the following gradle plugin extension:
 
 ```groovy
 unpuzzle {
-  config 'eclipse-kepler'
-  group = 'eclipse'
-  source 'http://some.url/goes/here.zip', sourcesOnly: false, languagePacksOnly: false
+
+  selectedEclipseVersion = '4.3'
+
+  eclipseVersion('4.3') {
+
+    eclipseMavenGroup = 'eclipse-kepler'
+
+    eclipseMirror = 'http://mirror.netcologne.de'
+
+    eclipseArchiveMirror = 'http://archive.eclipse.org'
+    
+    sources {
+
+      source "$eclipseMirror/eclipse//technology/epp/downloads/release/kepler/SR2/eclipse-jee-kepler-SR2-linux-gtk-x86_64.tar.gz"
+      source "$eclipseMirror/eclipse//eclipse/downloads/drops4/R-4.3.2-201402211700/eclipse-SDK-4.3.2-linux-gtk-x86_64.tar.gz", sourcesOnly: true
+      source "$eclipseMirror/eclipse//eclipse/downloads/drops4/R-4.3.2-201402211700/eclipse-4.3.2-delta-pack.zip"
+      
+      languagePackTemplate '${eclipseMirror}/eclipse//technology/babel/babel_language_packs/R0.11.1/kepler/BabelLanguagePack-eclipse-${language}_4.3.0.v20131123020001.zip'
+      
+      languagePack 'de'
+      languagePack 'fr'
+      languagePack 'es'
+    }
+  }
+
   uploadEclipse = [
     url: 'http://example.com/repository',
     user: 'someUser',
@@ -133,36 +158,48 @@ unpuzzle {
   ]  
 }
 ```
-Here is the detailed description of all properties:
+Here is the detailed description of configuration options:
 
-- **config** - optional, function call. It currently accepts only 'eclipse-kepler' as an argument.
-  "config" specifies that Unpuzzle should download/mavenize/install all OSGi bundles
-  relevant to the specified configuration. You can slightly augment the configuration
-  by providing additional sources. See concrete example at https://github.com/akhikhl/unpuzzle/tree/master/examples/deployEclipseKeplerViaPlugin
+- **selectedEclipseVersion** - string, optional, default value is '4.3'. When specified, defines which version of eclipse is to be downloaded and installed
+  by Unpuzzle tasks.
   
-- **group** - optional, string. "group" specifies which maven group is assigned
-  to all OSGi bundles upon mavenizing. The default value is 'eclipse-kepler'.
+- **eclipseVersion** - function(String, Closure), multiplicity 0..n. When called, defines version-specific configuration. Unpuzzle configuration may contain multiple
+  version-specific configurations. Only one version-specific configuration is "active" - this is defined by selectedEclipseVersion.
+
+- **eclipseMavenGroup** - string, optional, default value (for version '4.3') is 'eclipse-kepler'.
+
+- **eclipseMirror** - string, optional, default is 'http://mirror.netcologne.de'. Can be used for specifying common base URL.
+
+- **eclipseArchiveMirror** - string, optional, default is 'http://archive.eclipse.org'. Can be used for specifying common base URL for older packages.
+
+- **sources** - function(Closure), multiplicity 0..n.
   
-- **source** - optional, multiple, function call. Essentially "source" specifies URL
+- **source** - function(Map, String), multiplicity 0..n. Essentially "source" specifies URL
   from which Unpuzzle should download eclipse distribution (or add-on distributions,
   like eclipse-SDK, delta-pack or language-packs). Additionally it acccepts the following properties:
   - **sourcesOnly** - optional, boolean. When specified, signifies whether the given
-    distribution package contains only sources or not. Default value is false.
+    distribution package contains only sources. Default value is false.
     Typical use-case: sourcesOnly=true for eclipse-SDK.
   - **languagePacksOnly** - optional, boolean. When specified, signifies whether the given
     distribution package contains only language fragments. Default value is false.
     Typical use-case: languagePacksOnly=true for eclipse language packs.
     
-- **uploadEclipse** - optional, hashmap. See more information at [uploadEclipse configuration](#uploadEclipse-configuration).     
+- **languagePackTemplate** - function(String), multiplicity 0..n. Adds the specified string to the list of language-pack templates.
+
+- **languagePack** - function(String), multiplicity 0..n. Iterates all language-pack templates, for each template does:
+  - substritute given language and other parameters
+  - create source with the resulting url
     
-Additionally the following properties are injected into unpuzzle plugin extension
-and can be used for deducting correct version of eclipse to download:
+- **uploadEclipse** - optional, hashmap. See more information at [uploadEclipse configuration](#uploadeclipse-configuration).     
+    
+Additionally the following properties are injected into version-specific configuration
+and can be used for calculating correct version of eclipse to download:
 
 - **current_os** - string, assigned to 'linux' or 'windows', depending on the current operating system.
 
 - **current_arch** - string assigned to 'x86_32' or 'x86_64', depending on the current processor architecture.
     
-You can see the complete and working configuration at https://github.com/akhikhl/unpuzzle/blob/master/libs/gradle-unpuzzle/src/main/resources/eclipse-kepler.groovy
+You can see the complete and working configuration at https://github.com/akhikhl/unpuzzle/blob/master/libs/unpuzzle-plugin/src/main/resources/org/akhikhl/unpuzzle/defaultConfig.groovy
 
 ## uploadEclipse configuration
 
@@ -178,18 +215,7 @@ unpuzzle {
     url: 'http://example.com/repository',
     user: 'someUser',
     password: 'somePassword'
-  ]  
-}
-```
-- in "build.gradle" of the current project (project where unpuzzle gradle-plugin is being applied):
-```groovy
-ext {
-  // ...
-  uploadEclipse = [
-    url: 'http://example.com/repository',
-    user: 'someUser',
-    password: 'somePassword'
-  ]  
+  ]
 }
 ```
 - in "build.gradle" of the root project (in case of multiproject build):
@@ -200,7 +226,7 @@ ext {
     url: 'http://example.com/repository',
     user: 'someUser',
     password: 'somePassword'
-  ]  
+  ]
 }
 ```
 - in "init.gradle" script:
@@ -221,7 +247,7 @@ within the source code of your project. Consider: if you store the source code
 in the version control system, everybody authorized to see the sources effectively 
 gets he credentials to upload to your maven repository.
 
-A healthy alternative would be to use the last option - to store user name
+A healthy decision would be to use the last option - store user name
 and password in "init.gradle" script outside of the project. See more information
 about init scripts in [official gradle documentation](http://www.gradle.org/docs/current/userguide/init_scripts.html).
 
@@ -234,17 +260,17 @@ Good example of Unpuzzle API usage is given in the file https://github.com/akhik
 
 Essentially, Unpuzzle API consists of four classes:
 
-- [EclipseDownloader](http://akhikhl.github.io/unpuzzle/groovydoc/unpuzzle/org/akhikhl/unpuzzle/unpuzzle/EclipseDownloader.html), 
+- [EclipseDownloader](http://akhikhl.github.io/unpuzzle/groovydoc/unpuzzle-eclipse2maven/org/akhikhl/unpuzzle/eclipse2maven/EclipseDownloader.html), 
   implements downloading and unpacking the specified set of sources.
 
-- [Deployer](http://akhikhl.github.io/unpuzzle/groovydoc/osgi2mvn/org/akhikhl/unpuzzle/osgi2mvn/Deployer.html), 
+- [Deployer](http://akhikhl.github.io/unpuzzle/groovydoc/unpuzzle-osgi2maven/org/akhikhl/unpuzzle/osgi2maven/Deployer.html), 
   implements deployment of single jar or directory with the specified POM to the specified repository.
 
-- [EclipseDeployer](http://akhikhl.github.io/unpuzzle/groovydoc/unpuzzle/org/akhikhl/unpuzzle/unpuzzle/EclipseDeployer.html), 
+- [EclipseDeployer](http://akhikhl.github.io/unpuzzle/groovydoc/unpuzzle-eclipse2maven/org/akhikhl/unpuzzle/eclipse2maven/EclipseDeployer.html), 
   implements dependency resolution and deployment of multiple OSGi bundles
   to the specified maven group and specified Deployer.
   
-- [EclipseSource](http://akhikhl.github.io/unpuzzle/groovydoc/unpuzzle/org/akhikhl/unpuzzle/unpuzzle/EclipseSource.html), 
+- [EclipseSource](http://akhikhl.github.io/unpuzzle/groovydoc/unpuzzle-eclipse2maven/org/akhikhl/unpuzzle/eclipse2maven/EclipseSource.html), 
   simple POJO class, storing information on download source.
 
 ## Copyright and License
