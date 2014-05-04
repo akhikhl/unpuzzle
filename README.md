@@ -1,14 +1,13 @@
-# Unpuzzle 
+![Unpuzzle logo](media/logo.png "Unpuzzle logo")
+
 [![Maintainer Status](http://stillmaintained.com/akhikhl/unpuzzle.png)](http://stillmaintained.com/akhikhl/unpuzzle) 
 [![Build Status](https://travis-ci.org/akhikhl/unpuzzle.png?branch=master)](https://travis-ci.org/akhikhl/unpuzzle) 
-[![Latest Version](http://img.shields.io/badge/latest_version-0.0.7-blue.svg)](https://github.com/akhikhl/unpuzzle/tree/v0.0.7) 
-[![License](http://img.shields.io/badge/license-MIT-ff69b4.svg)](#copyright-and-license)
+[![Latest Version](http://img.shields.io/badge/latest_version-0.0.7-3f6498.svg)](https://github.com/akhikhl/unpuzzle/tree/v0.0.7) 
+[![License](http://img.shields.io/badge/license-MIT-d63434.svg)](#copyright-and-license)
 
-**Unpuzzle** is a set of tools for mavenizing OSGi-bundles.
-
-You can consume Unpuzzle in two forms: as a [gradle plugin](#gradle-plugin) and as an [ordinary jar-library](#jar-library-api).
-
-All versions of Unpuzzle are available in maven central under the group 'org.akhikhl.unpuzzle'.
+**Unpuzzle** is a set of tools for mavenizing OSGi-bundles. You can consume Unpuzzle in two forms: 
+as a [gradle plugin](#gradle-plugin) and as an [ordinary jar-library](#jar-library-api).
+All versions of Unpuzzle are available at jcenter and maven-central under the group 'org.akhikhl.unpuzzle'.
 
 **Content of this document**
 
