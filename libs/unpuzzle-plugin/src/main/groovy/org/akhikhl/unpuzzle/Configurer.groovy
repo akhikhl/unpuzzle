@@ -28,13 +28,9 @@ class Configurer {
   protected static final Logger log = LoggerFactory.getLogger(Configurer)
 
   private final Project project
-  private final File localMavenRepositoryDir
-  private final File unpuzzleDir
 
   Configurer(Project project) {
     this.project = project
-    localMavenRepositoryDir = new File(System.getProperty('user.home'), '.m2/repository')
-    unpuzzleDir = new File(System.getProperty('user.home'), '.unpuzzle')
   }
 
   void apply() {
@@ -98,11 +94,11 @@ class Configurer {
         description = 'Cleans $HOME/.unpuzzle directory, uninstalls mavenized artifacts'
         dependsOn project.tasks.uninstallEclipse
         outputs.upToDateWhen {
-          !unpuzzleDir.exists()
+          !effectiveConfig.unpuzzleDir.exists()
         }
         doLast {
-          if(unpuzzleDir.exists())
-            unpuzzleDir.deleteDir()
+          if(effectiveConfig.unpuzzleDir.exists())
+            effectiveConfig.unpuzzleDir.deleteDir()
         }
       }
     } // project.afterEvaluate
@@ -110,7 +106,7 @@ class Configurer {
 
   void downloadEclipse() {
     def vconf = getSelectedVersionConfig()
-    new EclipseDownloader().downloadAndUnpack(vconf.sources, unpuzzleDir)
+    new EclipseDownloader().downloadAndUnpack(vconf.sources, effectiveConfig.unpuzzleDir)
   }
 
   final Config getEffectiveConfig() {
@@ -135,11 +131,11 @@ class Configurer {
       log.warn 'installEclipse: unpuzzle.dryRun=true, no work done'
       return
     }
-    def mavenDeployer = new Deployer(localMavenRepositoryDir)
-    def eclipseDeployer = new EclipseDeployer(unpuzzleDir, vconf.eclipseMavenGroup, mavenDeployer)
+    def mavenDeployer = new Deployer(effectiveConfig.localMavenRepositoryDir)
+    def eclipseDeployer = new EclipseDeployer(effectiveConfig.unpuzzleDir, vconf.eclipseMavenGroup, mavenDeployer)
     if(!eclipseDeployer.allDownloadedPackagesAreInstalled(vconf.sources)) {
       downloadEclipse()
-      log.warn 'Installing eclipse version {} to maven-repo {}, maven-group {}', effectiveConfig.selectedEclipseVersion, localMavenRepositoryDir.toURI().toString(), vconf.eclipseMavenGroup
+      log.warn 'Installing eclipse version {} to maven-repo {}, maven-group {}', effectiveConfig.selectedEclipseVersion, effectiveConfig.localMavenRepositoryDir.toURI().toString(), vconf.eclipseMavenGroup
       eclipseDeployer.deploy(vconf.sources)
     }
   }
@@ -148,8 +144,8 @@ class Configurer {
     def vconf = getSelectedVersionConfig()
     if(effectiveConfig.dryRun)
       return false
-    def mavenDeployer = new Deployer(localMavenRepositoryDir)
-    new EclipseDeployer(unpuzzleDir, vconf.eclipseMavenGroup, mavenDeployer).allDownloadedPackagesAreInstalled(vconf.sources)
+    def mavenDeployer = new Deployer(effectiveConfig.localMavenRepositoryDir)
+    new EclipseDeployer(effectiveConfig.unpuzzleDir, vconf.eclipseMavenGroup, mavenDeployer).allDownloadedPackagesAreInstalled(vconf.sources)
   }
 
   private static void setupConfigChain(Project project) {
@@ -176,10 +172,10 @@ class Configurer {
       log.warn 'uninstallEclipse: unpuzzle.dryRun=true, no work done'
       return
     }
-    def mavenDeployer = new Deployer(localMavenRepositoryDir)
-    def eclipseDeployer = new EclipseDeployer(unpuzzleDir, vconf.eclipseMavenGroup, mavenDeployer)
+    def mavenDeployer = new Deployer(effectiveConfig.localMavenRepositoryDir)
+    def eclipseDeployer = new EclipseDeployer(effectiveConfig.unpuzzleDir, vconf.eclipseMavenGroup, mavenDeployer)
     if(!eclipseDeployer.allDownloadedPackagesAreUninstalled(vconf.sources)) {
-      log.warn 'Uninstalling eclipse version {} from maven-repo {}, maven-group {}', effectiveConfig.selectedEclipseVersion, localMavenRepositoryDir.toURI().toString(), vconf.eclipseMavenGroup
+      log.warn 'Uninstalling eclipse version {} from maven-repo {}, maven-group {}', effectiveConfig.selectedEclipseVersion, effectiveConfig.localMavenRepositoryDir.toURI().toString(), vconf.eclipseMavenGroup
       eclipseDeployer.uninstall(vconf.sources)
     }
   }
@@ -188,8 +184,8 @@ class Configurer {
     def vconf = getSelectedVersionConfig()
     if(effectiveConfig.dryRun)
       return false
-    def mavenDeployer = new Deployer(localMavenRepositoryDir)
-    def eclipseDeployer = new EclipseDeployer(unpuzzleDir, vconf.eclipseMavenGroup, mavenDeployer)
+    def mavenDeployer = new Deployer(effectiveConfig.localMavenRepositoryDir)
+    def eclipseDeployer = new EclipseDeployer(effectiveConfig.unpuzzleDir, vconf.eclipseMavenGroup, mavenDeployer)
     eclipseDeployer.allDownloadedPackagesAreUninstalled(vconf.sources)
   }
 
@@ -211,7 +207,7 @@ class Configurer {
     }
     log.warn 'Deploying eclipse version {} to maven-repo {}, maven-group {}', effectiveConfig.selectedEclipseVersion, uploadEclipse.url, vconf.eclipseMavenGroup
     Deployer mavenDeployer = new Deployer(uploadEclipse.url, user: uploadEclipse.user, password: uploadEclipse.password)
-    def eclipseDeployer = new EclipseDeployer(unpuzzleDir, vconf.eclipseMavenGroup, mavenDeployer)
+    def eclipseDeployer = new EclipseDeployer(effectiveConfig.unpuzzleDir, vconf.eclipseMavenGroup, mavenDeployer)
     eclipseDeployer.deploy(vconf.sources)
   }
 }

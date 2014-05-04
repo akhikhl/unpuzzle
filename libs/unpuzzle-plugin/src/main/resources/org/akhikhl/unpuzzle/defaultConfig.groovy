@@ -1,5 +1,9 @@
 unpuzzle {
 
+  localMavenRepositoryDir = new File(System.getProperty('user.home'), '.m2/repository')
+
+  unpuzzleDir = new File(System.getProperty('user.home'), '.unpuzzle')
+
   selectedEclipseVersion = '4.3.2'
 
   eclipseVersion('4.3.2') {
@@ -136,5 +140,5 @@ unpuzzle {
       languagePackTemplate '${eclipseMirror}/eclipse//technology/babel/babel_language_packs/R0.11.1/indigo/BabelLanguagePack-eclipse-${language}_3.7.0.v20131123061707.zip'
       languagePackTemplate '${eclipseMirror}/eclipse//technology/babel/babel_language_packs/R0.11.1/indigo/BabelLanguagePack-rt.equinox-${language}_3.7.0.v20131123061707.zip'
     }
-  }  
+  }
 }

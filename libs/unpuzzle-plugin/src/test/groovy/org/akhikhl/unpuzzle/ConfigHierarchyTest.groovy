@@ -26,6 +26,64 @@ class ConfigHierarchyTest extends Specification {
     plugin = new UnpuzzlePlugin()
   }
 
+  def 'should support default localMavenRepositoryDir'() {
+  when:
+    Project p = ProjectBuilder.builder().withName('p').build()
+    plugin.apply(p)
+  then:
+    p.effectiveUnpuzzle.localMavenRepositoryDir == new File(System.getProperty('user.home'), '.m2/repository')
+  }
+
+  def 'should support localMavenRepositoryDir inheritance'() {
+  when:
+    Project p1 = ProjectBuilder.builder().withName('p1').build()
+    plugin.apply(p1)
+    def file1 = new File(System.getProperty('user.home'), 'someDirectory')
+    p1.unpuzzle.localMavenRepositoryDir = file1
+    Project p2 = ProjectBuilder.builder().withName('p2').withParent(p1).build()
+    plugin.apply(p2)
+    Project p3 = ProjectBuilder.builder().withName('p3').withParent(p2).build()
+    plugin.apply(p3)
+    def file2 = new File(System.getProperty('user.home'), 'someDirectory2')
+    p3.unpuzzle.localMavenRepositoryDir = file2
+    Project p4 = ProjectBuilder.builder().withName('p4').withParent(p3).build()
+    plugin.apply(p4)
+  then:
+    p1.effectiveUnpuzzle.localMavenRepositoryDir == file1
+    p2.effectiveUnpuzzle.localMavenRepositoryDir == file1
+    p3.effectiveUnpuzzle.localMavenRepositoryDir == file2
+    p4.effectiveUnpuzzle.localMavenRepositoryDir == file2
+  }
+
+  def 'should support default unpuzzleDir'() {
+  when:
+    Project p = ProjectBuilder.builder().withName('p').build()
+    plugin.apply(p)
+  then:
+    p.effectiveUnpuzzle.unpuzzleDir == new File(System.getProperty('user.home'), '.unpuzzle')
+  }
+
+  def 'should support unpuzzleDir inheritance'() {
+  when:
+    Project p1 = ProjectBuilder.builder().withName('p1').build()
+    plugin.apply(p1)
+    def file1 = new File(System.getProperty('user.home'), 'someDirectory')
+    p1.unpuzzle.unpuzzleDir = file1
+    Project p2 = ProjectBuilder.builder().withName('p2').withParent(p1).build()
+    plugin.apply(p2)
+    Project p3 = ProjectBuilder.builder().withName('p3').withParent(p2).build()
+    plugin.apply(p3)
+    def file2 = new File(System.getProperty('user.home'), 'someDirectory2')
+    p3.unpuzzle.unpuzzleDir = file2
+    Project p4 = ProjectBuilder.builder().withName('p4').withParent(p3).build()
+    plugin.apply(p4)
+  then:
+    p1.effectiveUnpuzzle.unpuzzleDir == file1
+    p2.effectiveUnpuzzle.unpuzzleDir == file1
+    p3.effectiveUnpuzzle.unpuzzleDir == file2
+    p4.effectiveUnpuzzle.unpuzzleDir == file2
+  }
+
   def 'should support selectedEclipseVersion inheritance and override'() {
   when:
     Project p1 = ProjectBuilder.builder().withName('p1').build()
