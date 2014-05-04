@@ -129,7 +129,7 @@ unpuzzle {
       def suffix_arch = [ 'x86_32': '', 'x86_64': '-x86_64' ]
       def fileExt_os = [ 'linux': 'tar.gz', 'windows': 'zip' ]
 
-      source "$eclipseArchiveMirror/technology/epp/downloads/release/indigo/SR1/eclipse-java-indigo-SR1-${suffix_os[current_os]}${suffix_arch[current_arch]}.${fileExt_os[current_os]}"
+      source "$eclipseArchiveMirror/technology/epp/downloads/release/indigo/SR1/eclipse-jee-indigo-SR1-${suffix_os[current_os]}${suffix_arch[current_arch]}.${fileExt_os[current_os]}"
       source "$eclipseArchiveMirror/eclipse/downloads/drops/R-3.7.1-201109091335/eclipse-SDK-3.7.1-${suffix_os[current_os]}${suffix_arch[current_arch]}.${fileExt_os[current_os]}", sourcesOnly: true
       source "$eclipseArchiveMirror/eclipse/downloads/drops/R-3.7.1-201109091335/eclipse-3.7.1-delta-pack.zip"
 
