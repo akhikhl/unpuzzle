@@ -19,7 +19,7 @@ All versions of Unpuzzle are available at jcenter and maven-central under the gr
   - [uninstallEclipse](#uninstalleclipse)  
   - [uploadEclipse](#uploadeclipse)
   - [cleanUnpuzzle](#cleanunpuzzle)
-4. [Unpuzzle configuration](#Unpuzzle-configuration)
+4. [Configuration DSL](#configuration-dsl)
 5. [uploadEclipse configuration](#uploadeclipse-configuration)
 6. [Configuration hierarchy](#configuration-hierarchy)
 7. [Support of multiple Eclipse versions](#support-of-multiple-eclipse-versions)
@@ -115,7 +115,7 @@ uploadEclipse task depends on [downloadEclipse](#downloadeclipse] task.
 
 **cleanUnpuzzle** task cleans everything specific to Unpuzzle plugin. Particularly, it uninstalls installed maven artifacts and deletes directory $HOME/.unpuzzle.
 
-## Unpuzzle configuration
+## Configuration DSL
 
 Unpuzzle works without configuration out of the box. You just apply gradle plugin,
 run [installEclipse](#installeclipse) task and Unpuzzle does it's job with reasonable defaults.
