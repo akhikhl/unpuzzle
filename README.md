@@ -132,9 +132,9 @@ unpuzzle {
 
   unpuzzleDir = new File(System.getProperty('user.home'), '.unpuzzle')
 
-  selectedEclipseVersion = '4.3'
+  selectedEclipseVersion = '4.3.2'
 
-  eclipseVersion('4.3') {
+  eclipseVersion('4.3.2') {
 
     eclipseMavenGroup = 'eclipse-kepler'
 
@@ -172,13 +172,13 @@ unpuzzle {
   unpuzzleDir can be safely deleted from the file system any time. Unpuzzle re-creates this directory
   and downloads eclipse distributions into it as needed.
 
-- **selectedEclipseVersion** - string, optional, default value is '4.3'. 
+- **selectedEclipseVersion** - string, optional, default value is '4.3.2'. 
   Defines which version of eclipse is to be downloaded and installed by Unpuzzle tasks.
   
 - **eclipseVersion** - function(String, Closure), multiplicity 0..n. When called, defines version-specific configuration. Unpuzzle configuration may contain multiple
   version-specific configurations. Only one version-specific configuration is "active" - this is defined by selectedEclipseVersion.
 
-- **eclipseMavenGroup** - string, optional, default value (for version '4.3') is 'eclipse-kepler'.
+- **eclipseMavenGroup** - string, optional, default value (for version '4.3.2') is 'eclipse-kepler-sr2'.
 
 - **eclipseMirror** - string, optional, default is 'http://mirror.netcologne.de'. Can be used for specifying common base URL.
 
