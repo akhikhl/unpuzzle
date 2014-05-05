@@ -123,7 +123,7 @@ run [installEclipse](#installeclipse) task and Unpuzzle does it's job with reaso
 However, there are cases when you need to fine-tune Unpuzzle. For example you might
 want to download/install another version of eclipse distribution.
 
-Unpuzzle supports the following gradle plugin extension:
+Unpuzzle supports the following configuration DSL:
 
 ```groovy
 unpuzzle {
