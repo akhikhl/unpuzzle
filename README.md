@@ -163,7 +163,6 @@ unpuzzle {
   ]  
 }
 ```
-Here is the detailed description of configuration properties:
 
 - **localMavenRepositoryDir** - java.io.File, optional, default value is `new File(System.getProperty('user.home'), '.m2/repository')`.
   Defines which local directory is used as local maven repository for installation of eclipse artifacts.
