@@ -2,7 +2,7 @@
 
 [![Maintainer Status](http://stillmaintained.com/akhikhl/unpuzzle.png)](http://stillmaintained.com/akhikhl/unpuzzle) 
 [![Build Status](https://travis-ci.org/akhikhl/unpuzzle.png?branch=master)](https://travis-ci.org/akhikhl/unpuzzle) 
-[![Latest Version](http://img.shields.io/badge/latest_version-0.0.8-3f6498.svg)](https://github.com/akhikhl/unpuzzle/tree/v0.0.8)
+[![Latest Version](http://img.shields.io/badge/latest_version-0.0.9-3f6498.svg)](https://github.com/akhikhl/unpuzzle/tree/v0.0.9)
 [![License](http://img.shields.io/badge/license-MIT-d63434.svg)](#copyright-and-license)
 
 **Unpuzzle** is a set of tools for mavenizing OSGi-bundles. You can consume Unpuzzle in two forms: 
@@ -18,7 +18,7 @@ All versions of Unpuzzle are available at jcenter and maven-central under the gr
   - [installEclipse](#installeclipse)  
   - [uninstallEclipse](#uninstalleclipse)  
   - [uploadEclipse](#uploadeclipse)
-  - [cleanUnpuzzle](#cleanunpuzzle)
+  - [cleanEclipse](#cleaneclipse)
 4. [Configuration DSL](#configuration-dsl)
 5. [uploadEclipse configuration](#uploadeclipse-configuration)
 6. [Configuration hierarchy](#configuration-hierarchy)
@@ -111,9 +111,9 @@ You can define other maven group by providing your own [configuration](#gradle-p
 
 uploadEclipse task depends on [downloadEclipse](#downloadeclipse] task.
 
-### cleanUnpuzzle
+### cleanEclipse
 
-**cleanUnpuzzle** task cleans everything specific to Unpuzzle plugin. Particularly, it uninstalls installed maven artifacts and deletes directory $HOME/.unpuzzle.
+**cleanEclipse** task cleans everything specific to Unpuzzle plugin. Particularly, it uninstalls installed maven artifacts and deletes directory $HOME/.unpuzzle.
 
 ## Configuration DSL
 

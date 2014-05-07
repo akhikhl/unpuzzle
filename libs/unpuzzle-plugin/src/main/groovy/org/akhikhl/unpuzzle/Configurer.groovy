@@ -28,6 +28,7 @@ class Configurer {
   protected static final Logger log = LoggerFactory.getLogger(Configurer)
 
   private final Project project
+  boolean loadDefaultConfig = true
 
   Configurer(Project project) {
     this.project = project
@@ -51,16 +52,12 @@ class Configurer {
     project.afterEvaluate {
 
       project.task('downloadEclipse') {
-        group = 'unpuzzle'
-        description = 'Downloads eclipse distribution into $HOME/.unpuzzle directory'
         doLast {
           downloadEclipse()
         }
       }
 
       project.task('installEclipse') {
-        group = 'unpuzzle'
-        description = 'Mavenizes and installs bundles of the eclipse distribution into local maven repository'
         outputs.upToDateWhen {
           installEclipseUpToDate()
         }
@@ -70,8 +67,6 @@ class Configurer {
       }
 
       project.task('uninstallEclipse') {
-        group = 'unpuzzle'
-        description = 'Uninstalls mavenized artifacts of the eclipse distribution from local maven repository'
         outputs.upToDateWhen {
           uninstallEclipseUpToDate()
         }
@@ -81,17 +76,13 @@ class Configurer {
       }
 
       project.task('uploadEclipse') {
-        group = 'unpuzzle'
-        description = 'Uploads mavenized artifacts of the eclipse distribution to remote maven repository'
         dependsOn project.tasks.downloadEclipse
         doLast {
           uploadEclipse()
         }
       }
 
-      project.task('cleanUnpuzzle') {
-        group = 'unpuzzle'
-        description = 'Cleans $HOME/.unpuzzle directory, uninstalls mavenized artifacts'
+      project.task('cleanEclipse') {
         dependsOn project.tasks.uninstallEclipse
         outputs.upToDateWhen {
           !effectiveConfig.unpuzzleDir.exists()
@@ -101,7 +92,32 @@ class Configurer {
             effectiveConfig.unpuzzleDir.deleteDir()
         }
       }
-    } // project.afterEvaluate
+
+      if(!project.tasks.downloadEclipse.group)
+        updateTasks('unpuzzle')
+      } // project.afterEvaluate
+  }
+
+  void updateTasks(String taskGroup) {
+    Config econfig = new Config()
+    Config.merge(econfig, project.unpuzzle)
+    if(econfig.selectedVersionConfig != null && econfig.localMavenRepositoryDir != null) {
+      def mavenGroupPath
+      if(econfig.selectedVersionConfig.eclipseMavenGroup)
+        mavenGroupPath = new File(econfig.localMavenRepositoryDir, econfig.selectedVersionConfig.eclipseMavenGroup).absolutePath
+      else
+        mavenGroupPath = econfig.localMavenRepositoryDir.absolutePath
+      project.tasks.downloadEclipse.group = taskGroup
+      project.tasks.downloadEclipse.description = "Downloads eclipse version ${econfig.selectedEclipseVersion} into ${econfig.unpuzzleDir} directory"
+      project.tasks.installEclipse.group = taskGroup
+      project.tasks.installEclipse.description = "Mavenizes and installs bundles of the eclipse version ${econfig.selectedEclipseVersion} into ${mavenGroupPath}"
+      project.tasks.uninstallEclipse.group = taskGroup
+      project.tasks.uninstallEclipse.description = "Uninstalls mavenized bundles of the eclipse version ${econfig.selectedEclipseVersion} from ${mavenGroupPath}"
+      project.tasks.uploadEclipse.group = taskGroup
+      project.tasks.uploadEclipse.description = "Uploads mavenized bundles of the eclipse version ${econfig.selectedEclipseVersion} to remote maven repository"
+      project.tasks.cleanEclipse.group = taskGroup
+      project.tasks.cleanEclipse.description = "uninstalls all mavenized artifacts, cleans ${econfig.unpuzzleDir} directory"
+    }
   }
 
   void downloadEclipse() {
@@ -119,9 +135,12 @@ class Configurer {
   }
 
   private EclipseVersionConfig getSelectedVersionConfig() {
-    EclipseVersionConfig vconf = effectiveConfig.selectedVersionConfig
-    if(!vconf)
-      throw new GradleException("Eclipse version ${effectiveConfig.selectedEclipseVersion} is not configured")
+    EclipseVersionConfig vconf
+    if(effectiveConfig.selectedEclipseVersion != null) {
+      vconf = effectiveConfig.selectedVersionConfig
+      if(!vconf)
+        throw new GradleException("Eclipse version ${effectiveConfig.selectedEclipseVersion} is not configured")
+    }
     return vconf
   }
 
@@ -148,14 +167,17 @@ class Configurer {
     new EclipseDeployer(effectiveConfig.unpuzzleDir, vconf.eclipseMavenGroup, mavenDeployer).allDownloadedPackagesAreInstalled(vconf.sources)
   }
 
-  private static void setupConfigChain(Project project) {
+  private void setupConfigChain(Project project) {
     if(project.unpuzzle.parentConfig == null) {
       Project p = project.parent
       while(p != null && !p.extensions.findByName('unpuzzle'))
         p = p.parent
       if(p == null) {
-        log.debug '{}.unpuzzle.parentConfig <- defaultConfig', project.name
-        project.unpuzzle.parentConfig = new ConfigReader().readFromResource('defaultConfig.groovy')
+        if(loadDefaultConfig) {
+          log.debug '{}.unpuzzle.parentConfig <- defaultConfig', project.name
+          project.unpuzzle.parentConfig = new ConfigReader().readFromResource('defaultConfig.groovy')
+        } else
+          project.unpuzzle.parentConfig = new Config()
       }
       else {
         log.debug '{}.unpuzzle.parentConfig <- {}.unpuzzle', project.name, p.name
