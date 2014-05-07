@@ -6,6 +6,10 @@ unpuzzle {
 
   selectedEclipseVersion = '4.3.2'
 
+  def suffix_os = [ 'linux': 'linux-gtk', 'windows': 'win32' ]
+  def suffix_arch = [ 'x86_32': '', 'x86_64': '-x86_64' ]
+  def fileExt_os = [ 'linux': 'tar.gz', 'windows': 'zip' ]
+
   eclipseVersion('4.3.2') {
 
     eclipseMavenGroup = 'eclipse-kepler-sr2'
@@ -15,10 +19,6 @@ unpuzzle {
     eclipseArchiveMirror = 'http://archive.eclipse.org'
 
     sources {
-
-      def suffix_os = [ 'linux': 'linux-gtk', 'windows': 'win32' ]
-      def suffix_arch = [ 'x86_32': '', 'x86_64': '-x86_64' ]
-      def fileExt_os = [ 'linux': 'tar.gz', 'windows': 'zip' ]
 
       source "$eclipseMirror/eclipse//technology/epp/downloads/release/kepler/SR2/eclipse-jee-kepler-SR2-${suffix_os[current_os]}${suffix_arch[current_arch]}.${fileExt_os[current_os]}"
       source "$eclipseMirror/eclipse//eclipse/downloads/drops4/R-4.3.2-201402211700/eclipse-SDK-4.3.2-${suffix_os[current_os]}${suffix_arch[current_arch]}.${fileExt_os[current_os]}", sourcesOnly: true
@@ -38,10 +38,6 @@ unpuzzle {
 
     sources {
 
-      def suffix_os = [ 'linux': 'linux-gtk', 'windows': 'win32' ]
-      def suffix_arch = [ 'x86_32': '', 'x86_64': '-x86_64' ]
-      def fileExt_os = [ 'linux': 'tar.gz', 'windows': 'zip' ]
-
       source "$eclipseMirror/eclipse//technology/epp/downloads/release/kepler/SR1/eclipse-jee-kepler-SR1-${suffix_os[current_os]}${suffix_arch[current_arch]}.${fileExt_os[current_os]}"
       source "$eclipseMirror/eclipse//eclipse/downloads/drops4/R-4.3.1-201309111000/eclipse-SDK-4.3.1-${suffix_os[current_os]}${suffix_arch[current_arch]}.${fileExt_os[current_os]}", sourcesOnly: true
       source "$eclipseMirror/eclipse//eclipse/downloads/drops4/R-4.3.1-201309111000/eclipse-4.3.1-delta-pack.zip"
@@ -59,10 +55,6 @@ unpuzzle {
     eclipseArchiveMirror = 'http://archive.eclipse.org'
 
     sources {
-
-      def suffix_os = [ 'linux': 'linux-gtk', 'windows': 'win32' ]
-      def suffix_arch = [ 'x86_32': '', 'x86_64': '-x86_64' ]
-      def fileExt_os = [ 'linux': 'tar.gz', 'windows': 'zip' ]
 
       source "$eclipseMirror/eclipse//technology/epp/downloads/release/juno/SR2/eclipse-jee-juno-SR2-${suffix_os[current_os]}${suffix_arch[current_arch]}.${fileExt_os[current_os]}"
       source "$eclipseMirror/eclipse//eclipse/downloads/drops4/R-4.2.2-201302041200/eclipse-SDK-4.2.2-${suffix_os[current_os]}${suffix_arch[current_arch]}.${fileExt_os[current_os]}", sourcesOnly: true
@@ -83,10 +75,6 @@ unpuzzle {
 
     sources {
 
-      def suffix_os = [ 'linux': 'linux-gtk', 'windows': 'win32' ]
-      def suffix_arch = [ 'x86_32': '', 'x86_64': '-x86_64' ]
-      def fileExt_os = [ 'linux': 'tar.gz', 'windows': 'zip' ]
-
       source "$eclipseArchiveMirror/technology/epp/downloads/release/juno/SR1/eclipse-jee-juno-SR1-${suffix_os[current_os]}${suffix_arch[current_arch]}.${fileExt_os[current_os]}"
       source "$eclipseArchiveMirror/eclipse/downloads/drops4/R-4.2.1-201209141800/eclipse-SDK-4.2.1-${suffix_os[current_os]}${suffix_arch[current_arch]}.${fileExt_os[current_os]}", sourcesOnly: true
       source "$eclipseArchiveMirror/eclipse/downloads/drops4/R-4.2.1-201209141800/eclipse-4.2.1-delta-pack.zip"
@@ -106,10 +94,6 @@ unpuzzle {
 
     sources {
 
-      def suffix_os = [ 'linux': 'linux-gtk', 'windows': 'win32' ]
-      def suffix_arch = [ 'x86_32': '', 'x86_64': '-x86_64' ]
-      def fileExt_os = [ 'linux': 'tar.gz', 'windows': 'zip' ]
-
       source "$eclipseMirror/eclipse//technology/epp/downloads/release/indigo/SR2/eclipse-jee-indigo-SR2-${suffix_os[current_os]}${suffix_arch[current_arch]}.${fileExt_os[current_os]}"
       source "$eclipseArchiveMirror/eclipse/downloads/drops/R-3.7.2-201202080800/eclipse-SDK-3.7.2-${suffix_os[current_os]}${suffix_arch[current_arch]}.${fileExt_os[current_os]}", sourcesOnly: true
       source "$eclipseArchiveMirror/eclipse/downloads/drops/R-3.7.2-201202080800/eclipse-3.7.2-delta-pack.zip"
@@ -128,10 +112,6 @@ unpuzzle {
     eclipseArchiveMirror = 'http://archive.eclipse.org'
 
     sources {
-
-      def suffix_os = [ 'linux': 'linux-gtk', 'windows': 'win32' ]
-      def suffix_arch = [ 'x86_32': '', 'x86_64': '-x86_64' ]
-      def fileExt_os = [ 'linux': 'tar.gz', 'windows': 'zip' ]
 
       source "$eclipseArchiveMirror/technology/epp/downloads/release/indigo/SR1/eclipse-jee-indigo-SR1-${suffix_os[current_os]}${suffix_arch[current_arch]}.${fileExt_os[current_os]}"
       source "$eclipseArchiveMirror/eclipse/downloads/drops/R-3.7.1-201109091335/eclipse-SDK-3.7.1-${suffix_os[current_os]}${suffix_arch[current_arch]}.${fileExt_os[current_os]}", sourcesOnly: true
