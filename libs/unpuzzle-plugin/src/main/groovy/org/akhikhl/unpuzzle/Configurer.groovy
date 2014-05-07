@@ -28,6 +28,7 @@ class Configurer {
   protected static final Logger log = LoggerFactory.getLogger(Configurer)
 
   private final Project project
+  private String taskGroup = 'unpuzzle'
   boolean loadDefaultConfig = true
 
   Configurer(Project project) {
@@ -93,12 +94,17 @@ class Configurer {
         }
       }
 
-      if(!project.tasks.downloadEclipse.group)
-        updateTasks('unpuzzle')
-      } // project.afterEvaluate
+      updateTaskProperties()
+    } // project.afterEvaluate
   }
 
   void updateTasks(String taskGroup) {
+    this.taskGroup = taskGroup
+    if(project.tasks.findByName('downloadEclipse'))
+      updateTaskProperties()
+  }
+
+  private void updateTaskProperties() {
     Config econfig = new Config()
     Config.merge(econfig, project.unpuzzle)
     if(econfig.selectedVersionConfig != null && econfig.localMavenRepositoryDir != null) {
