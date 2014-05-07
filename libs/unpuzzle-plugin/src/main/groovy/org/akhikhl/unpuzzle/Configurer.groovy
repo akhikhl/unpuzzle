@@ -28,6 +28,7 @@ class Configurer {
   protected static final Logger log = LoggerFactory.getLogger(Configurer)
 
   private final Project project
+  boolean loadDefaultConfig = true
 
   Configurer(Project project) {
     this.project = project
@@ -100,7 +101,7 @@ class Configurer {
   void updateTasks(String taskGroup) {
     Config econfig = new Config()
     Config.merge(econfig, project.unpuzzle)
-    if(econfig.selectedVersionConfig != null) {
+    if(econfig.selectedVersionConfig != null && econfig.localMavenRepositoryDir != null) {
       def mavenGroupPath
       if(econfig.selectedVersionConfig.eclipseMavenGroup)
         mavenGroupPath = new File(econfig.localMavenRepositoryDir, econfig.selectedVersionConfig.eclipseMavenGroup).absolutePath
@@ -134,9 +135,12 @@ class Configurer {
   }
 
   private EclipseVersionConfig getSelectedVersionConfig() {
-    EclipseVersionConfig vconf = effectiveConfig.selectedVersionConfig
-    if(!vconf)
-      throw new GradleException("Eclipse version ${effectiveConfig.selectedEclipseVersion} is not configured")
+    EclipseVersionConfig vconf
+    if(effectiveConfig.selectedEclipseVersion != null) {
+      vconf = effectiveConfig.selectedVersionConfig
+      if(!vconf)
+        throw new GradleException("Eclipse version ${effectiveConfig.selectedEclipseVersion} is not configured")
+    }
     return vconf
   }
 
@@ -163,14 +167,17 @@ class Configurer {
     new EclipseDeployer(effectiveConfig.unpuzzleDir, vconf.eclipseMavenGroup, mavenDeployer).allDownloadedPackagesAreInstalled(vconf.sources)
   }
 
-  private static void setupConfigChain(Project project) {
+  private void setupConfigChain(Project project) {
     if(project.unpuzzle.parentConfig == null) {
       Project p = project.parent
       while(p != null && !p.extensions.findByName('unpuzzle'))
         p = p.parent
       if(p == null) {
-        log.debug '{}.unpuzzle.parentConfig <- defaultConfig', project.name
-        project.unpuzzle.parentConfig = new ConfigReader().readFromResource('defaultConfig.groovy')
+        if(loadDefaultConfig) {
+          log.debug '{}.unpuzzle.parentConfig <- defaultConfig', project.name
+          project.unpuzzle.parentConfig = new ConfigReader().readFromResource('defaultConfig.groovy')
+        } else
+          project.unpuzzle.parentConfig = new Config()
       }
       else {
         log.debug '{}.unpuzzle.parentConfig <- {}.unpuzzle', project.name, p.name
