@@ -194,10 +194,14 @@ class Configurer {
     if(effectiveConfig.dryRun)
       return false
     def mavenDeployer = new Deployer(effectiveConfig.localMavenRepositoryDir)
-    effectiveConfig.versionConfigs.each { eclipseVersion, vconf ->
+    def result = !effectiveConfig.versionConfigs.find { eclipseVersion, vconf ->
       def eclipseDeployer = new EclipseDeployer(effectiveConfig.unpuzzleDir, vconf.eclipseMavenGroup, mavenDeployer)
-      eclipseDeployer.allDownloadedPackagesAreUninstalled(vconf.sources)
+      def uninstalled = eclipseDeployer.allDownloadedPackagesAreUninstalled(vconf.sources)
+      log.debug '{} uninstalled: {}', eclipseVersion, uninstalled
+      return !uninstalled
     }
+    log.debug 'uninstallAllEclipseVersionsUpToDate: {}', result
+    return result
   }
 
   void uninstallEclipse() {
