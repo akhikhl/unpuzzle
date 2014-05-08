@@ -2,7 +2,7 @@
 
 [![Maintainer Status](http://stillmaintained.com/akhikhl/unpuzzle.png)](http://stillmaintained.com/akhikhl/unpuzzle) 
 [![Build Status](https://travis-ci.org/akhikhl/unpuzzle.png?branch=master)](https://travis-ci.org/akhikhl/unpuzzle) 
-[![Latest Version](http://img.shields.io/badge/latest_version-0.0.10-3f6498.svg)](https://github.com/akhikhl/unpuzzle/tree/v0.0.10)
+[![Latest Version](http://img.shields.io/badge/latest_version-0.0.11-3f6498.svg)](https://github.com/akhikhl/unpuzzle/tree/v0.0.11)
 [![License](http://img.shields.io/badge/license-MIT-d63434.svg)](#copyright-and-license)
 
 **Unpuzzle** is a set of tools for mavenizing OSGi-bundles. You can consume Unpuzzle in two forms: 
@@ -17,8 +17,9 @@ All versions of Unpuzzle are available at jcenter and maven-central under the gr
   - [downloadEclipse](#downloadeclipse)
   - [installEclipse](#installeclipse)  
   - [uninstallEclipse](#uninstalleclipse)  
+  - [uninstallAllEclipseVersions](#uninstallalleclipseversions)
   - [uploadEclipse](#uploadeclipse)
-  - [cleanEclipse](#cleaneclipse)
+  - [purgeEclipse](#purgeeclipse)
 4. [Configuration DSL](#configuration-dsl)
 5. [uploadEclipse configuration](#uploadeclipse-configuration)
 6. [Configuration hierarchy](#configuration-hierarchy)
@@ -65,7 +66,7 @@ from it's distribution site and install eclipse plugins to the local maven repos
 $HOME/.m2/repository, into maven group "eclipse-kepler".
 
 Alternatively, you can download the script from https://raw.github.com/akhikhl/unpuzzle/master/pluginScripts/unpuzzle.plugin 
-to the project folder and include it like this:
+to the project directory and include it like this:
 
 ```groovy
 apply from: 'unpuzzle.plugin'
@@ -77,18 +78,18 @@ or feel free copying (and modifying) the declarations from this script to your "
 
 ### downloadEclipse
 
-**downloadEclipse** task downloads eclipse distribution from the official site,
-then unpacks it to the $HOME/.unpuzzle folder. 
+**downloadEclipse** task downloads and unpacks distribution of the selected Eclipse version 
+from the official site into directory $HOME/.unpuzzle.
 
 By default Unpuzzle downloads eclipse kepler SR1, delta-pack and eclipse-SDK. You can fine-tune, which version of eclipse is downloaded and with which add-ons by providing your own [configuration](#gradle-plugin-extension).
 
 Before downloading a distribution package this task compares file size to the one returned by HTTP HEAD request. If file size did not change, no download is performed.
 
-**Hint**: you can force re-download of eclipse distribution simply by deleting *.zip and *.tar.gz files in the folder $HOME/.unpuzzle/downloaded.
+**Hint**: you can force re-download of eclipse distribution simply by deleting *.zip and *.tar.gz files in the directory $HOME/.unpuzzle/downloaded.
 
 ### installEclipse
 
-**installEclipse** task mavenizes all OSGi-bundles of the downloaded eclipse distribution 
+**installEclipse** task mavenizes all OSGi-bundles of selected Eclipse version
 and installs the generated maven artifacts to local maven repository ($HOME/.m2/repository).
 
 By default all OSGi-bundles are installed into "eclipse-kepler" maven group.
@@ -98,7 +99,11 @@ installEclipse task depends on [downloadEclipse](#downloadeclipse] task.
 
 ### uninstallEclipse
 
-**uninstallEclipse** task uninstalls installed OSGi-bundles of the downloaded eclipse distribution from the local maven repository ($HOME/.m2/repository).
+**uninstallEclipse** task uninstalls installed OSGi-bundles of the selected Eclipse version from the local maven repository ($HOME/.m2/repository).
+
+### uninstallAllEclipseVersions
+
+**uninstallAllEclipseVersions** task uninstalls installed OSGi-bundles of all Eclipse versions from the local maven repository ($HOME/.m2/repository).
 
 ### uploadEclipse
 
@@ -111,9 +116,9 @@ You can define other maven group by providing your own [configuration](#gradle-p
 
 uploadEclipse task depends on [downloadEclipse](#downloadeclipse] task.
 
-### cleanEclipse
+### purgeEclipse
 
-**cleanEclipse** task cleans everything specific to Unpuzzle plugin. Particularly, it uninstalls installed maven artifacts and deletes directory $HOME/.unpuzzle.
+**purgeEclipse** task cleans everything specific to Unpuzzle plugin. Particularly, it uninstalls installed maven artifacts and deletes directory $HOME/.unpuzzle.
 
 ## Configuration DSL
 

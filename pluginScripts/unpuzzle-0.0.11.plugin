@@ -1,6 +1,4 @@
 buildscript {
-  apply plugin: 'maven'
-
   repositories {
     mavenLocal()
     jcenter()
@@ -8,7 +6,7 @@ buildscript {
   }
   
   dependencies {
-    classpath 'org.akhikhl.unpuzzle:unpuzzle-plugin:+'
+    classpath 'org.akhikhl.unpuzzle:unpuzzle-plugin:0.0.11'
   }
 }
 
