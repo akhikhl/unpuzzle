@@ -76,6 +76,15 @@ class Configurer {
         }
       }
 
+      project.task('uninstallAllEclipseVersions') {
+        outputs.upToDateWhen {
+          uninstallAllEclipseVersionsUpToDate()
+        }
+        doLast {
+          uninstallAllEclipseVersions()
+        }
+      }
+
       project.task('uploadEclipse') {
         dependsOn project.tasks.downloadEclipse
         doLast {
@@ -83,8 +92,8 @@ class Configurer {
         }
       }
 
-      project.task('cleanEclipse') {
-        dependsOn project.tasks.uninstallEclipse
+      project.task('purgeEclipse') {
+        dependsOn project.tasks.uninstallAllEclipseVersions
         outputs.upToDateWhen {
           !effectiveConfig.unpuzzleDir.exists()
         }
@@ -96,34 +105,6 @@ class Configurer {
 
       updateTaskProperties()
     } // project.afterEvaluate
-  }
-
-  void updateTasks(String taskGroup) {
-    this.taskGroup = taskGroup
-    if(project.tasks.findByName('downloadEclipse'))
-      updateTaskProperties()
-  }
-
-  private void updateTaskProperties() {
-    Config econfig = new Config()
-    Config.merge(econfig, project.unpuzzle)
-    if(econfig.selectedVersionConfig != null && econfig.localMavenRepositoryDir != null) {
-      def mavenGroupPath
-      if(econfig.selectedVersionConfig.eclipseMavenGroup)
-        mavenGroupPath = new File(econfig.localMavenRepositoryDir, econfig.selectedVersionConfig.eclipseMavenGroup).absolutePath
-      else
-        mavenGroupPath = econfig.localMavenRepositoryDir.absolutePath
-      project.tasks.downloadEclipse.group = taskGroup
-      project.tasks.downloadEclipse.description = "Downloads eclipse version ${econfig.selectedEclipseVersion} into ${econfig.unpuzzleDir} directory"
-      project.tasks.installEclipse.group = taskGroup
-      project.tasks.installEclipse.description = "Mavenizes and installs bundles of the eclipse version ${econfig.selectedEclipseVersion} into ${mavenGroupPath}"
-      project.tasks.uninstallEclipse.group = taskGroup
-      project.tasks.uninstallEclipse.description = "Uninstalls mavenized bundles of the eclipse version ${econfig.selectedEclipseVersion} from ${mavenGroupPath}"
-      project.tasks.uploadEclipse.group = taskGroup
-      project.tasks.uploadEclipse.description = "Uploads mavenized bundles of the eclipse version ${econfig.selectedEclipseVersion} to remote maven repository"
-      project.tasks.cleanEclipse.group = taskGroup
-      project.tasks.cleanEclipse.description = "uninstalls all mavenized artifacts, cleans ${econfig.unpuzzleDir} directory"
-    }
   }
 
   void downloadEclipse() {
@@ -194,6 +175,31 @@ class Configurer {
       log.debug '{}.unpuzzle already has parentConfig, setupConfigChain skipped', project.name
   }
 
+  void uninstallAllEclipseVersions() {
+    if(effectiveConfig.dryRun) {
+      log.warn 'uninstallAllEclipseVersions: unpuzzle.dryRun=true, no work done'
+      return
+    }
+    def mavenDeployer = new Deployer(effectiveConfig.localMavenRepositoryDir)
+    effectiveConfig.versionConfigs.each { eclipseVersion, vconf ->
+      def eclipseDeployer = new EclipseDeployer(effectiveConfig.unpuzzleDir, vconf.eclipseMavenGroup, mavenDeployer)
+      if(!eclipseDeployer.allDownloadedPackagesAreUninstalled(vconf.sources)) {
+        log.warn 'Uninstalling eclipse version {} from maven-repo {}, maven-group {}', eclipseVersion, effectiveConfig.localMavenRepositoryDir.toURI().toString(), vconf.eclipseMavenGroup
+        eclipseDeployer.uninstall(vconf.sources)
+      }
+    }
+  }
+
+  boolean uninstallAllEclipseVersionsUpToDate() {
+    if(effectiveConfig.dryRun)
+      return false
+    def mavenDeployer = new Deployer(effectiveConfig.localMavenRepositoryDir)
+    effectiveConfig.versionConfigs.each { eclipseVersion, vconf ->
+      def eclipseDeployer = new EclipseDeployer(effectiveConfig.unpuzzleDir, vconf.eclipseMavenGroup, mavenDeployer)
+      eclipseDeployer.allDownloadedPackagesAreUninstalled(vconf.sources)
+    }
+  }
+
   void uninstallEclipse() {
     def vconf = getSelectedVersionConfig()
     if(effectiveConfig.dryRun) {
@@ -215,6 +221,36 @@ class Configurer {
     def mavenDeployer = new Deployer(effectiveConfig.localMavenRepositoryDir)
     def eclipseDeployer = new EclipseDeployer(effectiveConfig.unpuzzleDir, vconf.eclipseMavenGroup, mavenDeployer)
     eclipseDeployer.allDownloadedPackagesAreUninstalled(vconf.sources)
+  }
+
+  void updateTasks(String taskGroup) {
+    this.taskGroup = taskGroup
+    if(project.tasks.findByName('downloadEclipse'))
+      updateTaskProperties()
+  }
+
+  private void updateTaskProperties() {
+    Config econfig = new Config()
+    Config.merge(econfig, project.unpuzzle)
+    if(econfig.selectedVersionConfig != null && econfig.localMavenRepositoryDir != null) {
+      def mavenGroupPath
+      if(econfig.selectedVersionConfig.eclipseMavenGroup)
+        mavenGroupPath = new File(econfig.localMavenRepositoryDir, econfig.selectedVersionConfig.eclipseMavenGroup).absolutePath
+      else
+        mavenGroupPath = econfig.localMavenRepositoryDir.absolutePath
+      project.tasks.downloadEclipse.group = taskGroup
+      project.tasks.downloadEclipse.description = "Downloads eclipse version ${econfig.selectedEclipseVersion} into ${econfig.unpuzzleDir} directory"
+      project.tasks.installEclipse.group = taskGroup
+      project.tasks.installEclipse.description = "Mavenizes and installs bundles of the eclipse version ${econfig.selectedEclipseVersion} into ${mavenGroupPath}"
+      project.tasks.uninstallAllEclipseVersions.group = taskGroup
+      project.tasks.uninstallAllEclipseVersions.description = "Uninstalls mavenized bundles of all eclipse versions from ${econfig.localMavenRepositoryDir}"
+      project.tasks.uninstallEclipse.group = taskGroup
+      project.tasks.uninstallEclipse.description = "Uninstalls mavenized bundles of the eclipse version ${econfig.selectedEclipseVersion} from ${mavenGroupPath}"
+      project.tasks.uploadEclipse.group = taskGroup
+      project.tasks.uploadEclipse.description = "Uploads mavenized bundles of the eclipse version ${econfig.selectedEclipseVersion} to remote maven repository"
+      project.tasks.purgeEclipse.group = taskGroup
+      project.tasks.purgeEclipse.description = "Uninstalls all mavenized artifacts, removes ${econfig.unpuzzleDir} directory"
+    }
   }
 
   void uploadEclipse() {
