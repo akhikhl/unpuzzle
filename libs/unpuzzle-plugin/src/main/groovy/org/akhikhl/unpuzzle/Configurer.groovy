@@ -54,7 +54,7 @@ class Configurer {
 
       project.task('downloadEclipse') {
         doLast {
-          downloadEclipse()
+          self.downloadEclipse()
         }
       }
 
@@ -63,7 +63,7 @@ class Configurer {
           installEclipseUpToDate()
         }
         doLast {
-          installEclipse()
+          self.installEclipse()
         }
       }
 
@@ -72,7 +72,7 @@ class Configurer {
           uninstallEclipseUpToDate()
         }
         doLast {
-          uninstallEclipse()
+          self.uninstallEclipse()
         }
       }
 
@@ -81,14 +81,14 @@ class Configurer {
           uninstallAllEclipseVersionsUpToDate()
         }
         doLast {
-          uninstallAllEclipseVersions()
+          self.uninstallAllEclipseVersions()
         }
       }
 
       project.task('uploadEclipse') {
         dependsOn project.tasks.downloadEclipse
         doLast {
-          uploadEclipse()
+          self.uploadEclipse()
         }
       }
 
@@ -259,10 +259,18 @@ class Configurer {
 
   void uploadEclipse() {
     def uploadEclipse = [:]
-    if(project.hasProperty('uploadEclipse'))
-      uploadEclipse << project.uploadEclipse
+    if(project.ext.has('uploadEclipse'))
+      uploadEclipse << project.ext.uploadEclipse
     uploadEclipse << effectiveConfig.uploadEclipse
-    if(!uploadEclipse || !uploadEclipse.url || !uploadEclipse.user || !uploadEclipse.password) {
+    def checkProperty = { propName ->
+      if(!uploadEclipse.url || !uploadEclipse.user || !uploadEclipse.password) {
+        log.error 'Could not upload eclipse: uploadEclipse properties not defined.'
+        log.error 'See Unpuzzle online documentation for more details:'
+        log.error 'https://github.com/akhikhl/unpuzzle/blob/master/README.md'
+        return
+      }      
+    }
+    if(!uploadEclipse.url || !uploadEclipse.user || !uploadEclipse.password) {
       log.error 'Could not upload eclipse: uploadEclipse properties not defined.'
       log.error 'See Unpuzzle online documentation for more details:'
       log.error 'https://github.com/akhikhl/unpuzzle/blob/master/README.md'
