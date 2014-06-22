@@ -65,7 +65,12 @@ final class Downloader {
   }
 
   void downloadFile(URL url, File file) throws IOException {
-    long remoteContentLength = Long.parseLong(url.openConnection().getHeaderField('Content-Length'))
+    Long remoteContentLength
+    try {
+      remoteContentLength = Long.parseLong(url.openConnection().getHeaderField('Content-Length'))
+    } catch(NumberFormatException e) {
+      // no header, download anyway
+    }
     if (file.exists() && remoteContentLength == file.length()) {
       console.info("File ${file.getName()} already downloaded, skipping download")
       return
