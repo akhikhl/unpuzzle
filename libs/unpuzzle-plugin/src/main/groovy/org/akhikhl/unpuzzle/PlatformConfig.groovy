@@ -43,8 +43,7 @@ class PlatformConfig {
   public static final String current_arch_suffix
 
   static {
-    //current_os = System.getProperty('os.name')
-    current_os = 'Mac OS X'
+    current_os = System.getProperty('os.name')
     if(current_os.substring(0, 5).equalsIgnoreCase('linux'))
       current_os = 'linux'
     else if(current_os.substring(0, 7).equalsIgnoreCase('windows'))
