@@ -25,7 +25,7 @@ if( !hasProperty( 'keyPhrase' ) )
 task push(type: org._10ne.gradle.rest.RestTask) {
   description 'Push to bintray and sign it.'
   httpMethod = 'post'
-  uri = "https://api.bintray.com/gpg/akhikhl/maven/unpuzzle/versions/$version?passphrase=${project.keyPhrase}"
+  uri = "https://api.bintray.com/gpg/akhikhl/maven/unpuzzle/versions/${rootProject.ext.version}?passphrase=${project.keyPhrase}"
   username = project.bintrayUser
   password = project.bintrayKey
 }
