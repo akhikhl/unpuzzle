@@ -10,9 +10,6 @@ if( !hasProperty( 'bintrayUser' ) )
 if( !hasProperty( 'bintrayKey' ) )
   ext.bintrayKey = ''
 
-if( !hasProperty( 'keyPhrase' ) )
-  ext.keyPhrase = ''
-
 def thisProject = project
 
 install.repositories.mavenInstaller.pom*.whenConfigured { pom ->
