@@ -57,6 +57,5 @@ bintray {
 }
 
 bintrayUpload.dependsOn assemble
+bintrayUpload.finalizedBy parent.tasks.bintraySign
 
-parent.tasks.push.dependsOn bintrayUpload
-bintrayUpload.finalizedBy parent.tasks.push
