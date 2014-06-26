@@ -14,6 +14,21 @@ import groovy.xml.NamespaceBuilder
  * @author akhikhl
  */
 class Deployer {
+  
+  private static URL fileToUrl(File f) {
+    String s = f.toURI().toString()
+    if(s.endsWith('/'))
+      s = s[0..-2]
+    new URL(s)    
+  }
+  
+  private static URL stringToUrl(String s) {
+    if(!s.startsWith('file:') && !s.startsWith('http:') && !s.startsWith('https:'))
+      s = new File(s).toURI().toString()
+    if(s.endsWith('/'))
+      s = s[0..-2]
+    new URL(s)    
+  }
 
   final Map deployerOptions
   final URL repositoryUrl
@@ -26,11 +41,11 @@ class Deployer {
    * @param localRepositoryDir - target maven repository
    */
   Deployer(Map deployerOptions = [:], File localRepositoryDir) {
-    this(deployerOptions, localRepositoryDir.toURI().toURL())
+    this(deployerOptions, fileToUrl(localRepositoryDir))
   }
 
   Deployer(Map deployerOptions = [:], String repositoryUrl) {
-    this(deployerOptions, new URL(repositoryUrl))
+    this(deployerOptions, stringToUrl(repositoryUrl))
   }
 
   /**

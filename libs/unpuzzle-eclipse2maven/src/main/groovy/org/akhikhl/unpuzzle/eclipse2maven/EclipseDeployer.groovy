@@ -27,25 +27,28 @@ final class EclipseDeployer {
 
   protected static final Logger log = LoggerFactory.getLogger(EclipseDeployer)
 
-  private File targetDir
-  private String eclipseGroup
-  private Deployer mavenDeployer
+  private final File targetDir
+  private final String eclipseGroup
+  private final Deployer mavenDeployer
+  private final IConsole console
+  private final String installGroupPath
+  private final String installGroupChecksum
   private Map artifacts = [:]
   private Map artifactsNl = [:]
   private Map artifactFiles = [:]
   private Map sourceFiles = [:]
-  private IConsole console
 
   EclipseDeployer(File targetDir, String eclipseGroup, Deployer mavenDeployer, IConsole console = null) {
     this.targetDir = targetDir
     this.eclipseGroup = eclipseGroup
     this.mavenDeployer = mavenDeployer
     this.console = console ?: new SysConsole()
+    installGroupPath = mavenDeployer.repositoryUrl.toString() + '/' + (eclipseGroup ? eclipseGroup.replace('.', '/') : '')
+    installGroupChecksum = DigestUtils.md5Hex(installGroupPath)
   }
 
   boolean allDownloadedPackagesAreInstalled(List<EclipseSource> sources) {
     if(mavenDeployer.repositoryUrl.protocol == 'file') {
-      String installGroupChecksum = getInstallGroupChecksum()
       for(EclipseSource source in sources) {
         String url = source.url
         String fileName = url.substring(url.lastIndexOf('/') + 1)
@@ -75,7 +78,6 @@ final class EclipseDeployer {
 
   boolean allDownloadedPackagesAreUninstalled(List<EclipseSource> sources) {
     if(mavenDeployer.repositoryUrl.protocol == 'file') {
-      String installGroupChecksum = getInstallGroupChecksum()
       for(EclipseSource source in sources) {
         String url = source.url
         String fileName = url.substring(url.lastIndexOf('/') + 1)
@@ -134,8 +136,11 @@ final class EclipseDeployer {
   }
 
   void deploy(List<EclipseSource> sources) {
-
-    String installGroupChecksum
+    
+    File installedCheckumsInfoFile = new File(targetDir, "installed-checksums/${installGroupChecksum}/info.txt")
+    installedCheckumsInfoFile.parentFile.mkdirs()
+    installedCheckumsInfoFile.text = """eclipseGroup=$eclipseGroup
+installGroupPath=$installGroupPath"""
 
     for(EclipseSource source in sources) {
       String url = source.url
@@ -143,8 +148,6 @@ final class EclipseDeployer {
       File unpackDir = new File(targetDir, "unpacked/${Utils.getArchiveNameNoExt(fileName)}")
       boolean packageInstalled = false
       if(mavenDeployer.repositoryUrl.protocol == 'file') {
-        if(!installGroupChecksum)
-          installGroupChecksum = getInstallGroupChecksum()
         String downloadedChecksum
         File downloadedChecksumFile = new File(targetDir, "downloaded-checksums/${fileName}.md5")
         if(downloadedChecksumFile.exists())
@@ -236,11 +239,6 @@ final class EclipseDeployer {
     }
   }
 
-  String getInstallGroupChecksum() {
-    String groupPath = eclipseGroup ? eclipseGroup.replace('.', '/') : ''
-    DigestUtils.md5Hex(mavenDeployer.repositoryUrl.toString() + '/' + groupPath)
-  }
-
   void uninstall(List<EclipseSource> sources) {
 
     if(mavenDeployer.repositoryUrl.protocol != 'file') {
@@ -248,7 +246,6 @@ final class EclipseDeployer {
       return
     }
 
-    String installGroupChecksum = getInstallGroupChecksum()
     File repositoryDir = new File(mavenDeployer.repositoryUrl.toURI())
 
     for(EclipseSource source in sources) {
