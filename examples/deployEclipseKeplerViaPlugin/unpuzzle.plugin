@@ -5,11 +5,11 @@ buildscript {
   }
   
   dependencies {
-    classpath 'org.akhikhl.unpuzzle:unpuzzle-plugin:0.0.14'
+    classpath 'org.akhikhl.unpuzzle:unpuzzle-plugin:0.0.15'
   }
 }
 
-// apply plugin: 'unpuzzle-plugin'
+// apply plugin: 'org.akhikhl.unpuzzle'
 
 import org.akhikhl.unpuzzle.UnpuzzlePlugin
 
