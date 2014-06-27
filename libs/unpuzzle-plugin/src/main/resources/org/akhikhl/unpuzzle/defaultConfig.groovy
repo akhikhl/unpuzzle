@@ -124,8 +124,6 @@ unpuzzle {
 
   eclipseVersion('4.4') {
 
-    extendsFrom '4.3.2'
-
     eclipseMavenGroup = 'eclipse-luna'
 
     eclipseMirror = 'http://mirror.netcologne.de'
@@ -135,7 +133,7 @@ unpuzzle {
     sources {
 
       source "$eclipseMirror/eclipse//technology/epp/downloads/release/luna/R/eclipse-jee-luna-R-${suffix_os[current_os]}${suffix_arch[current_arch]}.${fileExt_os[current_os]}"
-      source "$eclipseMirror/eclipse//eclipse/downloads/drops4/R-4.4-201406061215/eclipse-SDK-4.4-${suffix_os[current_os]}${suffix_arch[current_arch]}.${fileExt_os[current_os]}"
+      source "$eclipseMirror/eclipse//eclipse/downloads/drops4/R-4.4-201406061215/eclipse-SDK-4.4-${suffix_os[current_os]}${suffix_arch[current_arch]}.${fileExt_os[current_os]}", sourcesOnly: true
       source "$eclipseMirror/eclipse//eclipse/downloads/drops4/R-4.4-201406061215/eclipse-4.4-delta-pack.zip"
 
       languagePackTemplate '${eclipseMirror}/eclipse//technology/babel/babel_language_packs/R0.12.0/luna/BabelLanguagePack-eclipse-${language}_4.4.0.v20140623020002.zip'
