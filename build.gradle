@@ -1,26 +1,17 @@
 ext {
-  group = 'org.akhikhl.unpuzzle'
-  version = '0.0.16'
-  
-  if(gradle.gradleVersion.startsWith('1.')) {
-    groovy_version = '1.8.6'
-    spock_version = '0.7-groovy-1.8'
-  } else {
-    groovy_version = '2.3.3'
-    spock_version = '0.7-groovy-2.0'
-  }
-  
   project_id = 'unpuzzle'
   project_description = 'Tool for mavenizing OSGi-bundles'
   developer_id = 'akhikhl'
   developer_name = 'Andrey Hihlovskiy'
   project_website = "https://github.com/${developer_id}/${project_id}"
   project_scm = "scm:git@github.com:${developer_id}/${project_id}.git"
-  license = 'The MIT License'
+  license = 'MIT'
   license_url = "https://raw.github.com/${developer_id}/${project_id}/master/LICENSE"
   labels = ['unpuzzle', 'gradle', 'plugin', 'eclipse', 'osgi', 'maven']
 }
 
+group = 'org.akhikhl.unpuzzle'
+version = '0.0.16'
 description = ext.project_description
 
 apply plugin: 'base' // add "clean" task to the root project.

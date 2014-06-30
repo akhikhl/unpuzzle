@@ -1,34 +1,12 @@
-buildscript {
-  repositories {
-    mavenLocal()
-    jcenter()
-    maven { url 'http://dl.bintray.com/content/noamt/gradle-plugins' }
+apply from: 'sign.gradle'
+
+ext {  
+  if(gradle.gradleVersion.startsWith('1.')) {
+    groovy_version = '1.8.6'
+    spock_version = '0.7-groovy-1.8'
+  } else {
+    groovy_version = '2.3.3'
+    spock_version = '0.7-groovy-2.0'
   }
-
-  dependencies {
-    classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:0.4'
-    classpath 'org._10ne.gradle:rest-gradle-plugin:0.1.1'
-  }
-}
-
-apply plugin: 'rest'
-
-if( !hasProperty( 'bintrayUser' ) )
-  ext.bintrayUser = ''
-
-if( !hasProperty( 'bintrayKey' ) )
-  ext.bintrayKey = ''
-
-if( !hasProperty( 'keyPhrase' ) )
-  ext.keyPhrase = ''
-
-task bintraySign(type: org._10ne.gradle.rest.RestTask) {
-  description 'Push to bintray and sign it.'
-  httpMethod = 'post'
-  uri = "https://api.bintray.com/gpg/${rootProject.ext.developer_id}/maven/${rootProject.ext.project_id}/versions/${rootProject.ext.version}"
-  username = project.bintrayUser
-  password = project.bintrayKey
-  requestBody = [ passphrase: project.keyPhrase ]
-  contentType = groovyx.net.http.ContentType.JSON  
 }
 

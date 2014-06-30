@@ -10,12 +10,12 @@ repositories {
   mavenCentral()
 }
 
-group = rootProject.ext.group
-version = rootProject.ext.version
+group = rootProject.group
+version = rootProject.version
 
 dependencies {
-  compile "org.codehaus.groovy:groovy-all:${rootProject.ext.groovy_version}"
-  testCompile "org.spockframework:spock-core:${rootProject.ext.spock_version}"
+  compile "org.codehaus.groovy:groovy-all:${project.groovy_version}"
+  testCompile "org.spockframework:spock-core:${project.spock_version}"
 }
 
 // lib projects should be always installed into "$HOME/.m2"

@@ -1,8 +1,21 @@
 // include this file in subprojects:
 // apply from: rootProject.file('libs/publish.gradle')
 
+buildscript {
+  repositories {
+    mavenLocal()
+    jcenter()
+  }
+
+  dependencies {
+    classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:0.4'
+  }
+}
+
+import com.jfrog.bintray.gradle.BintrayPlugin
+
 apply plugin: 'maven-publish'
-apply plugin: 'com.jfrog.bintray'
+apply plugin: BintrayPlugin
 
 if( !hasProperty( 'bintrayUser' ) )
   ext.bintrayUser = ''
@@ -50,7 +63,7 @@ bintray {
     repo = 'maven'
     name = thisProject.rootProject.project_id
     desc = thisProject.rootProject.description
-    licenses = ['MIT']
+    licenses = [ thisProject.rootProject.license ]
     labels = thisProject.rootProject.labels
   }
   dryRun = false
