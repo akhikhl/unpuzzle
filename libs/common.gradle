@@ -13,6 +13,9 @@ repositories {
 group = rootProject.group
 version = rootProject.version
 
+sourceCompatibility = '1.6'
+targetCompatibility = '1.6'
+
 dependencies {
   compile "org.codehaus.groovy:groovy-all:${project.groovy_version}"
   testCompile "org.spockframework:spock-core:${project.spock_version}"
