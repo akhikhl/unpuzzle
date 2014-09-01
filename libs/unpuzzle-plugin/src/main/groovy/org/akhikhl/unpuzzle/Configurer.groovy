@@ -134,7 +134,7 @@ class Configurer {
   void installEclipse() {
     def vconf = getSelectedVersionConfig()
     if(effectiveConfig.dryRun) {
-      log.warn 'installEclipse: unpuzzle.dryRun=true, no work done'
+      log.warn 'installEclipse: unpuzzle.dryRun=true, no work done, vconf.eclipseMavenGroup={}', vconf.eclipseMavenGroup
       return
     }
     def mavenDeployer = new Deployer(effectiveConfig.localMavenRepositoryDir)

@@ -1,20 +1,30 @@
-ext {
-  project_id = 'unpuzzle'
-  project_description = 'Tool for mavenizing OSGi-bundles'
-  developer_id = 'akhikhl'
-  developer_name = 'Andrey Hihlovskiy'
-  project_website = "https://github.com/${developer_id}/${project_id}"
-  project_scm = "scm:git@github.com:${developer_id}/${project_id}.git"
-  license = 'MIT'
-  license_url = "https://raw.github.com/${developer_id}/${project_id}/master/LICENSE"
-  labels = ['unpuzzle', 'gradle', 'plugin', 'eclipse', 'osgi', 'maven']
+buildscript {
+  repositories {
+    mavenLocal()
+    jcenter()
+  }
+
+  dependencies {
+    classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:0.4'
+    classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:3.0.1'
+  }
 }
 
-group = 'org.akhikhl.unpuzzle'
-version = '0.0.16'
-description = ext.project_description
+apply plugin: 'base' // import clean task
+apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.artifactory'
 
-apply plugin: 'base' // add "clean" task to the root project.
+ext {
+  project_website="https://github.com/${developerId}/${projectId}"
+  project_scm = "scm:git@github.com:${developerId}/${projectId}.git"
+  license_url = "https://raw.github.com/${developerId}/${projectId}/master/LICENSE"
+}
+
+if( !hasProperty( 'bintrayUser' ) )
+  ext.bintrayUser = ''
+
+if( !hasProperty( 'bintrayKey' ) )
+  ext.bintrayKey = ''
 
 task('build')
 
@@ -31,4 +41,26 @@ task('cleanExamples', type: GradleBuild) { task ->
 }
 
 // clean.dependsOn cleanExamples
+
+artifactory {
+  contextUrl = 'https://oss.jfrog.org/artifactory'
+  publish {
+    repository {
+      if (project.version.endsWith('-SNAPSHOT'))
+        repoKey = 'oss-snapshot-local'
+      else
+        repoKey = 'oss-release-local'
+      username = project.bintrayUser
+      password = project.bintrayKey
+    }
+    defaults {
+      publications 'mavenJava'
+    }
+  }
+  resolve {
+    repository {
+      repoKey = 'repo'
+    }
+  }
+}
 

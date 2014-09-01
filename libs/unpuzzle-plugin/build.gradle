@@ -2,7 +2,9 @@ apply from: rootProject.file('libs/common.gradle')
 apply from: rootProject.file('libs/publish.gradle')
 
 dependencies {
-  compile project(':libs:unpuzzle-eclipse2maven')
+  compile project(':libs:unpuzzle-eclipse2maven'), {
+    exclude group='org.codehaus.groovy', module='groovy-all'
+  }
   compile gradleApi()
 }
 
