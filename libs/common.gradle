@@ -14,8 +14,10 @@ group = rootProject.group
 version = rootProject.version
 
 dependencies {
-  testCompile "org.codehaus.groovy:groovy-all:${groovy_version}"
-  testCompile "org.spockframework:spock-core:${spock_version}"
+  testCompile 'org.codehaus.groovy:groovy-backports-compat23:2.3.6'
+  testCompile "org.spockframework:spock-core:${spock_version}", {
+    exclude group: 'org.codehaus.groovy', module: 'groovy-all'
+  }
 }
 
 sourceCompatibility = '1.6'
