@@ -15,6 +15,8 @@ import groovy.xml.NamespaceBuilder
  */
 class Deployer {
   
+  private static final String antTasksFileName = 'maven-ant-tasks-2.1.4-20140721.171858-14.jar'
+
   private static URL fileToUrl(File f) {
     String s = f.toURI().toString()
     if(s.endsWith('/'))
@@ -32,7 +34,7 @@ class Deployer {
 
   final Map deployerOptions
   final URL repositoryUrl
-  private AntBuilder ant
+  private ant
   private File workFolder
 
   /**
@@ -58,10 +60,18 @@ class Deployer {
     if(this.deployerOptions.ant)
       this.ant = this.deployerOptions.ant
     else {
-      URLClassLoader classLoader = (URLClassLoader)this.getClass().getClassLoader()
-      URL mavenAntTasks = classLoader.URLs.find { it.toString().contains('maven-ant-tasks') }
-      this.ant = new AntBuilder()
-      this.ant.taskdef(resource: 'org/apache/maven/artifact/ant/antlib.xml', classpath: mavenAntTasks.toString())
+      File tempDir = deployerOptions.tempDir ?: new File(System.getProperty('java.io.tmpdir'), 'unpuzzle')
+      tempDir.mkdirs()
+      File antTasksFile = new File(tempDir, antTasksFileName)
+      if(!antTasksFile.exists())
+        getClass().getClassLoader().getResourceAsStream(antTasksFileName).withStream { ins ->
+          antTasksFile.withOutputStream { outs ->
+            outs << ins
+          }
+        }
+      ClassLoader antTasksClassLoader = new URLClassLoader([ antTasksFile.toURI().toURL() ] as URL[], getClass().getClassLoader())
+      this.ant = Class.forName('groovy.util.AntBuilder', true, antTasksClassLoader).newInstance()
+      this.ant.taskdef(resource: 'org/apache/maven/artifact/ant/antlib.xml', classpath: antTasksFile.toURI().toURL().toString())
     }
     this.repositoryUrl = repositoryUrl
     workFolder = new File(System.getProperty("java.io.tmpdir"), UUID.randomUUID().toString())

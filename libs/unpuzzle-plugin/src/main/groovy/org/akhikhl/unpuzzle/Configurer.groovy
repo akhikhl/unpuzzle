@@ -133,13 +133,17 @@ class Configurer {
     return vconf
   }
 
+  private File getTempDir() {
+    new File(project.rootProject.buildDir, 'unpuzzle_temp')
+  }
+
   void installEclipse() {
     def vconf = getSelectedVersionConfig()
     if(effectiveConfig.dryRun) {
       log.warn 'installEclipse: unpuzzle.dryRun=true, no work done, vconf.eclipseMavenGroup={}', vconf.eclipseMavenGroup
       return
     }
-    def mavenDeployer = new Deployer(effectiveConfig.localMavenRepositoryDir)
+    def mavenDeployer = new Deployer(effectiveConfig.localMavenRepositoryDir, tempDir: getTempDir())
     def eclipseDeployer = new EclipseDeployer(effectiveConfig.unpuzzleDir, vconf.eclipseMavenGroup, mavenDeployer)
     if(!eclipseDeployer.allDownloadedPackagesAreInstalled(vconf.sources)) {
       downloadEclipse()
@@ -152,7 +156,7 @@ class Configurer {
     def vconf = getSelectedVersionConfig()
     if(effectiveConfig.dryRun)
       return false
-    def mavenDeployer = new Deployer(effectiveConfig.localMavenRepositoryDir)
+    def mavenDeployer = new Deployer(effectiveConfig.localMavenRepositoryDir, tempDir: getTempDir())
     new EclipseDeployer(effectiveConfig.unpuzzleDir, vconf.eclipseMavenGroup, mavenDeployer).allDownloadedPackagesAreInstalled(vconf.sources)
   }
 
@@ -182,7 +186,7 @@ class Configurer {
       log.warn 'uninstallAllEclipseVersions: unpuzzle.dryRun=true, no work done'
       return
     }
-    def mavenDeployer = new Deployer(effectiveConfig.localMavenRepositoryDir)
+    def mavenDeployer = new Deployer(effectiveConfig.localMavenRepositoryDir, tempDir: getTempDir())
     effectiveConfig.versionConfigs.each { eclipseVersion, vconf ->
       def eclipseDeployer = new EclipseDeployer(effectiveConfig.unpuzzleDir, vconf.eclipseMavenGroup, mavenDeployer)
       if(!eclipseDeployer.allDownloadedPackagesAreUninstalled(vconf.sources)) {
@@ -195,7 +199,7 @@ class Configurer {
   boolean uninstallAllEclipseVersionsUpToDate() {
     if(effectiveConfig.dryRun)
       return false
-    def mavenDeployer = new Deployer(effectiveConfig.localMavenRepositoryDir)
+    def mavenDeployer = new Deployer(effectiveConfig.localMavenRepositoryDir, tempDir: getTempDir())
     def result = !effectiveConfig.versionConfigs.find { eclipseVersion, vconf ->
       def eclipseDeployer = new EclipseDeployer(effectiveConfig.unpuzzleDir, vconf.eclipseMavenGroup, mavenDeployer)
       def uninstalled = eclipseDeployer.allDownloadedPackagesAreUninstalled(vconf.sources)
@@ -212,7 +216,7 @@ class Configurer {
       log.warn 'uninstallEclipse: unpuzzle.dryRun=true, no work done'
       return
     }
-    def mavenDeployer = new Deployer(effectiveConfig.localMavenRepositoryDir)
+    def mavenDeployer = new Deployer(effectiveConfig.localMavenRepositoryDir, tempDir: getTempDir())
     def eclipseDeployer = new EclipseDeployer(effectiveConfig.unpuzzleDir, vconf.eclipseMavenGroup, mavenDeployer)
     if(!eclipseDeployer.allDownloadedPackagesAreUninstalled(vconf.sources)) {
       log.warn 'Uninstalling eclipse version {} from maven-repo {}, maven-group {}', effectiveConfig.selectedEclipseVersion, effectiveConfig.localMavenRepositoryDir.toURI().toString(), vconf.eclipseMavenGroup
@@ -224,7 +228,7 @@ class Configurer {
     def vconf = getSelectedVersionConfig()
     if(effectiveConfig.dryRun)
       return false
-    def mavenDeployer = new Deployer(effectiveConfig.localMavenRepositoryDir)
+    def mavenDeployer = new Deployer(effectiveConfig.localMavenRepositoryDir, tempDir: getTempDir())
     def eclipseDeployer = new EclipseDeployer(effectiveConfig.unpuzzleDir, vconf.eclipseMavenGroup, mavenDeployer)
     eclipseDeployer.allDownloadedPackagesAreUninstalled(vconf.sources)
   }
@@ -284,7 +288,7 @@ class Configurer {
       return
     }
     log.warn 'Deploying eclipse version {} to maven-repo {}, maven-group {}', effectiveConfig.selectedEclipseVersion, uploadEclipse.url, vconf.eclipseMavenGroup
-    Deployer mavenDeployer = new Deployer(uploadEclipse.url, user: uploadEclipse.user, password: uploadEclipse.password)
+    Deployer mavenDeployer = new Deployer(uploadEclipse.url, tempDir: getTempDir(), user: uploadEclipse.user, password: uploadEclipse.password)
     def eclipseDeployer = new EclipseDeployer(effectiveConfig.unpuzzleDir, vconf.eclipseMavenGroup, mavenDeployer)
     eclipseDeployer.deploy(vconf.sources)
   }
