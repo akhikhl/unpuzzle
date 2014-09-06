@@ -16,7 +16,7 @@ import org.akhikhl.unpuzzle.eclipse2maven.EclipseSource
 class Config {
 
   Config parentConfig
-
+  String configName
   File localMavenRepositoryDir
   File unpuzzleDir
   String selectedEclipseVersion
@@ -27,6 +27,13 @@ class Config {
 
   // use this only for testing/debugging!
   boolean dryRun = false
+
+  Config() {
+  }
+
+  Config(String configName) {
+    this.configName = configName
+  }
 
   void eclipseVersion(String versionString, Closure closure) {
     List<Closure> closureList = lazyVersions[versionString]

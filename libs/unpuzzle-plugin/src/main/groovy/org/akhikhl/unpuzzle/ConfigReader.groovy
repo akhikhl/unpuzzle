@@ -14,7 +14,7 @@ package org.akhikhl.unpuzzle
 class ConfigReader {
 
   Config readFromResource(String resourceName) {
-    Config config = new Config()
+    Config config = new Config("unpuzzle-config-resource(${resourceName})")
     Binding binding = new Binding()
     binding.unpuzzle = { Closure closure ->
       closure.resolveStrategy = Closure.DELEGATE_FIRST

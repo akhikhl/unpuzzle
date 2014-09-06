@@ -36,8 +36,10 @@ class Configurer {
   }
 
   void apply() {
-    if(!project.extensions.findByName('unpuzzle'))
+    if(!project.extensions.findByName('unpuzzle')) {
       project.extensions.create('unpuzzle', Config)
+      project.extensions.unpuzzle.configName = "unpuzzle-config(${project.path})"
+    }
 
     def self = this
 
@@ -114,7 +116,7 @@ class Configurer {
 
   final Config getEffectiveConfig() {
     if(!project.ext.has('_effectiveUnpuzzle')) {
-      Config econfig = new Config()
+      Config econfig = new Config("unpuzzle-config-effective(${project.path})")
       Config.merge(econfig, project.unpuzzle)
       project.ext._effectiveUnpuzzle = econfig
     }
@@ -164,7 +166,7 @@ class Configurer {
           log.debug '{}.unpuzzle.parentConfig <- defaultConfig', project.name
           project.unpuzzle.parentConfig = new ConfigReader().readFromResource('defaultConfig.groovy')
         } else
-          project.unpuzzle.parentConfig = new Config()
+          project.unpuzzle.parentConfig = new Config('unpuzzle-config-default-empty')
       }
       else {
         log.debug '{}.unpuzzle.parentConfig <- {}.unpuzzle', project.name, p.name
@@ -234,7 +236,7 @@ class Configurer {
   }
 
   private void updateTaskProperties() {
-    Config econfig = new Config()
+    Config econfig = new Config("unpuzzle-config-effective(${project.path})")
     Config.merge(econfig, project.unpuzzle)
     if(econfig.selectedVersionConfig != null && econfig.localMavenRepositoryDir != null) {
       def mavenGroupPath
