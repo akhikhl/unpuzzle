@@ -7,7 +7,9 @@
  */
 package org.akhikhl.unpuzzle
 
+import org.akhikhl.unpuzzle.eclipse2maven.EclipseDeployer
 import org.akhikhl.unpuzzle.eclipse2maven.EclipseSource
+import org.gradle.api.GradleException
 
 /**
  * Plugin extension for {@link org.akhikhl.unpuzzle.UnpuzzlePlugin}
@@ -45,6 +47,14 @@ class Config {
 
   void languagePack(String language) {
     languagePacks.add(language)
+  }
+
+  File getEclipseUnpackDir() {
+    def vconfig = getSelectedVersionConfig()
+    def source = vconfig.sources.find { !it.url.contains('delta') && !it.url.contains('SDK') }
+    if(source == null)
+      throw new GradleException("Could not determine source for eclipse version ${selectedEclipseVersion}")
+    EclipseDeployer.getUnpackDir(unpuzzleDir, source)
   }
 
   EclipseVersionConfig getSelectedVersionConfig() {
