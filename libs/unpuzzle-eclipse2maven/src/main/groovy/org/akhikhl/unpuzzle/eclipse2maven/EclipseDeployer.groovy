@@ -25,6 +25,12 @@ import org.slf4j.LoggerFactory
  */
 final class EclipseDeployer {
 
+  static File getUnpackDir(File targetDir, EclipseSource source) {
+    String url = source.url
+    String fileName = url.substring(url.lastIndexOf('/') + 1)
+    new File(targetDir, 'unpacked/' + Utils.getArchiveNameNoExt(fileName))
+  }
+
   protected static final Logger log = LoggerFactory.getLogger(EclipseDeployer)
 
   private final File targetDir
@@ -136,7 +142,7 @@ final class EclipseDeployer {
   }
 
   void deploy(List<EclipseSource> sources) {
-    
+
     File installedCheckumsInfoFile = new File(targetDir, "installed-checksums/${installGroupChecksum}/info.txt")
     installedCheckumsInfoFile.parentFile.mkdirs()
     installedCheckumsInfoFile.text = """eclipseGroup=$eclipseGroup
