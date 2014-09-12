@@ -110,26 +110,31 @@ final class EclipseDeployer {
   private void collectArtifactsInFolder(EclipseSource source, artifactsSourceDir) {
     def processFile = { File file ->
       console.info("Collecting artifacts: ${file.name}")
-      Bundle2Pom reader = new Bundle2Pom(group: eclipseGroup, dependencyGroup: eclipseGroup)
-      Pom pom = reader.convert(file)
-      def source_match = pom.artifact =~ /(.*)\.source/
-      if(source_match) {
-        def artifact = source_match[0][1]
-        sourceFiles["${artifact}:${pom.version}"] = file
-      } else if(!source.sourcesOnly) {
-        def nl_match = pom.artifact =~ /(.*)\.nl_(.*)/
-        if(nl_match) {
-          def artifact = nl_match[0][1]
-          def language = nl_match[0][2]
-          if(!artifactsNl[language])
-            artifactsNl[language] = [:]
-          artifactsNl[language][artifact] = pom
-        } else if(!source.languagePacksOnly) {
-          if(!artifacts.containsKey(pom.artifact))
-            artifacts[pom.artifact] = []
-          artifacts[pom.artifact].add pom
+      try {
+        Bundle2Pom reader = new Bundle2Pom(group: eclipseGroup, dependencyGroup: eclipseGroup)
+        Pom pom = reader.convert(file)
+        def source_match = pom.artifact =~ /(.*)\.source/
+        if(source_match) {
+          def artifact = source_match[0][1]
+          sourceFiles["${artifact}:${pom.version}"] = file
+        } else if(!source.sourcesOnly) {
+          def nl_match = pom.artifact =~ /(.*)\.nl_(.*)/
+          if(nl_match) {
+            def artifact = nl_match[0][1]
+            def language = nl_match[0][2]
+            if(!artifactsNl[language])
+              artifactsNl[language] = [:]
+            artifactsNl[language][artifact] = pom
+          } else if(!source.languagePacksOnly) {
+            if(!artifacts.containsKey(pom.artifact))
+              artifacts[pom.artifact] = []
+            artifacts[pom.artifact].add pom
+          }
+          artifactFiles["${pom.artifact}:${pom.version}"] = file
         }
-        artifactFiles["${pom.artifact}:${pom.version}"] = file
+      } catch (Exception e) {
+        console.info("Error while mavenizing ${file}")
+        e.printStackTrace()
       }
     }
     console.startProgress("Reading bundles in $artifactsSourceDir")
@@ -164,8 +169,13 @@ installGroupPath=$installGroupPath"""
           installedChecksum = installedChecksumFile.text
         packageInstalled = downloadedChecksum == installedChecksum
       }
-      if(!packageInstalled)
-        collectArtifactsInFolder(source, new File(unpackDir, 'plugins'))
+      if(!packageInstalled) {
+        File pluginFolder = new File(unpackDir, 'plugins')
+        if (!pluginFolder.exists()) {
+          pluginFolder = unpackDir
+        }
+        collectArtifactsInFolder(source, pluginFolder)
+      }
     }
 
     fixDependencies()
@@ -270,8 +280,13 @@ installGroupPath=$installGroupPath"""
           installedChecksum = installedChecksumFile.text
         packageInstalled = downloadedChecksum == installedChecksum
       }
-      if(packageInstalled)
-        collectArtifactsInFolder(source, new File(unpackDir, 'plugins'))
+      if(packageInstalled) {
+        File pluginFolder = new File(unpackDir, 'plugins')
+        if (!pluginFolder.exists()) {
+          pluginFolder = unpackDir
+        }
+        collectArtifactsInFolder(source, pluginFolder)
+      }
     }
 
     fixDependencies()
