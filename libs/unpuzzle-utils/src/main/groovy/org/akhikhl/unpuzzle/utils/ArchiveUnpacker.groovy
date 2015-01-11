@@ -13,13 +13,13 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.io.OutputStream
 import java.util.zip.GZIPInputStream
-import java.util.zip.ZipEntry
-import java.util.zip.ZipInputStream
 
 import org.apache.commons.compress.archivers.ArchiveException
 import org.apache.commons.compress.archivers.ArchiveStreamFactory
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry
+import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.StringUtils
 
@@ -112,9 +112,9 @@ final class ArchiveUnpacker {
 
   void unZip(final File inputFile, final File outputDir) throws IOException, ArchiveException {
     console.startProgress("Unzipping file: ${inputFile.getName()}")
-    ZipInputStream zis = new ZipInputStream(new FileInputStream(inputFile))
+    ZipArchiveInputStream zis = new ZipArchiveInputStream(new FileInputStream(inputFile))
     try {
-      ZipEntry ze = zis.getNextEntry()
+      ZipArchiveEntry ze = zis.getNextEntry()
       while (ze != null) {
         final File outputFile = new File(outputDir, ze.getName())
         console.info(ze.getName())
