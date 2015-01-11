@@ -14,6 +14,7 @@ import java.io.IOException
 import java.io.OutputStream
 import java.util.zip.GZIPInputStream
 
+import org.apache.commons.compress.archivers.ArchiveEntry
 import org.apache.commons.compress.archivers.ArchiveException
 import org.apache.commons.compress.archivers.ArchiveStreamFactory
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry
@@ -102,7 +103,7 @@ final class ArchiveUnpacker {
           outputFile.withOutputStream { outputFileStream ->
             IOUtils.copy(tarInputStream, outputFileStream)
           }
-          if (isExecutable(entry.getMode())) {
+          if (isExecutable(entry, entry.getMode())) {
             outputFile.setExecutable(true);
           }
         }
@@ -128,7 +129,7 @@ final class ArchiveUnpacker {
           outputFile.withOutputStream { fos ->
             IOUtils.copy(zis, fos)
           }
-          if (isExecutable(ze.getUnixMode())) {
+          if (isExecutable(ze, ze.getUnixMode())) {
             outputFile.setExecutable(true);
           }
         }
@@ -141,8 +142,12 @@ final class ArchiveUnpacker {
   }
 
   /** Returns true if the given unix filemode contains any executable flags. */
-  public static boolean isExecutable(int mode) {
-    return parseFilePermissions(mode).contains("x");
+  public static boolean isExecutable(ArchiveEntry entry, int mode) {
+    try {
+      return parseFilePermissions(mode).contains("x");
+    } catch (Exception e) {
+      System.err.println("Ignoring permissions for " + entry.getName() + " mode= " + mode + " because " + e.getMessage());
+    }
   }
 
   /** Returns a modeStr which is compatible with PosixFilePermissions.fromString.
@@ -153,14 +158,16 @@ final class ArchiveUnpacker {
    *  File.setExecutable() which is available since 6.
    */
   public static String parseFilePermissions(int mode) {
-    if (mode < 0 || mode > 777) {
-      throw new IllegalArgumentException("Mode shouold be between 0 and 777, was " + mode)
+    // add octal 1 000 (to ensure that the string has at least 4 characters)
+    String modeNumStr = Integer.toOctalString(mode + 01000);
+    if (modeNumStr.length() < 3) {
+      throw new IllegalArgumentException("There should be at least 4 digits, but this only had " )
     }
-    String modeNumStr = Integer.toString(mode);
+    CharSequence permissions = modeNumStr.substring(modeNumStr.length()-3)
 
     StringBuffer b = new StringBuffer(9);
     for (int i = 0; i < 3; i++) {
-      char c = modeNumStr.length() > i ? modeNumStr.charAt(i) : '0';
+      char c = permissions.charAt(i);
       switch (c) {
       case '0': b.append("---"); break;
       case '1': b.append("--x"); break;
@@ -175,6 +182,4 @@ final class ArchiveUnpacker {
     }
     return b.toString();
   }
-
-  public static boolean isExecutable
 }
