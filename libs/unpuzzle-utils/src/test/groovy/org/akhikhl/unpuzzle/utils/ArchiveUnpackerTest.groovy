@@ -13,7 +13,7 @@ import spock.lang.Specification
  * Unit-test for {@link org.akhikhl.unpuzzle.utils.ArchiveUnpacker} class.
  * @author akhikhl
  */
-class ArchiveUnpackerTest {
+class ArchiveUnpackerTest extends Specification {
 
   static console
 
@@ -37,9 +37,9 @@ class ArchiveUnpackerTest {
     File[] unpackedFiles = testFolder.listFiles()
   then:
     unpackedFiles != null
-    unpackedFiles.length() == 1
+    unpackedFiles.length == 1
     unpackedFiles[0].name == 'sample.txt'
-    unpackedFiles[0].text == '0042bfe2-8812-11e3-85b6-6bf8a04179ee'
+    unpackedFiles[0].text == '0042bfe2-8812-11e3-85b6-6bf8a04179ee\n'
   }
 
   def 'should unpack .zip files'() {
@@ -49,9 +49,9 @@ class ArchiveUnpackerTest {
     File[] unpackedFiles = testFolder.listFiles()
   then:
     unpackedFiles != null
-    unpackedFiles.length() == 1
+    unpackedFiles.length == 1
     unpackedFiles[0].name == 'sample.txt'
-    unpackedFiles[0].text == '0042bfe2-8812-11e3-85b6-6bf8a04179ee'
+    unpackedFiles[0].text == '0042bfe2-8812-11e3-85b6-6bf8a04179ee\n'
   }
 }
 
