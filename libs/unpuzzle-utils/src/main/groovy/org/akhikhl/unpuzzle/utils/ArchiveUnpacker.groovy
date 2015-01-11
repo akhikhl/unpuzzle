@@ -102,6 +102,9 @@ final class ArchiveUnpacker {
           outputFile.withOutputStream { outputFileStream ->
             IOUtils.copy(tarInputStream, outputFileStream)
           }
+          if (isExecutable(entry.getMode())) {
+            outputFile.setExecutable(true);
+          }
         }
       }
     } finally {
@@ -125,6 +128,9 @@ final class ArchiveUnpacker {
           outputFile.withOutputStream { fos ->
             IOUtils.copy(zis, fos)
           }
+          if (isExecutable(ze.getUnixMode())) {
+            outputFile.setExecutable(true);
+          }
         }
         ze = zis.getNextEntry()
       }
@@ -133,4 +139,42 @@ final class ArchiveUnpacker {
       console.endProgress()
     }
   }
+
+  /** Returns true if the given unix filemode contains any executable flags. */
+  public static boolean isExecutable(int mode) {
+    return parseFilePermissions(mode).contains("x");
+  }
+
+  /** Returns a modeStr which is compatible with PosixFilePermissions.fromString.
+   *  
+   *  TODO: When unpuzzle upgrades to Java >= 7
+   *  This modeStr is compatible with PosixFilePermissions.fromString
+   *  which is a Java7 API.  In the meantime, we will settle for
+   *  File.setExecutable() which is available since 6.
+   */
+  public static String parseFilePermissions(int mode) {
+    if (mode < 0 || mode > 777) {
+      throw new IllegalArgumentException("Mode shouold be between 0 and 777, was " + mode)
+    }
+    String modeNumStr = Integer.toString(mode);
+
+    StringBuffer b = new StringBuffer(9);
+    for (int i = 0; i < 3; i++) {
+      char c = modeNumStr.length() > i ? modeNumStr.charAt(i) : '0';
+      switch (c) {
+      case '0': b.append("---"); break;
+      case '1': b.append("--x"); break;
+      case '2': b.append("-w-"); break;
+      case '3': b.append("-wx"); break;
+      case '4': b.append("r--"); break;
+      case '5': b.append("r-x"); break;
+      case '6': b.append("rw-"); break;
+      case '7': b.append("rwx"); break;
+      default: throw new IllegalArgumentException("Each digit should be 0-7, was " + c);
+      }
+    }
+    return b.toString();
+  }
+
+  public static boolean isExecutable
 }
