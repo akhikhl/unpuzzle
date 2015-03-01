@@ -141,20 +141,20 @@ unpuzzle {
   }
 
   eclipseVersion('4.4.1') {
-    
     eclipseMavenGroup = 'eclipse-luna-sr1'
-
-    eclipseMirror = 'http://mirror.netcologne.de'
-
     eclipseArchiveMirror = 'http://archive.eclipse.org'
-
     sources {
+      source "${eclipseArchiveMirror}/eclipse/downloads/drops4/R-4.4.1-201409250400/eclipse-SDK-4.4.1-${suffix_os[current_os]}${suffix_arch[current_arch]}.${fileExt_os[current_os]}"
+      source "${eclipseArchiveMirror}/eclipse/downloads/drops4/R-4.4.1-201409250400/eclipse-4.4.1-delta-pack.zip"
+    }
+  }
 
-      source "${eclipseMirror}/eclipse//technology/epp/downloads/release/luna/SR1/eclipse-jee-luna-SR1-${suffix_os[current_os]}${suffix_arch[current_arch]}.${fileExt_os[current_os]}"
-      source "${eclipseMirror}/eclipse//eclipse/downloads/drops4/R-4.4.1-201409250400/eclipse-SDK-4.4.1-${suffix_os[current_os]}${suffix_arch[current_arch]}.${fileExt_os[current_os]}", sourcesOnly: true
-      source "${eclipseMirror}/eclipse//eclipse/downloads/drops4/R-4.4.1-201409250400/eclipse-4.4.1-delta-pack.zip"
-
-      languagePackTemplate '${eclipseMirror}/eclipse//technology/babel/babel_language_packs/R0.12.0/luna/BabelLanguagePack-eclipse-${language}_4.4.0.v20140623020002.zip'
+  eclipseVersion('4.4.2') {
+    eclipseMavenGroup = 'eclipse-luna-sr2'
+    eclipseArchiveMirror = 'http://archive.eclipse.org'
+    sources {
+      source "${eclipseArchiveMirror}/eclipse/downloads/drops4/R-4.4.2-201502041700/eclipse-SDK-4.4.2-${suffix_os[current_os]}${suffix_arch[current_arch]}.${fileExt_os[current_os]}"
+      source "${eclipseArchiveMirror}/eclipse/downloads/drops4/R-4.4.2-201502041700/eclipse-4.4.2-delta-pack.zip"
     }
   }
 }
