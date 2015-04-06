@@ -55,6 +55,21 @@ bintrayUpload.dependsOn assemble
 bintrayUpload.finalizedBy parent.tasks.bintraySign
 
 publishing {
+  repositories {
+    maven {
+      if (project.version.endsWith('-SNAPSHOT')) {
+        url "${dp_maven}/libs-snapshot-local"
+      } else {
+        url "${dp_maven}/libs-release-local"
+      }
+
+      credentials {
+        username "${dp_maven_user}"
+        password "${dp_maven_pass}"
+      }
+    }
+  }
+
   publications {
     mavenJava(MavenPublication) {
       from components.java
