@@ -3,7 +3,8 @@ apply from: rootProject.file('libs/publish.gradle')
 
 dependencies {
   compile "org.codehaus.groovy:groovy-all:${groovy_version}"
-  compile 'org.codehaus.groovy:groovy-backports-compat23:2.3.6'
+  if(gradle.gradleVersion.startsWith('1.'))
+    compile "org.codehaus.groovy:groovy-backports-compat23:$groovy_version"
   compile 'commons-io:commons-io:2.4'
   compile 'org.apache.commons:commons-compress:1.4.1'
   compile 'org.apache.commons:commons-lang3:3.1'
