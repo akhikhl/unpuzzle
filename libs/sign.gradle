@@ -32,6 +32,5 @@ task bintraySign(type: RestTask) {
   username = project.bintrayUser
   password = project.bintrayKey
   requestBody = [ passphrase: project.bintrayKeyPhrase ]
-  contentType = ContentType.JSON
+  contentType = ContentType.JSON  
 }
-
