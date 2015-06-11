@@ -6,6 +6,7 @@ dependencies {
   if(gradle.gradleVersion.startsWith('1.'))
     compile "org.codehaus.groovy:groovy-backports-compat23:$groovy_version"
   compile 'org.osgi:org.osgi.core:5.0.0'
+  compile 'org.apache.maven:maven-compat:2.2.1'
   testCompile 'org.apache.maven:maven-ant-tasks:2.1.4-SNAPSHOT'
   testCompile 'xmlunit:xmlunit:1.4'
 }

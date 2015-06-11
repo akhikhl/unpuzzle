@@ -15,7 +15,7 @@ import groovy.xml.NamespaceBuilder
  */
 class Deployer {
   
-  private static final String antTasksFileName = 'maven-ant-tasks-2.1.4-20140721.171858-14.jar'
+  private static final String antTasksFileName = 'maven-ant-tasks-2.1.4-SNAPSHOT.jar'
 
   private static URL fileToUrl(File f) {
     String s = f.toURI().toString()
