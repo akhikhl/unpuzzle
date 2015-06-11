@@ -2,8 +2,8 @@
 
 [![Build Status](https://travis-ci.org/akhikhl/unpuzzle.png?branch=master)](https://travis-ci.org/akhikhl/unpuzzle) 
 [![Maintainer Status](http://stillmaintained.com/akhikhl/unpuzzle.png)](http://stillmaintained.com/akhikhl/unpuzzle) 
-[![Release](http://img.shields.io/badge/release-0.0.17-47b31f.svg)](https://github.com/akhikhl/unpuzzle/releases/latest)
-[![Snapshot](http://img.shields.io/badge/current-0.0.18--SNAPSHOT-47b31f.svg)](https://github.com/akhikhl/unpuzzle/tree/master)
+[![Release](http://img.shields.io/badge/release-0.0.19-47b31f.svg)](https://github.com/akhikhl/unpuzzle/releases/latest)
+[![Snapshot](http://img.shields.io/badge/current-0.0.20--SNAPSHOT-47b31f.svg)](https://github.com/akhikhl/unpuzzle/tree/master)
 [![License](http://img.shields.io/badge/license-MIT-47b31f.svg)](#copyright-and-license)
 
 **Unpuzzle** is a set of tools for mavenizing OSGi-bundles. You can consume Unpuzzle in two forms: 
@@ -336,7 +336,7 @@ Essentially, Unpuzzle API consists of four classes:
 
 ## Copyright and License
 
-Copyright 2014 (c) Andrey Hihlovskiy
+Copyright 2014-2015 (c) Andrey Hihlovskiy.
 
 All versions, present and past, of Unpuzzle are licensed under [MIT license](license.txt).
 
