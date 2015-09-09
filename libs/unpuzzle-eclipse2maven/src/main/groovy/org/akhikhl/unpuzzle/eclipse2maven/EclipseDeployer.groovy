@@ -170,9 +170,12 @@ installGroupPath=$installGroupPath"""
         packageInstalled = downloadedChecksum == installedChecksum
       }
       if(!packageInstalled) {
-        File pluginFolder = new File(unpackDir, 'plugins')
+        File pluginFolder = new File(unpackDir, 'Contents/Eclipse/plugins')
         if (!pluginFolder.exists()) {
-          pluginFolder = unpackDir
+          pluginFolder = new File(unpackDir, 'plugins')
+          if (!pluginFolder.exists()) {
+            pluginFolder = unpackDir
+          }
         }
         collectArtifactsInFolder(source, pluginFolder)
       }
@@ -281,9 +284,12 @@ installGroupPath=$installGroupPath"""
         packageInstalled = downloadedChecksum == installedChecksum
       }
       if(packageInstalled) {
-        File pluginFolder = new File(unpackDir, 'plugins')
+        File pluginFolder = new File(unpackDir, 'Contents/Eclipse/plugins')
         if (!pluginFolder.exists()) {
-          pluginFolder = unpackDir
+          pluginFolder = new File(unpackDir, 'plugins')
+          if (!pluginFolder.exists()) {
+            pluginFolder = unpackDir
+          }
         }
         collectArtifactsInFolder(source, pluginFolder)
       }
