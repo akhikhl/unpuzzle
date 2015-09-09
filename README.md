@@ -2,8 +2,8 @@
 
 [![Build Status](https://travis-ci.org/akhikhl/unpuzzle.png?branch=master)](https://travis-ci.org/akhikhl/unpuzzle) 
 [![Maintainer Status](http://stillmaintained.com/akhikhl/unpuzzle.png)](http://stillmaintained.com/akhikhl/unpuzzle) 
-[![Release](http://img.shields.io/badge/release-0.0.19-47b31f.svg)](https://github.com/akhikhl/unpuzzle/releases/latest)
-[![Snapshot](http://img.shields.io/badge/current-0.0.20--SNAPSHOT-47b31f.svg)](https://github.com/akhikhl/unpuzzle/tree/master)
+[![Release](http://img.shields.io/badge/release-0.0.20-47b31f.svg)](https://github.com/akhikhl/unpuzzle/releases/latest)
+[![Snapshot](http://img.shields.io/badge/current-0.0.21--SNAPSHOT-47b31f.svg)](https://github.com/akhikhl/unpuzzle/tree/master)
 [![License](http://img.shields.io/badge/license-MIT-47b31f.svg)](#copyright-and-license)
 
 **Unpuzzle** is a set of tools for mavenizing OSGi-bundles. You can consume Unpuzzle in two forms: 
@@ -297,7 +297,7 @@ unit-test.
 
 ## Support of multiple Eclipse versions
 
-Unpuzzle supports Eclipse versions 4.3.2, 4.3.1, 4.2.2, 4.2.1, 3.7.2, 3.7.1 out of the box.
+Unpuzzle supports Eclipse versions 4.5, 4.4.2, 4.4.1, 4.4, 4.3.2, 4.3.1, 4.2.2, 4.2.1, 3.7.2, 3.7.1 out of the box.
 You can easily switch between Eclipse versions by simply specifying eclipse version in "build.gradle":
 
 ```groovy
@@ -336,7 +336,7 @@ Essentially, Unpuzzle API consists of four classes:
 
 ## Copyright and License
 
-Copyright 2014-2015 (c) Andrey Hihlovskiy.
+Copyright 2014-2015 (c) Andrey Hihlovskiy and contributors.
 
 All versions, present and past, of Unpuzzle are licensed under [MIT license](license.txt).
 
