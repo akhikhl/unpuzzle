@@ -4,11 +4,11 @@ buildscript {
   repositories {
     mavenLocal()
     jcenter()
-    mavenCentral()
+    maven { url 'http://oss.jfrog.org/artifactory/oss-snapshot-local' }
   }
 
   dependencies {
-    classpath 'org.akhikhl.unpuzzle:unpuzzle-eclipse2maven:+'
+    classpath 'org.akhikhl.unpuzzle:unpuzzle-eclipse2maven:0.0.21-SNAPSHOT'
   }
 }
 

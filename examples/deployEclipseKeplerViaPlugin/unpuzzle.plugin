@@ -2,10 +2,11 @@ buildscript {
   repositories {
     mavenLocal()
     jcenter()
+    maven { url 'http://oss.jfrog.org/artifactory/oss-snapshot-local' }
   }
   
   dependencies {
-    classpath 'org.akhikhl.unpuzzle:unpuzzle-plugin:+'
+    classpath 'org.akhikhl.unpuzzle:unpuzzle-plugin:0.0.21-SNAPSHOT'
   }
 }
 
