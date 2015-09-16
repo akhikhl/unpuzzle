@@ -66,8 +66,9 @@ final class Downloader {
 
   void downloadFile(URL url, File file) throws IOException {
     Long remoteContentLength
+    def connection = openConnection(url)
     try {
-      remoteContentLength = Long.parseLong(url.openConnection().getHeaderField('Content-Length'))
+      remoteContentLength = Long.parseLong(connection.getHeaderField('Content-Length'))
     } catch(NumberFormatException e) {
       // no header, download anyway
     }
@@ -76,15 +77,30 @@ final class Downloader {
       return
     }
     console.startProgress("Downloading file: ${url.toExternalForm()}")
+    InputStream inStream = connection.getInputStream();
     try {
       file.parentFile.mkdirs()
-      url.openStream().withStream { is ->
+      inStream.withStream { is ->
         file.withOutputStream { os ->
           IOUtils.copy(is, new DownloadCountingOutputStream(os))
         }
       }
     } finally {
+      inStream.close()
       console.endProgress()
     }
+  }
+    
+  URLConnection openConnection(URL url){
+    String protocol = url.getProtocol()
+    String user = System.getProperty("${protocol}.proxyUser")
+    String pw = System.getProperty("${protocol}.proxyPassword")
+    def connection = url.openConnection();
+    if(user != null && pw != null ){
+      connection.setRequestProperty(
+          "Proxy-Authorization",
+          "Basic " + Base64.getEncoder().encodeToString("${user}:${pw}".getBytes()));
+    }
+    return connection
   }
 }
