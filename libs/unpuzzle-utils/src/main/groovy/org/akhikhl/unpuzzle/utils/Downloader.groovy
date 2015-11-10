@@ -14,8 +14,8 @@ import java.io.InputStream
 import java.io.OutputStream
 import java.net.HttpURLConnection
 import java.net.URL
-import java.util.Base64;
 
+import org.apache.commons.codec.binary.Base64
 import org.apache.commons.io.IOUtils
 
 /**
@@ -100,7 +100,7 @@ final class Downloader {
     if(user != null && pw != null ){
       connection.setRequestProperty(
           "Proxy-Authorization",
-          "Basic " + Base64.getEncoder().encodeToString("${user}:${pw}".getBytes()));
+          "Basic " + Base64.encodeBase64String("${user}:${pw}".getBytes()));
     }
     return connection
   }
