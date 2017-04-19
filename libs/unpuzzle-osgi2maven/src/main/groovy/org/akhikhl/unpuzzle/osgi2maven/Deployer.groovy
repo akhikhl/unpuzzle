@@ -87,7 +87,7 @@ class Deployer {
   void deployBundle(Map options = [:], Pom pomStruct, File bundleFileOrDirectory) {
     workFolder.mkdirs()
     def pomFile = new File(workFolder, 'myPom.xml')
-    File bundleFile
+    File bundleFile	
     if (bundleFileOrDirectory.isDirectory()) {
       pomStruct.packaging = 'jar'
       pomFile.text = pomStruct.toString()
@@ -105,6 +105,10 @@ class Deployer {
       ant.zip(basedir: sourceFile, destfile: zipFile)
       sourceFile = zipFile
     }
+	
+	// define pom task
+	ant.taskdef(resource: 'org/apache/maven/artifact/ant/antlib.xml', uri: 'antlib:org.apache.maven.artifact.ant')
+	
     ant.with {
       pom id: 'mypom', file: pomFile
       deploy file: bundleFile, {
