@@ -2,12 +2,17 @@ apply from: 'sign.gradle'
 
 ext {  
   
-  if(gradle.gradleVersion.startsWith('1.')) {
+  if (gradle.gradleVersion.startsWith('1.')) {
     groovy_version = gradle_1x_groovy_version
     spock_version = gradle_1x_spock_version
-  } else {
+  } 
+  else if (gradle.gradleVersion.startsWith('2.')) {
     groovy_version = gradle_2x_groovy_version
     spock_version = gradle_2x_spock_version
+  }
+  else {
+    groovy_version = gradle_3x_groovy_version
+    spock_version = gradle_3x_spock_version
   }
 }
 
